@@ -35,7 +35,7 @@ class Role(models.Model):
 
 class Comment(models.Model):
     # The ticket of the comment
-    ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
+    ticket = models.ForeignKey("Ticket", on_delete=models.DO_NOTHING, related_name="comments")
     # The author of the comment
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="comments"
@@ -52,7 +52,7 @@ class Comment(models.Model):
 
 class Ticket(models.Model):
     # The project of the ticket
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tickets")
+    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING, related_name="tickets")
     # The author of the ticket
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="tickets"
