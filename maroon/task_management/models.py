@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL)
     avatar = models.ImageField(upload_to="avatars/",help_text="Profile picture", blank=True )
 
 @receiver(post_save, sender=User)
@@ -35,7 +35,7 @@ class Role(models.Model):
 
 class Comment(models.Model):
     # The ticket of the comment
-    ticket = models.ForeignKey("Ticket", on_delete=models.DO_NOTHING, related_name="comments")
+    ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
     # The author of the comment
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="comments"
@@ -52,7 +52,7 @@ class Comment(models.Model):
 
 class Ticket(models.Model):
     # The project of the ticket
-    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING, related_name="tickets")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tickets")
     # The author of the ticket
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="tickets"
@@ -68,10 +68,33 @@ class Ticket(models.Model):
     class Meta:
         ordering = ["created_date"]
 
-class TicketTemplate(models.Model):
-    # The name of the template (Bug, Task, Issue)
-    name = models.TextField()
 
+class TicketTemplate(models.Model):
+    # The project that this template will be applied to
+    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+
+class State(models.Model):
+    # The ticket template that contains these states
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="states")
+
+    # The name of the state
+    state_name = models.TextField(max_length=50)
+
+class Type(models.Model):
+    # The ticket template that contains these types
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="types")   
+
+    # The name of the type
+    type_name = models.TextField(max_length=50)
+
+class Attribute(models.Model):
+    # The parent of the attribute
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="attributes")
+
+    # For simplicity value will be a text field to accept any alphanumeric value
+    value = models.TextField()
+    # The name of the attribute
+    name = models.TextField()
 
 class File(models.Model):
     # The parent of the file
@@ -83,14 +106,3 @@ class File(models.Model):
     file = models.FileField()
     # The date that the file was created
     created_date = models.DateTimeField(auto_now_add=True)
-
-class Attribute(models.Model):
-    # The parent of the attribute
-    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="attributes")
-
-    # For simplicity value will be a text field to accept any alphanumeric value
-    value = models.TextField()
-    # The name of the attribute
-    name = models.TextField()
-
-
