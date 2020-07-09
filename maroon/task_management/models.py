@@ -37,9 +37,7 @@ class Comment(models.Model):
     # The ticket of the comment
     ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
     # The author of the comment
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comments"
-    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
 
     # The text of the comment
     body = models.TextField()
@@ -54,9 +52,7 @@ class Ticket(models.Model):
     # The project of the ticket
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tickets")
     # The author of the ticket
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="tickets"
-    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets")
 
     # The title of the Ticket
     title = models.CharField(max_length=200, unique=True)
@@ -72,7 +68,7 @@ class Ticket(models.Model):
 class TicketTemplate(models.Model):
     # The project that this template will be applied to
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="ticket_template")
-    \
+
 class State(models.Model):
     # The ticket template that contains these states
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="states")
