@@ -71,8 +71,8 @@ class Ticket(models.Model):
 
 class TicketTemplate(models.Model):
     # The project that this template will be applied to
-    project = models.OneToOneField(Project, on_delete=models.CASCADE)
-
+    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="ticket_template")
+    \
 class State(models.Model):
     # The ticket template that contains these states
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="states")
