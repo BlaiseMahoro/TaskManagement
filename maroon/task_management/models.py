@@ -71,6 +71,7 @@ class Ticket(models.Model):
 class TicketTemplate(models.Model):
     # The name of the template (Bug, Task, Issue)
     name = models.TextField()
+    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING, related_name="ticketTemplate")
 
 
 class File(models.Model):
