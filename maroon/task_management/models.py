@@ -71,10 +71,7 @@ class Ticket(models.Model):
 class TicketTemplate(models.Model):
     # The name of the template (Bug, Task, Issue)
     name = models.TextField()
-    # The author of the ticket template
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="ticket_template"
-    )
+
 
 class File(models.Model):
     # The parent of the file
