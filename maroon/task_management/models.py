@@ -33,15 +33,12 @@ class Role(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     
 
-
-# Create your models here.
-
 class Comment(models.Model):
     # The ticket of the comment
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="comments")
+    ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
     # The author of the comment
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="blog_posts"
+        User, on_delete=models.CASCADE, related_name="comments"
     )
 
     # The text of the comment
@@ -58,7 +55,7 @@ class Ticket(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tickets")
     # The author of the ticket
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="blog_posts"
+        User, on_delete=models.CASCADE, related_name="tickets"
     )
 
     # The title of the Ticket
@@ -76,7 +73,7 @@ class TicketTemplate(models.Model):
     name = models.TextField()
     # The author of the ticket template
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="blog_posts"
+        User, on_delete=models.CASCADE, related_name="ticket_template"
     )
 
 class File(models.Model):
@@ -98,3 +95,5 @@ class Attribute(models.Model):
     value = models.TextField()
     # The name of the attribute
     name = models.TextField()
+
+
