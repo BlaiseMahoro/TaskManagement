@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
     avatar = models.ImageField(upload_to="avatars/",help_text="Profile picture", blank=True )
 
 @receiver(post_save, sender=User)
