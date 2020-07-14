@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ 
+  {% block title %}  <title>Maroon Task Management</title> {% endblock %}
+          
+
+  {% block stylesheets %}
+  <!-- Include global stylesheets here -->
+  {% endblock stylesheets %}
+          
+</head>
+<body>
+  {% include "navigation.html" %}
+  </div> 
+    <div class="content"> 
+
+        {% block content %}
+         <!--The content of the page goes here-->
+        {% endblock %}
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
