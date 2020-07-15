@@ -37,7 +37,7 @@ class Account(View):  # Will later add: LoginRequredMixin
 
 
 class Register(View):
-    template_name = "register.html"
+    template_name = "registration/register.html"
 
     def get(self, request):
         form = RegisterForm()
