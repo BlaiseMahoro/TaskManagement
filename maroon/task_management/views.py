@@ -4,6 +4,8 @@ from django.views.generic.base import RedirectView
 from django.http import HttpResponse
 from .forms import RegisterForm
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 # Create your views here.
 
 
@@ -13,8 +15,8 @@ class Redirect(RedirectView):
     pattern_name = 'landing'
 
 
-class Landing(View):  # Will later add: LoginRequredMixin
-    #login_url = 'login'
+class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+    login_url = 'login'
     template_name = "landing.html"
 
     def get(self, request):
@@ -27,8 +29,8 @@ class Landing(View):  # Will later add: LoginRequredMixin
         return render(request, self.template_name, context)
 
 
-class Account(View):  # Will later add: LoginRequredMixin
-    #login_url = 'login'
+class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+    login_url = 'login'
     template_name = "user/account.html"
 
     def get(self, request):
@@ -55,3 +57,4 @@ class Register(View):
             return redirect('landing')
         context = {'form': form}
         return render(request, self.template_name, context)
+

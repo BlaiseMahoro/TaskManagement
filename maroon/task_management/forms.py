@@ -7,7 +7,6 @@ from django import forms
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    email = forms.EmailField(max_length=254, help_text='Required.')
     
     class Meta:
         model = User
@@ -20,6 +19,7 @@ class RegisterForm(UserCreationForm):
             self.fields[fieldname].help_text = None
 
     def clean(self):
+       super(UserCreationForm, self).clean()
        email = self.cleaned_data.get('email')
        if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email address already exists")
