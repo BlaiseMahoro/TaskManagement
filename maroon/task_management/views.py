@@ -22,3 +22,11 @@ class Landing(View): #Will later add: LoginRequredMixin
             'some_other_value' : project_2,
         }
         return render(request, self.template_name, context)
+
+class Account(View): #Will later add: LoginRequredMixin
+    #login_url = 'login'
+    template_name = "user/account.html"
+
+    def get(self, request):
+        context = {}
+        return render(request, self.template_name, context)
