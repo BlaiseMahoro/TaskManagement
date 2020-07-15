@@ -18,4 +18,9 @@ class RegisterForm(UserCreationForm):
 
         for fieldname in ['username', 'email','password1', 'password2']:
             self.fields[fieldname].help_text = None
-            
+
+    def clean(self):
+       email = self.cleaned_data.get('email')
+       if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email address already exists")
+       return self.cleaned_data
