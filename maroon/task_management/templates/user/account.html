@@ -1,5 +1,16 @@
 {% extends 'base_generic.html' %}
 
 {% block content %} 
-<h1>Account Page</h1>
+<h1>Account Details</h1>
+
+<h3> {{ user.username }}</h3>
+<p>Email:</p>
+<h5>{{ user.email }}</h5> 
+<p>First Name:</p>
+<h5>{{ user.first_name }}</h5>
+<p>Last Name:</p>
+<h5>{{ user.last_name }}</h5>
+<p>Date Joined:</p>
+<h5>{{ user.date_joined }}</h5>
+
 {% endblock content %} 
