@@ -4,7 +4,7 @@ from task_management import models
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Profile
-        fields = ['user', 'avatar']
+        fields = ['avatar']
 
 class TicketTemplateSerializer(serializers.ModelSerializer):
     types = serializers.SlugRelatedField(many=True,read_only=True,slug_field='type_name')

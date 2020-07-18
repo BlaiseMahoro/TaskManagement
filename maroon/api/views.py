@@ -2,7 +2,9 @@ from task_management import models
 from api import serializers
 from rest_framework import generics
 from rest_framework import mixins
-
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 class ProfileCreate(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
@@ -29,18 +31,23 @@ class ProjectList(generics.ListCreateAPIView):
     #     return models.Role.objects.filter(profile=profile).values('project')
     #     #return models..objects.all()
 
-    # def post(self, request, format=None):
-    #     serializer = ProjectSerializer(data=request.data)
-    #     if serializer.is_valid():
+    def post(self, request, format=None):
+        
+        project = models.Project(name=request.data.get('name'), description=request.data.get('description'))
+        project.save(user=request.user)
+        serializer = serializers.ProjectSerializer(project)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # serializer = serializers.ProjectSerializer(data=request.data)
+        # if serializer.is_valid():
             
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #     serializer.save(user=request.user)
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_create(self, serializer):
-        role = Role()
-        role.project = self.request.data
-        serializer.save(owner=self.request.user)
+    # def perform_create(self, serializer):
+    #     role = Role()
+    #     role.project = self.request.data
+    #     serializer.save(owner=self.request.user)
 
 # For retrieving, updating, or detroying a project
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):

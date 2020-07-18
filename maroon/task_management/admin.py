@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Project, Role, Comment, Ticket, TicketTemplate, File, Attribute, Type, State
+from .models import Profile, Project, Role, Comment, Ticket, TicketTemplate, File, Attribute, Type, State, AttributeType
 
 admin.site.register(Project)
 admin.site.register(Profile)
@@ -11,4 +11,4 @@ admin.site.register(Comment)
 admin.site.register(Attribute)
 admin.site.register(State)
 admin.site.register(Type)
-
+admin.site.register(AttributeType)

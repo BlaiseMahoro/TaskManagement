@@ -21,7 +21,21 @@ def save_user_profile(sender, instance, **kwargs):
 class Project(models.Model):
     name = models.CharField(max_length=30, blank=False)
     description = models.TextField(max_length=200, blank=True)
-
+    
+    #function to override model.save(). Does not override Model.objects.create(kwargs)
+    def save(self, *args, **kwargs):
+        user = None
+        if kwargs.get('user'):
+            user = kwargs.pop('user')
+        created = False
+        if not self.pk:
+            created = True  
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        if created and user != None:
+            profile = Profile.objects.get(user=user)
+            print(profile)
+            Role.objects.create(profile=profile, project= self)
+            TicketTemplate.objects.create(project=self)
 
 ROLES_CHOICES = (
     ("is_admin", "Admin"),
@@ -29,7 +43,7 @@ ROLES_CHOICES = (
 )
 class Role(models.Model):
     role = models.CharField(max_length=10,choices=ROLES_CHOICES, default="is_admin", help_text="User role")
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="roles")
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="roles")
 
 class Comment(models.Model):
@@ -59,6 +73,11 @@ class Ticket(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     # The date that the ticket was created
     created_date = models.DateTimeField(auto_now_add=True)
+    #state of ticket
+    state = models.OneToOneField('State', on_delete=models.DO_NOTHING)
+    #type of ticket
+    ticket_type = models.OneToOneField('Type', on_delete=models.DO_NOTHING)
+  
 
     class Meta:
         ordering = ["created_date"]
@@ -84,7 +103,7 @@ class Type(models.Model):
 
 class AttributeType(models.Model):
     # The ticket template the attribute belongs to
-    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="attributes")
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="attributeTypes")
     # The name of the attribute
     name = models.TextField()
 
@@ -93,6 +112,8 @@ class Attribute(models.Model):
     attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attribute")
     # For simplicity value will be a text field to accept any alphanumeric value
     value = models.TextField()
+    # For ticket to have more than one Attributes
+    ticket = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="attribute", blank=True)
 
 class File(models.Model):
     # The parent of the file
