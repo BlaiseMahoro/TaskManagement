@@ -1,10 +1,100 @@
 {% extends 'base_generic.html' %}
 
-{% block content %} 
+{% block content %}
+<style>
+	/* Simple Container for Button */
+	.container {
+		height: 50px;
+		position: relative;
+	}
+
+	/* Center Div in container */
+	.center {
+		margin: 0;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-ms-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+
+	/* Moqup styled Border */
+	.bordered {
+		width: 500px;
+		height: auto;
+		padding: 20px;
+		border: 1px solid gray;
+		border-radius: 5px;
+	}
+
+	/* Moqup styled Button */
+	button {
+		background-color: #bb285c;
+		border-radius: 4px;
+		padding: 8px;
+		width: 100px;
+		color: white;
+	}
+
+	/* left aligned label */
+	.left_aligned_label {
+		display: inline-block;
+		width: 82%;
+		text-align: left;
+	}
+
+	/* Optional label */
+	.optional_label {
+		font-size: 75%;
+	}
+
+	/* Input Fields */
+	input {
+		width: 100%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		box-sizing: border-box;
+		border: 2px solid black;
+		border-radius: 5px;
+	}
+</style>
+
 <h3>Register</h3>
-<form method="POST">
-    {% csrf_token %}
-    {{form.as_p}}
-<button type="submit">Register</button>
-</form>
-{% endblock content %} 
+<div class=bordered>
+
+	<form method="POST">
+		<p>
+			<label class=left_aligned_label for="id_username">Username</label>
+			<input Class=right_aligned type="text" name="username" maxlength="150" required=true id="id_username">
+		</p>
+		<p>
+			<label class=left_aligned_label for="id_first_name">First name</label> <label
+				class="optional_label">Optional</label>
+			<input type="text" name="first_name" maxlength="30" id="id_first_name">
+		</p>
+		<p>
+			<label class=left_aligned_label for="id_last_name">Last name</label> <label
+				class="optional_label">Optional</label>
+			<input type="text" name="last_name" maxlength="30" id="id_last_name">
+		</p>
+		<p>
+			<label class=left_aligned_label for="id_email">Email</label>
+			<input type="email" name="email" maxlength="254" required=true id="id_email">
+		</p>
+		<p>
+			<label class=left_aligned_label for="id_password1">Password</label>
+			<input type="password" name="password1" autocomplete="new-password" required=true id="id_password1">
+		</p>
+		<p>
+			<label class=left_aligned_label for="id_password2">Password confirmation</label>
+			<input type="password" name="password2" autocomplete="new-password" required=true id="id_password2">
+		</p>
+
+		<div class="container">
+			<div class="center">
+				<button type="submit">Register</button>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock content %}
