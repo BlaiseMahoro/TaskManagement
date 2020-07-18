@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('task_management.urls'), name="maroon"),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/', include('api.urls'), name="api"),
 ]
 
 #for viewing picture in django admin

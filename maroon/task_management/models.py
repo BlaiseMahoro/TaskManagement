@@ -30,8 +30,7 @@ ROLES_CHOICES = (
 class Role(models.Model):
     role = models.CharField(max_length=10,choices=ROLES_CHOICES, default="is_admin", help_text="User role")
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="roles")
 
 class Comment(models.Model):
     # The ticket of the comment
@@ -83,14 +82,17 @@ class Type(models.Model):
     # The name of the type
     type_name = models.TextField(max_length=50)
 
-class Attribute(models.Model):
-    # The parent of the attribute
+class AttributeType(models.Model):
+    # The ticket template the attribute belongs to
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="attributes")
-
-    # For simplicity value will be a text field to accept any alphanumeric value
-    value = models.TextField()
     # The name of the attribute
     name = models.TextField()
+
+class Attribute(models.Model):
+    # The parent of the attribute
+    attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attribute")
+    # For simplicity value will be a text field to accept any alphanumeric value
+    value = models.TextField()
 
 class File(models.Model):
     # The parent of the file
