@@ -4,7 +4,18 @@
 <h1>Account Details</h1>
 
 <h3>Personal Information</h3>
+<div>
+    <a  href="avatar">
 
+    {% if profile.avatar%}
+    <img src="{{profile.avatar}}" alt="Avatar" class="avatar">
+    {% else %}
+    <img src="/avatars/users/user.png" alt="Avatar" class="avatar">
+    {% endif %}
+    </a>
+</div>
+
+</br>
 <label for="firstname"> First Name </label>
 <input type="text" id="firstname" readonly> {{ user.first_name }}</input><br><br>
 <label for="lastname"> Last Name </label>

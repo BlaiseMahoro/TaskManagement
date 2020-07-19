@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.http import HttpResponse
-from .forms import RegisterForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -10,7 +9,8 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
-
+from .models import Profile
+from .forms import RegisterForm, ProfilePicForm
 # Create your views here.
 
 
@@ -39,7 +39,8 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
     template_name = "user/account.html"
 
     def get(self, request):
-        context = {}
+        profile = Profile.objects.get(user=request.user)
+        context = {"profile":profile}
         return render(request, self.template_name, context)
     
 
@@ -64,3 +65,20 @@ class Register(View):
         context = {'form': form}
         return render(request, self.template_name, context)
 
+class UploadAvatar(View):
+    template_name = 'user/avatar.html'
+
+    def get(self, request):
+        form = ProfilePicForm()
+        return render(request, self.template_name,{})
+
+    def post(self, request):
+        if request.method == 'POST':
+            form = ProfilePicForm(request.POST, request.FILES)
+            if form.is_valid():
+                m = Profile.objects.get(user=request.user)
+                m.avatar = form.cleaned_data['image']
+                m.save()
+                return redirect('account')
+        return render(request, self.template_name,{})
+    
