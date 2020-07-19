@@ -5,6 +5,11 @@ from django.http import HttpResponse
 from .forms import RegisterForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect
+from django.utils.translation import ugettext as _
 
 # Create your views here.
 
@@ -36,6 +41,7 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
     def get(self, request):
         context = {}
         return render(request, self.template_name, context)
+    
 
 
 class Register(View):

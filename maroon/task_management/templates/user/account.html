@@ -3,14 +3,26 @@
 {% block content %} 
 <h1>Account Details</h1>
 
-<h3> {{ user.username }}</h3>
-<p>Email:</p>
-<h5>{{ user.email }}</h5> 
-<p>First Name:</p>
-<h5>{{ user.first_name }}</h5>
-<p>Last Name:</p>
-<h5>{{ user.last_name }}</h5>
-<p>Date Joined:</p>
-<h5>{{ user.date_joined }}</h5>
+<h3>Personal Information</h3>
+
+<label for="firstname"> First Name </label>
+<input type="text" id="firstname" readonly> {{ user.first_name }}</input><br><br>
+<label for="lastname"> Last Name </label>
+<input id="lastname" readonly>{{ user.last_name }}</input> <br><br>
+<label for="username"> Username </label>
+<input id="username" readonly>{{ user.username }}</input><br><br>
+<label for="email"> Email </label>
+<input id="email" readonly>{{ user.email }}</input><br><br>
+
+
+<!--Write the form-->
+<a href="{% url 'change-password' %}">
+    <i class="fas fa-fw fa-key"></i>
+    <span>Change Password</span></a>
+</a>
+
+
+<button style="background-color: red;">Delete Account</button>
+
 
 {% endblock content %} 
