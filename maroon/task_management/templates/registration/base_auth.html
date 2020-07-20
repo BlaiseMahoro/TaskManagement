@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ 
+  {% block title %}  <title>Maroon Task Management</title> {% endblock %}
+          
+
+  {% block stylesheets %}
+  <!-- Include global stylesheets here -->
+  <script src="https://kit.fontawesome.com/92ed4f50f3.js" crossorigin="anonymous"></script>
+  
+  {% endblock stylesheets %}
+          
+</head>
+<body>
+  </div> 
+    <div class="content"> 
+
+        {% block content %}
+         <!--The content of the page goes here-->
+        {% endblock %}
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
