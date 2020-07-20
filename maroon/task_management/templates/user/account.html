@@ -3,37 +3,45 @@
 {% block content %} 
 <h1>Account Details</h1>
 
-<h3>Personal Information</h3>
-<div>
-    <a  href="avatar">
-
+<!-- Profile Photo-->
+<div class="profile_photo">
+    <h3>Profile Photo</h3>
+     <a  href="avatar">
     {% if profile.avatar%}
     <img src="{{profile.avatar}}" alt="Avatar" class="avatar">
     {% else %}
     <img src="/avatars/users/user.png" alt="Avatar" class="avatar">
     {% endif %}
     </a>
+    <button type ="button">Upload</button>
 </div>
 
-</br>
-<label for="firstname"> First Name </label>
-<input type="text" id="firstname" readonly> {{ user.first_name }}</input><br><br>
-<label for="lastname"> Last Name </label>
-<input id="lastname" readonly>{{ user.last_name }}</input> <br><br>
-<label for="username"> Username </label>
-<input id="username" readonly>{{ user.username }}</input><br><br>
-<label for="email"> Email </label>
-<input id="email" readonly>{{ user.email }}</input><br><br>
+<!-- Personal Information-->
+<div class= "personal_info">
+    <h3>Personal Information</h3>
+    <label for="firstname"> First Name </label>
+    <input type="text" id="firstname" readonly> {{ user.first_name }}</input><br><br>
+    <label for="lastname"> Last Name </label>
+    <input id="lastname" readonly>{{ user.last_name }}</input> <br><br>
+    <label for="username"> Username </label>
+    <input id="username" readonly>{{ user.username }}</input><br><br>
+    <label for="email"> Email </label>
+    <input id="email" readonly>{{ user.email }}</input><br><br>
+</div>
 
+<!-- Change Password-->
+<div class="change_pw">
+    <h3>Change Password</h3>
+    <!--Write the form-->
+    <a href="{% url 'change-password' %}">
+        <i class="fas fa-fw fa-key"></i>
+        <span>Change Password</span></a>
+</div>
 
-<!--Write the form-->
-<a href="{% url 'change-password' %}">
-    <i class="fas fa-fw fa-key"></i>
-    <span>Change Password</span></a>
-</a>
-
-
-<button style="background-color: red;">Delete Account</button>
-
+<!-- Delete Account-->
+<div class="delete_account">
+    <h3>Delete Account</h3>
+    <button type ="button">Delete Account</button>
+</div>
 
 {% endblock content %} 
