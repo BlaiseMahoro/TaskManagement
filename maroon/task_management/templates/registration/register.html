@@ -63,7 +63,14 @@
 <div class=bordered>
 
 	<form method="POST">
-		<p>
+		<!--The csrf token is required, don't remove-->
+		{% csrf_token %}
+
+		<!-- This allows for error messages -->
+		{{form.as_p}}
+		<!-- This following commented out will be ok as long as they account for 
+		required error messages that will appear on duplicate users and bad passwords for example. -->
+		<!-- <p>
 			<label class=left_aligned_label for="id_username">Username</label>
 			<input Class=right_aligned type="text" name="username" maxlength="150" required=true id="id_username">
 		</p>
@@ -88,7 +95,7 @@
 		<p>
 			<label class=left_aligned_label for="id_password2">Password confirmation</label>
 			<input type="password" name="password2" autocomplete="new-password" required=true id="id_password2">
-		</p>
+		</p> -->
 
 		<div class="container">
 			<div class="center">
