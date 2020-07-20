@@ -24,3 +24,10 @@ class RegisterForm(UserCreationForm):
        if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email address already exists")
        return self.cleaned_data
+
+
+class ProfilePicForm(forms.Form):
+    image = forms.ImageField()
+    class Meta:
+        model = Profile    
+        fields = ('avatar')

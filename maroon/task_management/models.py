@@ -6,7 +6,7 @@ from django.dispatch import receiver
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
-    avatar = models.ImageField(upload_to="avatars/",help_text="Profile picture", blank=True )
+    avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -21,6 +21,8 @@ def save_user_profile(sender, instance, **kwargs):
 class Project(models.Model):
     name = models.CharField(max_length=30, blank=False)
     description = models.TextField(max_length=200, blank=True)
+    avatar = models.ImageField(upload_to="avatars/projects",help_text="Project Avatar", blank=True )
+    
 
 
 ROLES_CHOICES = (
