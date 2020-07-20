@@ -1,6 +1,32 @@
 {% extends 'base_generic.html' %}
 
 {% block content %} 
-<h1>Landing Page</h1>
+<div class="header">
+    <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+    <p class="title">Project Leia</p>
+    <i class="fa fa-cog" aria-hidden="true"></i>
+</div>
+
+    <!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
+
+  <ul class="nav nav-tabs">
+    <!-- This tab selected from 'active' class -->
+    <li class="nav tab active"><a data-toggle="tab" href="#backlog">Backlog</a></li>
+    <li class="nav tab"><a data-toggle="tab" href="#board">Board</a></li>
+    <div class="add-task">
+        <i class="fa fa-plus" aria-hidden="true">  Add Task</i>
+      </div>
+  </ul>
+  <div class="tab-content">
+  
+    <!-- Show this tab by adding `active` class -->
+    <div class="tab-pane fade in active" id="backlog">
+        {% include "project/backlog.html" %}
+    </div>
+    <div class="tab-pane fade" id="board">
+        {% include "project/board.html" %}
+    </div>
+  
+  </div>
 {% endblock content %} 
 
