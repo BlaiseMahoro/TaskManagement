@@ -1,0 +1,31 @@
+{% extends 'base_generic.html' %}
+
+{% block content %} 
+<div class="header">
+    <p class="title">Project Leia</p>
+</div>
+
+    <!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
+
+  <ul class="nav nav-tabs">
+    <!-- This tab selected from 'active' class -->
+    <li class="nav tab active"><a data-toggle="tab" href="#detail">Details</a></li>
+    <li class="nav tab"><a data-toggle="tab" href="#access">Access</a></li>
+    <li class="nav tab"><a data-toggle="tab" href="#ticket_template">Ticket Template</a></li>
+  </ul>
+  <div class="tab-content">
+  
+    <!-- Show this tab by adding `active` class -->
+    <div class="tab-pane fade in active" id="detail">
+        {% include "project/management/detail.html" %}
+    </div>
+    <div class="tab-pane fade" id="access">
+        {% include "project/management/access.html" %}
+    </div>
+    <div class="tab-pane fade" id="ticket_template">
+        {% include "project/management/ticket_template.html" %}
+    </div>
+  
+  </div>
+{% endblock content %} 
+

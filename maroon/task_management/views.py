@@ -81,4 +81,17 @@ class UploadAvatar(View):
                 m.save()
                 return redirect('account')
         return render(request, self.template_name,{})
+
+class Project(LoginRequiredMixin,View):
+    login_url = 'login'
+    template_name = "project/management/container.html"
+
+    def get(self, request):
+        project = "Project one"
+        project_2 = "Project two"
+        context = {
+            'some_value': project,
+            'some_other_value': project_2,
+        }
+        return render(request, self.template_name, context)
     
