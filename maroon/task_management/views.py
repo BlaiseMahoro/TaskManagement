@@ -42,6 +42,24 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
         profile = Profile.objects.get(user=request.user)
         context = {"profile":profile}
         return render(request, self.template_name, context)
+
+    def post(self, request):
+        error_message =""
+        try:
+            response = request.POST
+            user = request.user
+            user.first_name = response['fname']
+            user.last_name = response['lname']
+            user.username = response['username']
+            user.email = response['email']
+            user.save()
+        except:
+            error_message = "Username already exists!"
+
+        profile = Profile.objects.get(user=request.user)
+        context = {"profile":profile, "error":error_message}
+
+        return render(request, self.template_name, context)
     
 
 
