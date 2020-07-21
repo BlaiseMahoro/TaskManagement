@@ -67,20 +67,18 @@ class Register(View):
 
 class UploadAvatar(View):
     template_name = 'user/avatar.html'
-
-    def get(self, request):
-        form = ProfilePicForm()
-        return render(request, self.template_name,{})
-
+    
     def post(self, request):
-        if request.method == 'POST':
-            form = ProfilePicForm(request.POST, request.FILES)
-            if form.is_valid():
-                m = Profile.objects.get(user=request.user)
-                m.avatar = form.cleaned_data['image']
-                m.save()
-                return redirect('account')
-        return render(request, self.template_name,{})
+        
+        form = ProfilePicForm(request.POST, request.FILES)
+        m = Profile.objects.get(user=request.user)
+        if form.is_valid():
+            m.avatar = form.cleaned_data['image']
+            m.save()
+            return redirect('account')
+        m.avatar = None #Delete profile
+        m.save()
+        return redirect('account')
 
 class Project(LoginRequiredMixin,View):
     login_url = 'login'

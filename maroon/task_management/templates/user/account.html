@@ -6,16 +6,45 @@
 <!-- Profile Photo-->
 <div class="profile_photo">
     <h3>Profile Photo</h3>
-     <a  href="avatar">
+     
     {% if profile.avatar%}
     <img src="{{profile.avatar}}" alt="Avatar" class="avatar">
     {% else %}
     <img src="/avatars/users/user.png" alt="Avatar" class="avatar">
     {% endif %}
-    </a>
-    <button type ="button">Upload</button>
+    
+    <button type ="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Upload</button>
 </div>
-
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel"><em>Upload Picture</em></h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'avatar'%}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <p>
+                    <input id="id_image" accept="image/*" type="file" class="" name="image">
+                </p>
+                <p>
+                    ** Just click submit without selecting file to delete profile picture. **
+                </p>
+                <div class="modal-footer">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <!-- <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+          <!--<button type="button" class="btn btn-primary">Save changes</button>
+        </div> -->
+      </div>
+    </div>
+  </div>
 <!-- Personal Information-->
 <div class= "personal_info">
     <h3>Personal Information</h3>
