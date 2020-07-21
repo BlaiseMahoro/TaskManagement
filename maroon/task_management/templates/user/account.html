@@ -1,5 +1,4 @@
 {% extends 'base_generic.html' %}
-
 {% block content %} 
 <h1>Account Details</h1>
 
@@ -20,13 +19,14 @@
 <div class= "personal_info">
     <h3>Personal Information</h3>
     <label for="firstname"> First Name </label>
-    <input type="text" id="firstname" readonly> {{ user.first_name }}</input><br><br>
+    <input type="text" id="firstname" value="{{ user.first_name }}" />
     <label for="lastname"> Last Name </label>
-    <input id="lastname" readonly>{{ user.last_name }}</input> <br><br>
+    <input type="text" id="lastname" value="{{ user.last_name }}" />
     <label for="username"> Username </label>
-    <input id="username" readonly>{{ user.username }}</input><br><br>
+    <input type="text" id="username" value="{{ user.username }}" />
     <label for="email"> Email </label>
-    <input id="email" readonly>{{ user.email }}</input><br><br>
+    <input type="text" id="email" value ="{{ user.email }}" /><br><br>
+    <button type ="button">Submit</button>
 </div>
 
 <!-- Change Password-->
