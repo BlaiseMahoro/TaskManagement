@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'task_management.apps.TaskManagementConfig',
     'api.apps.ApiConfig',
 ]
@@ -101,6 +102,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+#REST Authentication 
+#https://florimondmanca.github.io/djangorestframework-api-key/guide/
+#https://www.django-rest-framework.org/api-guide/authentication/
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        #"rest_framework_api_key.permissions.HasAPIKey",
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 
 # Internationalization

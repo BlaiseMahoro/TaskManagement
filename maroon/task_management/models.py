@@ -2,16 +2,27 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
     avatar = models.ImageField(upload_to="avatars/",help_text="Profile picture", blank=True )
 
+    def get_user_projects(self):
+        projects = []
+        for role in Role.objects.filter(profile=self):
+            projects.append(role.project)
+        return projects
+
+    def __str__(self):
+        return self.user.username + " " + self.user.email
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+        Token.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
@@ -33,9 +44,11 @@ class Project(models.Model):
         super().save(*args, **kwargs)  # Call the "real" save() method.
         if created and user != None:
             profile = Profile.objects.get(user=user)
-            print(profile)
             Role.objects.create(profile=profile, project= self)
             TicketTemplate.objects.create(project=self)
+    
+    def __str__(self):
+        return "PK: " + str(self.pk) + " Name: " + self.name
 
 ROLES_CHOICES = (
     ("is_admin", "Admin"),
@@ -78,7 +91,6 @@ class Ticket(models.Model):
     #type of ticket
     ticket_type = models.OneToOneField('Type', on_delete=models.DO_NOTHING)
   
-
     class Meta:
         ordering = ["created_date"]
 

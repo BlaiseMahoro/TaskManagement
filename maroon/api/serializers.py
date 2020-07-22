@@ -4,7 +4,7 @@ from task_management import models
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Profile
-        fields = ['avatar']
+        fields = ['name']
 
 class TicketTemplateSerializer(serializers.ModelSerializer):
     types = serializers.SlugRelatedField(many=True,read_only=True,slug_field='type_name')
@@ -15,13 +15,18 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
         model = models.TicketTemplate
         fields = ['types', 'states'] #, 'attributes'
 
+class RoleSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+
+    class Meta:
+        model = models.Role
+        fields = ['role', 'profile']
+
 class ProjectSerializer(serializers.ModelSerializer):
     ticket_template = TicketTemplateSerializer(read_only=True)
+    # roles = serializers.
+    #roles = serializer_related_field.RoleSerializer(read_only=True)
 
     class Meta:
         model = models.Project
-        fields = ('name', 'description', 'ticket_template', 'roles')
-
-    # def create_role(self, instance, user, role_title):
-    #     role = Role(role_title, instance, user)
-    #     role.save()
+        fields = ('id','name', 'description', 'ticket_template', 'roles')
