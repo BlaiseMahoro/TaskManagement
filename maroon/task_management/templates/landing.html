@@ -1,34 +1,77 @@
 {% extends 'base_generic.html' %}
 
-{% block content %} 
+{% block content %}
+
 <div class="header">
-    <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
-    <p class="title">Project Leia</p>
-    <a href="project">
-      <i class="fa fa-cog" aria-hidden="true"></i>
-    </a>
+  <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+  <p class="title">Project Leia</p>
+  <a href="project">
+    <i class="fa fa-cog" aria-hidden="true"></i>
+  </a>
 </div>
 
-    <!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
+<!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
 
-  <ul class="nav nav-tabs">
-    <!-- This tab selected from 'active' class -->
-    <li class="nav tab active"><a data-toggle="tab" href="#backlog">Backlog</a></li>
-    <li class="nav tab"><a data-toggle="tab" href="#board">Board</a></li>
-    <div class="add-task">
-        <i class="fa fa-plus" aria-hidden="true">  Add Task</i>
-      </div>
-  </ul>
-  <div class="tab-content">
-  
-    <!-- Show this tab by adding `active` class -->
-    <div class="tab-pane fade in active" id="backlog">
-        {% include "project/backlog.html" %}
-    </div>
-    <div class="tab-pane fade" id="board">
-        {% include "project/board.html" %}
-    </div>
-  
+<ul class="nav nav-tabs">
+  <!-- This tab selected from 'active' class -->
+  <li class="nav tab active"><a data-toggle="tab" href="#backlog">Backlog</a></li>
+  <li class="nav tab"><a data-toggle="tab" href="#board">Board</a></li>
+  <div class="add-task">
+    <!-- Trigger the modal with a button -->
+    <button type="button" class="fa fa-plus" data-toggle="modal" data-target="#myModal">Add Task</button>
+
+    <!-- Modal -->
+
   </div>
-{% endblock content %} 
+</ul>
+<div class="tab-content">
 
+  <!-- Show this tab by adding `active` class -->
+  <div class="tab-pane fade in active" id="backlog">
+    {% include "project/backlog.html" %}
+  </div>
+  <div class="tab-pane fade" id="board">
+    {% include "project/board.html" %}
+  </div>
+
+</div>
+
+<!-- Modal (Following https://www.w3schools.com/bootstrap/bootstrap_modal.asp) -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form action="" method="POST">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <!-- Body -->
+        <div class="modal-body">
+          {% csrf_token %}
+          <label class="left_aligned_label">Title</label>
+          <br />
+          <input class="modal_input" type="text" name="title" /><br />
+          <label class="left_aligned_label">Type</label> <br />
+          <select class="modal_select" id="type_name" name="type_name">
+            <option>Bug</option>
+            <option>Work Item</option>
+          </select> <br />
+          <label class="left_aligned_label">Author</label> <br />
+          <select class="modal_select" id="author" name="author">
+            <option>Nathan</option>
+            <option>James</option>
+          </select> <br />
+          <label class="left_aligned_label">State</label> <br />
+          <select class="modal_select" id="state_name" name="state_name">
+            <option>New</option>
+            <option>Approved</option>
+          </select> <br />
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Add Task</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+{% endblock content %}
