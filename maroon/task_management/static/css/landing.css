@@ -44,3 +44,30 @@
     margin-top: 15px;
     color: gray;
 }
+
+/* left aligned label */
+.left_aligned_label {
+display: inline-block;
+width: 82%;
+text-align: left;
+}
+
+/* Modal Input Fields */
+.modal_input {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid black;
+border-radius: 5px;
+}
+
+/* Modal Select Fields */
+.modal_select {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid black;
+border-radius: 5px;
+}
