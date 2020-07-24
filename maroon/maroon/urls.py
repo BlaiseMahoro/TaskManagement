@@ -54,6 +54,7 @@ urlpatterns = [
              template_name='registration/password-reset/password_reset_complete.html'
          ),
          name='password_reset_complete'),
+    path('api/', include('api.urls'), name="api"),
 ]
 
 
