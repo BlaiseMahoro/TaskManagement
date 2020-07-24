@@ -31,11 +31,17 @@ h2, h3 {
     margin-left: 10%;
 }
 
-button{
+.profile_photo button, .personal_info button, .delete_account button {
     background-color: #bb285c;
     color:white;
     margin-left: 15px;
     border-radius: 6px;
+    
+}
+
+.profile_photo button, .personal_info button {
+    width: 30%;
+    border-color: lightgray;
 }
 
 .profile_photo {
