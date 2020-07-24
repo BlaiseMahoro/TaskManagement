@@ -64,12 +64,18 @@ class ProjectDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
             print("Not authorized")
             return Response("Project not found", status=status.HTTP_404_NOT_FOUND)
             
-        project.name = body['name'];
-        project.description = body['description'];
-        #project.update_template(body['template'])
-        #project.update_roles(body['roles'])
-        project.save()
-        serializer = serializers.ProjectSerializer(project)
+        serializer = serializers.ProjectSerializer(project, data=body)
+        serializer.is_valid()
+        serializer.save()
+
+        # Update ticket template
+        template_serializer = serializers.TicketTemplateSerializer(instance=project.ticket_template, data=body['ticket_template'])
+        template_serializer.is_valid()
+        template_serializer.save()
+        serializer.data.ticket_template = template_serializer.data
+
+        # TODO: update roles
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
