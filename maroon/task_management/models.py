@@ -9,10 +9,18 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
     avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
-    def get_user_projects(self):
+    def get_user_projects(self, admin=None):
+        query = Role.objects.filter(profile=self)
+        print(query)
+        if admin is True:
+            query = query.filter(role="is_admin")
+        elif admin is False:
+            query = query.filter(role="is_normal")
+        
         projects = []
-        for role in Role.objects.filter(profile=self):
+        for role in query:
             projects.append(role.project)
+
         return projects
 
     def __str__(self):
