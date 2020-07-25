@@ -9,7 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class CustomSlugRelatedField(serializers.SlugRelatedField):
     def to_internal_value(self, data):
         try:
-            print(self.ticket_template)
+            #print(self.ticket_template)
             obj, created = self.get_queryset().get_or_create(**{self.slug_field: data}, ticket_template=self.ticket_template)
             return obj
         except (TypeError, ValueError):
@@ -34,7 +34,7 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         #Delete Types and States before the new ones are added to the database
-        print("template internal value")
+        #print("template internal value")
         models.Type.objects.filter(ticket_template=self.instance).delete()
         models.State.objects.filter(ticket_template=self.instance).delete()
         return super(TicketTemplateSerializer, self).to_internal_value(data=data)
@@ -49,8 +49,23 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
             if attribute.name not in names:
                 attribute.delete()
 
+class FlatUserName(serializers.CharField):
+    def to_representation(self, value):
+        return value.user.username
+
 class RoleSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField(source='profile.user.username')
+    username = FlatUserName(source="profile")
+
+    def update(self, instance, validated_data):
+        print(validated_data)
+        profile = models.Profile.objects.get(user=models.User.objects.get(username=validated_data['profile']))
+
+        #'instance' in this case is the project to find the role
+        role, created = models.Role.objects.all().get_or_create(profile=profile, project=instance)
+        role.role = validated_data['role']
+        role.save()
+
+        return role
 
     class Meta:
         model = models.Role
@@ -71,10 +86,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         return Project.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        print("Updating Project")
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
-
         instance.save()
 
         return instance
+
+    def delete_removed_roles(self, instance, validated_data):
+        roles = [new_role['username'] for new_role in validated_data]
+        for role in models.Role.objects.filter(project=instance):
+            if role.profile.user.username not in roles:
+                role.delete()

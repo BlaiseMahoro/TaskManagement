@@ -61,21 +61,34 @@ class ProjectDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
                 project = user_project
 
         if not project:
-            print("Not authorized")
             return Response("Project not found", status=status.HTTP_404_NOT_FOUND)
             
+        #Update Project details
         serializer = serializers.ProjectSerializer(project, data=body)
         serializer.is_valid()
         serializer.save()
 
-        # Update ticket template
+        # Update Ticket Template
         template_serializer = serializers.TicketTemplateSerializer(instance=project.ticket_template, data=body['ticket_template'])
         template_serializer.is_valid()
         template_serializer.save()
         serializer.data.ticket_template = template_serializer.data
 
-        # TODO: update roles
-        
+        # Update the roles
+        serialized_roles = []
+        for role in body['roles']:
+            role_serializer = serializers.RoleSerializer(instance=project, data=role)
+            role_serializer.is_valid()
+            role_serializer.save()
+
+            #serialized_roles.append({'role': role_serializer.validated_data['role'], 'username': role_serializer.validated_data['profile']})
+
+        serializer.delete_removed_roles(project, body['roles'])
+
+        #The roles data sent back is not getting assigned correctly
+        #Don't this the following line works
+        serializer.data['roles'] = role_serializer.data
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
