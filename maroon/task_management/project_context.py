@@ -1,5 +1,6 @@
 from .models import Project, Profile, Role
 
+#http://kkabardi.me/post/dynamic-menu-navigation-django/
 def get_projects(request):
     admin_projects = []
     normal_projects = []
