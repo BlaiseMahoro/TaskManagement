@@ -19,17 +19,20 @@
     </div>
     <div class="collapse-container">
         <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#admin-list"><p>Admin</p><i class="fa fa-caret-down" aria-hidden="true"></i></button>
-        <div id="admin-list" class="collapse">
+        <div id="admin-list" class="collapse in">
             <tr>
                 {% for project in admin_projects %} 
-                    <td><a href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a></td>
+                    <td>
+                        <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+                        <a href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a>
+                    </td>
                 {% endfor %}
             </tr>
         </div>
     </div>
     <div class="collapse-container">
         <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#normal-list"><p>Collaborator</p><i class="fa fa-caret-down" aria-hidden="true"></i></button>
-        <div id="normal-list" class="collapse">
+        <div id="normal-list" class="collapse in">
             <tr>
                 {% for project in normal_projects %} 
                     <td><a href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a></td>

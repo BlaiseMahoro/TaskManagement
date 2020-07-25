@@ -85,6 +85,15 @@
     margin: auto;
 }
 
+.project-list img {
+    width: 30px;
+    height: 20px;
+    vertical-align: middle;
+    float: left;
+    /* padding-right: 10px; */
+    margin: 10px;
+}
+
 .project-list button:hover{
     background-color: #94194d;
     border-color: transparent;
