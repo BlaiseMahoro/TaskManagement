@@ -11,6 +11,8 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from .models import Profile
 from .forms import RegisterForm, ProfilePicForm
+from django.contrib.auth import logout
+
 # Create your views here.
 
 
@@ -110,4 +112,8 @@ class Project(LoginRequiredMixin,View):
             'some_other_value': project_2,
         }
         return render(request, self.template_name, context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
     

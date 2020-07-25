@@ -7,5 +7,7 @@ urlpatterns = [
     path('account', views.Account.as_view(), name='account'),
     path('project', views.Project.as_view(), name='project'),
     path('register',  views.Register.as_view(), name = 'register'),
-    path('avatar', views.UploadAvatar.as_view(), name = 'avatar')
+    path('avatar', views.UploadAvatar.as_view(), name = 'avatar'),
+    path('logout', views.logout_view, name='logout'),
+
 ]
