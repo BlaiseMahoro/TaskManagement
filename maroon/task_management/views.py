@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.generic import DetailView, ListView, ListView, TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
@@ -83,11 +83,11 @@ class Register(View):
         context = {'form': form}
         return render(request, self.template_name, context)
 
-class UploadAvatar(View):
+class UploadAvatar(LoginRequiredMixin, View):
+    login_url = 'login'
     template_name = 'user/avatar.html'
     
     def post(self, request):
-        
         form = ProfilePicForm(request.POST, request.FILES)
         m = Profile.objects.get(user=request.user)
         if form.is_valid():
@@ -98,6 +98,20 @@ class UploadAvatar(View):
         m.save()
         return redirect('account')
 
+class UploadProjectAvatar(LoginRequiredMixin, View):
+    login_url = 'login'
+    template_name = 'user/avatar.html'
+    
+    def post(self, request):
+        form = ProfilePicForm(request.POST, request.FILES)
+        m = Project.objects.get(user=request.user)
+        if form.is_valid():
+            m.avatar = form.cleaned_data['image']
+            m.save()
+            return redirect('landing')
+        m.avatar = None #Delete profile
+        m.save()
+        return redirect('landing')
 class Project(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "project/management/container.html"

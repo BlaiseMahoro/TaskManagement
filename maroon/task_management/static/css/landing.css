@@ -9,6 +9,12 @@
     vertical-align: middle;
 }
 
+.project_img{
+    vertical-align: middle;
+    width: 180px;
+    height: 180px;
+    
+}
 .header i {
     float: right;
     color: gray;
