@@ -3,9 +3,15 @@
 {% block content %}
 
 <div class="header">
-  <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+  <!-- <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"> -->
+  {% if project.avatar%}
+  <img src="/{{project.avatar}}" alt="Avatar" class="project_img">
+  {% else %}
+  <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+  {% endif %}
+
   <p class="title">{{project.name}}</p>
-  <a href="/project">
+  <a href="{% url 'project' project.pk %}">
     <i class="fa fa-cog" aria-hidden="true"></i>
   </a>
 </div>

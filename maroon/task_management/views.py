@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.generic import DetailView, ListView, ListView, TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
@@ -92,11 +92,10 @@ class Register(View):
         context = {'form': form}
         return render(request, self.template_name, context)
 
-class UploadAvatar(View):
-    template_name = 'user/avatar.html'
+class UploadAvatar(LoginRequiredMixin, View):
+    login_url = 'login'
     
     def post(self, request):
-        
         form = ProfilePicForm(request.POST, request.FILES)
         m = Profile.objects.get(user=request.user)
         if form.is_valid():
@@ -107,16 +106,42 @@ class UploadAvatar(View):
         m.save()
         return redirect('account')
 
+class UploadProjectAvatar(LoginRequiredMixin, View):
+    login_url = 'login'
+    template_name = 'project/management/container.html'
+    
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        print(project_id)
+        form = ProfilePicForm(request.POST, request.FILES)
+        project = get_object_or_404(Project, pk=project_id)
+        if form.is_valid():
+            project.avatar = form.cleaned_data['image']
+            project.save()
+            return render(request, self.template_name, {'project':project})
+        project.avatar = None #Delete profile
+        project.save()
+        return render(request, self.template_name, {'project':project})
 class ProjectSettings(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "project/management/container.html"
 
-    def get(self, request):
-        project = "Project one"
-        project_2 = "Project two"
-        context = {
-            'some_value': project,
-            'some_other_value': project_2,
-        }
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        context = {'project': project}
         return render(request, self.template_name, context)
     
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        response = request.POST
+        #For Project Detail Tab
+        if response.get('section') =='detail':
+            project.name = response['title']
+            project.description = response['description']
+            project.save()
+            return render(request, self.template_name, {'project': project})
+
+        context = {'project': project}
+        return render(request, self.template_name, context)
