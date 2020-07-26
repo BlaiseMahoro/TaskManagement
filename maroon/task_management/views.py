@@ -5,12 +5,14 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from .models import Profile, Project
-from .forms import RegisterForm, ProfilePicForm
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm
+from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
 
 
@@ -145,3 +147,9 @@ class ProjectSettings(LoginRequiredMixin,View):
 
         context = {'project': project}
         return render(request, self.template_name, context)
+
+class NewProjectView(BSModalCreateView):
+    template_name = 'project/new_project.html'
+    form_class = NewProjectForm
+    success_message = 'Success: Project was created.'
+    success_url = reverse_lazy('index')
