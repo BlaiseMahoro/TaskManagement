@@ -7,9 +7,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
-from .models import Profile
+from .models import Profile, Project
 from .forms import RegisterForm, ProfilePicForm
 # Create your views here.
 
@@ -17,12 +17,11 @@ from .forms import RegisterForm, ProfilePicForm
 class Redirect(RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'landing'
+    pattern_name = 'landingNoneSelected'
 
-
-class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+class LandingNoneSelected(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
     login_url = 'login'
-    template_name = "landing.html"
+    template_name = "landing_none_selected.html"
 
     def get(self, request):
         project = "Project one"
@@ -31,6 +30,16 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
             'some_value': project,
             'some_other_value': project_2,
         }
+        return render(request, self.template_name, context)
+
+
+class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+    login_url = 'login'
+    template_name = "landing.html"
+
+    def get(self, request, *args, **kwargs):
+        project = get_object_or_404(Project, pk=kwargs['pk'])
+        context = {'project': project}
         return render(request, self.template_name, context)
 
 
@@ -112,7 +121,7 @@ class UploadProjectAvatar(LoginRequiredMixin, View):
         m.avatar = None #Delete profile
         m.save()
         return redirect('landing')
-class Project(LoginRequiredMixin,View):
+class ProjectSettings(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "project/management/container.html"
 
