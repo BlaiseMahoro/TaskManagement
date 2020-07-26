@@ -1,6 +1,13 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
 <!-- Profile Photo-->
-<div>
-    <h3>Profile Photo</h3>
+<div class= "profile_photod">    
 
     {% if project.avatar%}
     <img src="{{project.avatar}}" alt="Avatar" class="project_img">
@@ -42,3 +49,13 @@
         </div>
     </div>
 </div>
+
+<div class= "project_details">
+    <h3>Title</h3>
+    <input type="text" id="title" value= "" /> <!-- Value will be proj name?-->
+    
+    <h3>Description</h3>
+    <textarea name="description" cols="24" rows="6"></textarea>
+</div>
+
+{% endblock content %}

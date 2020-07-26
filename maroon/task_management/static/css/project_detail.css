@@ -1,0 +1,31 @@
+.profile_photod button {
+    position:absolute;
+    top: 50%;    
+    left: 12%;
+    background-color: #bb285c;
+    color:white;
+    margin-left: 15px;
+    border-radius: 6px;
+    border-color: #bb285c;
+}
+
+.profile_photod img {
+    position: absolute;
+    left: 10%;
+    top: 28%;
+}
+
+.project_details {
+    position: absolute;
+    right: 50%;
+}
+
+.project_details input {
+    background-color: #ebebeb;
+    border-color: #ebebeb;
+}
+
+.project_details textarea {
+    background-color: #ebebeb;
+    border-color: #ebebeb;    
+}
