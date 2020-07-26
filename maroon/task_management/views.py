@@ -19,7 +19,9 @@ class Redirect(RedirectView):
     query_string = True
     pattern_name = 'landingNoneSelected'
 
-class LandingNoneSelected(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+
+# Will later add: LoginRequredMixin
+class LandingNoneSelected(LoginRequiredMixin, View):
     login_url = 'login'
     template_name = "landing_none_selected.html"
 
@@ -33,7 +35,7 @@ class LandingNoneSelected(LoginRequiredMixin,View):  # Will later add: LoginRequ
         return render(request, self.template_name, context)
 
 
-class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+class Landing(LoginRequiredMixin, View):  # Will later add: LoginRequredMixin
     login_url = 'login'
     template_name = "landing.html"
 
@@ -43,17 +45,17 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
         return render(request, self.template_name, context)
 
 
-class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+class Account(LoginRequiredMixin, View):  # Will later add: LoginRequredMixin
     login_url = 'login'
     template_name = "user/account.html"
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile}
+        context = {"profile": profile}
         return render(request, self.template_name, context)
 
     def post(self, request):
-        error_message =""
+        error_message = ""
         try:
             response = request.POST
             user = request.user
@@ -66,10 +68,9 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
             error_message = "Username already exists!"
 
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile, "error":error_message}
+        context = {"profile": profile, "error": error_message}
 
         return render(request, self.template_name, context)
-    
 
 
 class Register(View):
@@ -87,14 +88,16 @@ class Register(View):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
-            login(request, user) #authenticate user and redirect them to landing page
+            # authenticate user and redirect them to landing page
+            login(request, user)
             return redirect('landing')
         context = {'form': form}
         return render(request, self.template_name, context)
 
+
 class UploadAvatar(LoginRequiredMixin, View):
     login_url = 'login'
-    
+
     def post(self, request):
         form = ProfilePicForm(request.POST, request.FILES)
         m = Profile.objects.get(user=request.user)
@@ -102,14 +105,15 @@ class UploadAvatar(LoginRequiredMixin, View):
             m.avatar = form.cleaned_data['image']
             m.save()
             return redirect('account')
-        m.avatar = None #Delete profile
+        m.avatar = None  # Delete profile
         m.save()
         return redirect('account')
+
 
 class UploadProjectAvatar(LoginRequiredMixin, View):
     login_url = 'login'
     template_name = 'project/management/container.html'
-    
+
     def post(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
         print(project_id)
@@ -118,11 +122,13 @@ class UploadProjectAvatar(LoginRequiredMixin, View):
         if form.is_valid():
             project.avatar = form.cleaned_data['image']
             project.save()
-            return render(request, self.template_name, {'project':project})
-        project.avatar = None #Delete profile
+            return render(request, self.template_name, {'project': project})
+        project.avatar = None  # Delete profile
         project.save()
-        return render(request, self.template_name, {'project':project})
-class ProjectSettings(LoginRequiredMixin,View):
+        return render(request, self.template_name, {'project': project})
+
+
+class ProjectSettings(LoginRequiredMixin, View):
     login_url = 'login'
     template_name = "project/management/container.html"
 
@@ -131,13 +137,13 @@ class ProjectSettings(LoginRequiredMixin,View):
         project = get_object_or_404(Project, pk=project_id)
         context = {'project': project}
         return render(request, self.template_name, context)
-    
+
     def post(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
         project = get_object_or_404(Project, pk=project_id)
         response = request.POST
-        #For Project Detail Tab
-        if response.get('section') =='detail':
+        # For Project Detail Tab
+        if response.get('section') == 'detail':
             project.name = response['title']
             project.description = response['description']
             project.save()
