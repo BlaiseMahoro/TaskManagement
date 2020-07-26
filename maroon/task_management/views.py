@@ -94,7 +94,6 @@ class Register(View):
 
 class UploadAvatar(LoginRequiredMixin, View):
     login_url = 'login'
-    template_name = 'user/avatar.html'
     
     def post(self, request):
         form = ProfilePicForm(request.POST, request.FILES)
@@ -109,28 +108,40 @@ class UploadAvatar(LoginRequiredMixin, View):
 
 class UploadProjectAvatar(LoginRequiredMixin, View):
     login_url = 'login'
-    template_name = 'user/avatar.html'
+    template_name = 'project/management/container.html'
     
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        print(project_id)
         form = ProfilePicForm(request.POST, request.FILES)
-        m = Project.objects.get(user=request.user)
+        project = get_object_or_404(Project, pk=project_id)
         if form.is_valid():
-            m.avatar = form.cleaned_data['image']
-            m.save()
-            return redirect('landing')
-        m.avatar = None #Delete profile
-        m.save()
-        return redirect('landing')
+            project.avatar = form.cleaned_data['image']
+            project.save()
+            return render(request, self.template_name, {'project':project})
+        project.avatar = None #Delete profile
+        project.save()
+        return render(request, self.template_name, {'project':project})
 class ProjectSettings(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "project/management/container.html"
 
-    def get(self, request):
-        project = "Project one"
-        project_2 = "Project two"
-        context = {
-            'some_value': project,
-            'some_other_value': project_2,
-        }
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        context = {'project': project}
         return render(request, self.template_name, context)
     
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        response = request.POST
+        #For Project Detail Tab
+        if response.get('section') =='detail':
+            project.name = response['title']
+            project.description = response['description']
+            project.save()
+            return render(request, self.template_name, {'project': project})
+
+        context = {'project': project}
+        return render(request, self.template_name, context)

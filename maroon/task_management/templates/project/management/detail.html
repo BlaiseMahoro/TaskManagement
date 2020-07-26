@@ -1,4 +1,3 @@
-{% extends "base_generic.html" %}
 {% load static %}
 {% block stylesheets %}
 <link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
@@ -7,10 +6,10 @@
 {% block content %}
 
 <!-- Profile Photo-->
-<div class= "profile_photod">    
+<div class="profile_photod">
 
     {% if project.avatar%}
-    <img src="{{project.avatar}}" alt="Avatar" class="project_img">
+    <img src="/{{project.avatar}}" alt="Avatar" class="project_img">
     {% else %}
     <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
     {% endif %}
@@ -30,7 +29,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'project_avatar'%}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <form action="{% url 'project_avatar' project.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <p>
                         <input id="id_image" accept="image/*" type="file" class="" name="image">
                     </p>
@@ -50,12 +50,17 @@
     </div>
 </div>
 
-<div class= "project_details">
-    <h3>Title</h3>
-    <input type="text" id="title" value= "" /> <!-- Value will be proj name?-->
-    
-    <h3>Description</h3>
-    <textarea name="description" cols="24" rows="6"></textarea>
+<div class="project_details">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <h3>Title</h3>
+        <input type="text" id="title" name="title" value="{{project.name}}" /> <!-- Value will be proj name?-->
+
+        <h3>Description</h3>
+        <textarea name="description" cols="24" rows="6">{{project.description}}</textarea>
+        <input id="section" name="section" type="hidden" value="detail">
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
 </div>
 
 {% endblock content %}
