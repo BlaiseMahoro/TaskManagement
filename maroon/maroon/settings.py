@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'task_management.apps.TaskManagementConfig',
     'api.apps.ApiConfig',
+    'bootstrap_modal_forms',
 ]
 
 MIDDLEWARE = [
