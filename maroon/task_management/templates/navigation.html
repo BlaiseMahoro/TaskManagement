@@ -1,3 +1,22 @@
+<!-- Loads Static Referneces -->
+{% load static %}
+
+<!-- Loads Bootstrap -->
+
+<head>
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.css' %}">
+</head>
+
+<!-- Required for AJAX driven Django forms in Bootstrap modal -->
+
+<body>
+    <script src="{% static 'assets/js/bootstrap.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
+    <!-- You can alternatively load the minified version -->
+    <script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+</body>
+
 <div class="sidenav">
     <div class="icon">
         <p>M</p>
@@ -51,6 +70,7 @@
     <!-- New Project button -->
     <button id="new-project" class="btn btn-primary" type="button" name="button">New Project</button>
   </div>
+
 <script type="text/javascript">
     function openNav() {
         document.getElementById("project-list").style.width = "250px";
@@ -60,4 +80,15 @@
     function closeNav() {
         document.getElementById("project-list").style.width = "0";
     }
+</script>
+
+<!-- Binds the modalForm to the button trigger -->
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#new-project").modalForm({
+            formURL: "{% url 'new_project' %}"
+        });
+
+    });
 </script>
