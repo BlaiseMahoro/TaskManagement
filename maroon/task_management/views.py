@@ -1,32 +1,31 @@
 from django.shortcuts import render, redirect
-from django.views.generic import DetailView, ListView, ListView, TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
-from .models import Profile
-from .forms import RegisterForm, ProfilePicForm
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
-from django.contrib import messages
-
+from .models import Profile, Project
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm
+from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
 
 
 class Redirect(RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'landing'
+    pattern_name = 'landingNoneSelected'
 
-
-class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+class LandingNoneSelected(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
     login_url = 'login'
-    template_name = "landing.html"
+    template_name = "landing_none_selected.html"
 
     def get(self, request):
         project = "Project one"
@@ -35,6 +34,16 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
             'some_value': project,
             'some_other_value': project_2,
         }
+        return render(request, self.template_name, context)
+
+
+class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+    login_url = 'login'
+    template_name = "landing.html"
+
+    def get(self, request, *args, **kwargs):
+        project = get_object_or_404(Project, pk=kwargs['pk'])
+        context = {'project': project}
         return render(request, self.template_name, context)
 
 
@@ -87,11 +96,10 @@ class Register(View):
         context = {'form': form}
         return render(request, self.template_name, context)
 
-class UploadAvatar(View):
-    template_name = 'user/avatar.html'
+class UploadAvatar(LoginRequiredMixin, View):
+    login_url = 'login'
     
     def post(self, request):
-        
         form = ProfilePicForm(request.POST, request.FILES)
         m = Profile.objects.get(user=request.user)
         if form.is_valid():
@@ -102,18 +110,32 @@ class UploadAvatar(View):
         m.save()
         return redirect('account')
 
-class Project(LoginRequiredMixin,View):
+class UploadProjectAvatar(LoginRequiredMixin, View):
+    login_url = 'login'
+    template_name = 'project/management/container.html'
+    
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        print(project_id)
+        form = ProfilePicForm(request.POST, request.FILES)
+        project = get_object_or_404(Project, pk=project_id)
+        if form.is_valid():
+            project.avatar = form.cleaned_data['image']
+            project.save()
+            return render(request, self.template_name, {'project':project})
+        project.avatar = None #Delete profile
+        project.save()
+        return render(request, self.template_name, {'project':project})
+class ProjectSettings(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "project/management/container.html"
 
-    def get(self, request):
-        project = "Project one"
-        project_2 = "Project two"
-        context = {
-            'some_value': project,
-            'some_other_value': project_2,
-        }
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        context = {'project': project}
         return render(request, self.template_name, context)
+<<<<<<< HEAD
 
 def logout_view(request):
     logout(request)
@@ -136,3 +158,25 @@ def logout_view(request):
 #     return render(request, 'user/delete-account.html', context)
 
     
+=======
+    
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        response = request.POST
+        #For Project Detail Tab
+        if response.get('section') =='detail':
+            project.name = response['title']
+            project.description = response['description']
+            project.save()
+            return render(request, self.template_name, {'project': project})
+
+        context = {'project': project}
+        return render(request, self.template_name, context)
+
+class NewProjectView(BSModalCreateView):
+    template_name = 'project/new_project.html'
+    form_class = NewProjectForm
+    success_message = 'Success: Project was created.'
+    success_url = reverse_lazy('index')
+>>>>>>> 0e1c676a96a40b7042ad93628022939fc58cc3d0

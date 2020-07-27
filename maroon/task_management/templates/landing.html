@@ -3,9 +3,15 @@
 {% block content %}
 
 <div class="header">
-  <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
-  <p class="title">Project Leia</p>
-  <a href="project">
+  <!-- <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"> -->
+  {% if project.avatar%}
+  <img src="/{{project.avatar}}" alt="Avatar" class="project_img">
+  {% else %}
+  <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+  {% endif %}
+
+  <p class="title">{{project.name}}</p>
+  <a href="{% url 'project' project.pk %}">
     <i class="fa fa-cog" aria-hidden="true"></i>
   </a>
 </div>
@@ -19,9 +25,6 @@
   <div class="add-task">
     <!-- Trigger the modal with a button -->
     <button type="button" class="fa fa-plus" data-toggle="modal" data-target="#myModal">Add Task</button>
-
-    <!-- Modal -->
-
   </div>
 </ul>
 <div class="tab-content">
@@ -36,42 +39,6 @@
 
 </div>
 
-<!-- Modal (Following https://www.w3schools.com/bootstrap/bootstrap_modal.asp) -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <form action="" method="POST">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <!-- Body -->
-        <div class="modal-body">
-          {% csrf_token %}
-          <label class="left_aligned_label">Title</label>
-          <br />
-          <input class="modal_input" type="text" name="title" /><br />
-          <label class="left_aligned_label">Type</label> <br />
-          <select class="modal_select" id="type_name" name="type_name">
-            <option>Bug</option>
-            <option>Work Item</option>
-          </select> <br />
-          <label class="left_aligned_label">Author</label> <br />
-          <select class="modal_select" id="author" name="author">
-            <option>Nathan</option>
-            <option>James</option>
-          </select> <br />
-          <label class="left_aligned_label">State</label> <br />
-          <select class="modal_select" id="state_name" name="state_name">
-            <option>New</option>
-            <option>Approved</option>
-          </select> <br />
-        </div>
-
-        <!-- Footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Add Task</button>
-        </div>
-    </form>
-  </div>
-</div>
+{% include "ticket/create_ticket.html" %}
 
 {% endblock content %}
