@@ -152,4 +152,4 @@ class NewProjectView(BSModalCreateView):
     template_name = 'project/new_project.html'
     form_class = NewProjectForm
     success_message = 'Success: Project was created.'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('landing')
