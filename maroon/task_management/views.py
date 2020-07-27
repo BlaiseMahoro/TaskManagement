@@ -10,8 +10,10 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
+from django.contrib.auth import logout
+# from .forms import UserDeleteForm
 from .models import Profile, Project
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
 
@@ -133,7 +135,7 @@ class ProjectSettings(LoginRequiredMixin,View):
         project = get_object_or_404(Project, pk=project_id)
         context = {'project': project}
         return render(request, self.template_name, context)
-    
+   
     def post(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
         project = get_object_or_404(Project, pk=project_id)
@@ -152,4 +154,25 @@ class NewProjectView(BSModalCreateView):
     template_name = 'project/new_project.html'
     form_class = NewProjectForm
     success_message = 'Success: Project was created.'
-    success_url = reverse_lazy('landing')
+    success_url = reverse_lazy('index')
+
+
+def deleteuser(request):
+    if request.method == 'POST':
+        delete_form = UserDeleteForm(request.POST, instance=request.user)
+        user = request.user
+        user.delete()
+        messages.info(request, 'Your account has been deleted.')
+        return redirect('login')
+    else:
+        delete_form = UserDeleteForm(instance=request.user)
+
+    context = {
+        'delete_form': delete_form
+    }
+
+    return render(request, 'user/delete.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

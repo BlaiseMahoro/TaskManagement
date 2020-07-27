@@ -33,6 +33,10 @@ class ProfilePicForm(forms.Form):
         model = Profile    
         fields = ('avatar')
 
+class UserDeleteForm(forms.ModelForm):
+     class Meta:
+         model = User
+         fields = []   #Form has only submit button.  Empty "fields" list still necessary, though.
 class NewProjectForm(BSModalModelForm):
     class Meta:
         model = Project

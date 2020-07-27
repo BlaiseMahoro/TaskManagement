@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) #Need to change to CASCADE.
     avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
     def get_user_projects(self, admin=None):
