@@ -1,23 +1,38 @@
 .profile_photod button {
-    position:absolute;
+    /* position:absolute;
     top: 50%;    
-    left: 12%;
+    left: 12%; */
     background-color: #bb285c;
     color:white;
-    margin-left: 15px;
+    /* margin-left: 15px; */
     border-radius: 6px;
     border-color: #bb285c;
+    position: relative;
 }
 
+
+
 .profile_photod img {
-    position: absolute;
-    left: 10%;
-    top: 28%;
+    /* position: absolute; */
+    /* float: left;
+    margin: 20px; */
+    /* left: 10%;
+    top: 28%; */
+
+}
+
+.profile_photod {
+    float: left;
+    margin: 50px;
+    text-align: center;
+    /* display: block; */
 }
 
 .project_details {
-    position: absolute;
-    right: 50%;
+    /* position: absolute; */
+    float: left;
+    margin: 20px;
+    /* right: 50%; */
 }
 
 .project_details input {
@@ -30,10 +45,31 @@
     border-color: #ebebeb;    
 }
 
-.access1 h2{
+.user-row {
+
+    border-bottom: 2px solid;
+    border-color: lightgray;
+    padding: 20px;
+    margin: 20px;
+    font-size: 16px;
+    width: 70%;
+}
+
+.user-row i{
+    float: left;
+
+}
+
+.user-info {
+    /* float: left; */
+    display: block;
+    margin-left: 100px;
+}
+
+/* .access1 h2{
     position: absolute;
     left: 10%;
-}
+} */
 
 .access1 hr {
 	border-top: 3px solid #cccccc;
@@ -45,7 +81,7 @@
     font-size: 40px;
 }
 
-.access1 #circ1 {
+/* .access1 #circ1 {
     position: absolute;
     left: 10%;
     top: 30%;    
@@ -78,7 +114,7 @@
     position: absolute;
     left: 40%;
     top: 54%;
-}
+} */
 
 .access1 .button1, .button2 {
     color: white;
@@ -89,7 +125,7 @@
     font-size: 20px;
 }
 
-.access1 .button1 {    
+/* .access1 .button1 {    
     position: absolute;
     left: 10%;
     top: 61%;
@@ -147,13 +183,13 @@
     position: absolute;
     left: 10%;
     top: 100%;
-}
+} */
 .access1 #trash1, #trash2 , #trash3 {
     color: dimgray;
     font-size: 30px;
 }
 
-.access1 #trash1 {
+/* .access1 #trash1 {
     position: absolute;
     left: 40%;
     top: 80%;    
@@ -169,4 +205,4 @@
     position: absolute;
     left: 40%;
     top: 100%;    
-}
+} */
