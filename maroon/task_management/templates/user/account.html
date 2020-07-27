@@ -2,7 +2,7 @@
 {% block content %} 
 
 <h1>Account Details</h1>
-<div class="account">
+
 <!-- Profile Photo-->
 <div class="profile_photo">
     <h3>Profile Photo</h3>
@@ -28,7 +28,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'user_avatar'%}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <form action="{% url 'avatar'%}" method="post" enctype="multipart/form-data">{% csrf_token %}
                     <p>
                         <input id="id_image" accept="image/*" type="file" class="" name="image">
                     </p>
@@ -79,5 +79,5 @@
     <h3>Delete Account</h3>
     <button type="button">Delete Account</button>
 </div>
-</div>
+
 {% endblock content %}
