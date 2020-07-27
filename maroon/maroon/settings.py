@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'task_management.apps.TaskManagementConfig',
     'api.apps.ApiConfig',
-    'bootstrap_modal_forms',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +66,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'task_management.project_context.get_projects'
             ],
         },
     },

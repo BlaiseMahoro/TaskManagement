@@ -3,4 +3,3 @@ env/
 *.pyc
 *.sqlite
 maroon/db.sqlite3
-settings.json
