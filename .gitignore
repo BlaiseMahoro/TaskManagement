@@ -4,3 +4,4 @@ env/
 *.sqlite
 
 settings.json
+*.ps1
