@@ -31,3 +31,8 @@ class ProfilePicForm(forms.Form):
     class Meta:
         model = Profile    
         fields = ('avatar')
+
+# class UserDeleteForm(forms.ModelForm):
+#     class Meta:
+#         model = User
+#         fields = []   #Form has only submit button.  Empty "fields" list still necessary, though.

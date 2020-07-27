@@ -12,6 +12,8 @@ from django.utils.translation import ugettext as _
 from .models import Profile
 from .forms import RegisterForm, ProfilePicForm
 from django.contrib.auth import logout
+# from .forms import UserDeleteForm
+from django.contrib import messages
 
 # Create your views here.
 
@@ -116,4 +118,21 @@ class Project(LoginRequiredMixin,View):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+# def deleteuser(self, request):
+#     if request.method == 'POST':
+#         delete_form = UserDeleteForm(request.POST, instance=request.user)
+#         user = request.user
+#         user.delete()
+#         messages.info(request, 'Your account has been deleted.')
+#         return redirect('login')
+#     else:
+#         delete_form = UserDeleteForm(instance=request.user)
+
+#     context = {
+#         'delete_form': delete_form
+#     }
+
+#     return render(request, 'user/delete-account.html', context)
+
     
