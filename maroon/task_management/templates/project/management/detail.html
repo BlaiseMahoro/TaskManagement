@@ -1,1 +1,66 @@
-<p>Detail page</p>
+{% load static %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Profile Photo-->
+<div class="profile_photod">
+
+    {% if project.avatar%}
+    <img src="/{{project.avatar}}" alt="Avatar" class="project_img">
+    {% else %}
+    <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+    {% endif %}
+
+    <button type="button" type="button" class="btn btn-primary" data-toggle="modal"
+        data-target="#exampleModal">Upload</button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel"><em>Upload Picture</em></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'project_avatar' project.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <p>
+                        <input id="id_image" accept="image/*" type="file" class="" name="image">
+                    </p>
+                    <p>
+                        ** Just click submit without selecting file to delete profile picture. **
+                    </p>
+                    <div class="modal-footer">
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+            <!-- <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+            <!--<button type="button" class="btn btn-primary">Save changes</button>
+        </div> -->
+        </div>
+    </div>
+</div>
+
+<div class="project_details">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <h3>Title</h3>
+        <input type="text" id="title" name="title" value="{{project.name}}" /> <!-- Value will be proj name?-->
+
+        <h3>Description</h3>
+        <textarea name="description" cols="24" rows="6">{{project.description}}</textarea>
+        <input id="section" name="section" type="hidden" value="detail">
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+</div>
+
+{% endblock content %}
