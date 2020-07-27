@@ -1,13 +1,13 @@
-.account h1, .account h2,.account h3, .account label{
+h1,h2,h3, label{
     font-family: Helvetica, sans-serif;
     font-weight: lighter;
 }
 
-.account h1 {
+h1 {
     padding-bottom: 5px;
 }
 
-.account h2, .account h3 {
+h2, h3 {
     padding-left: 10px;
 }
 
