@@ -9,6 +9,6 @@ urlpatterns = [
     path('project/<int:pk>', views.ProjectSettings.as_view(), name='project'),
     path('register',  views.Register.as_view(), name = 'register'),
     path('user/avatar', views.UploadAvatar.as_view(), name = 'user_avatar'),
-    path('project/<int:pk>/avatar', views.UploadProjectAvatar.as_view(), name = 'project_avatar')
-    
+    path('project/<int:pk>/avatar', views.UploadProjectAvatar.as_view(), name = 'project_avatar'),
+    path('project/new_project', views.NewProjectView.as_view(), name='new_project')  
 ]
