@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from task_management import models
 
-class ProfileSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = models.Profile
-        fields = ['user.username']
+        model = models.User
+        fields = ['username','first_name','last_name','email','password']
 
 class CustomSlugRelatedField(serializers.SlugRelatedField):
     def to_internal_value(self, data):

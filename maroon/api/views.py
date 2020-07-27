@@ -14,17 +14,39 @@ class TokenAuthView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
 
 
-class ProfileCreate(mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = models.Profile.objects.all()
-    serializer_class = serializers.ProfileSerializer
+class ProfileCreate(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.AllowAny]
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def post(self, request, format=None):
+        body = json.loads(request.body)
+        serializer = serializers.UserSerializer(data=body)
+        serializer.is_valid()
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.Profile.objects.all()
-    serializer_class = serializers.ProfileSerializer
+class ProfileDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
 
+    def put(self, request, *args, **kwargs):
+        body = json.loads(request.body)
+        user = models.User.objects.get(username = request.user.username)
+        serializer = serializers.UserSerializer(instance=user, data=body)
+        serializer.is_valid()
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        user = models.User.objects.get(username = request.user.username)
+        user.is_active = False
+        user.save()
+        return Response("Profile successfully deleted", status=status.HTTP_202_ACCEPTED)
+
+    def get_object(self):
+        return self.request.user
+    
 # For retrieving all projects and creating a project
 class ProjectList(TokenAuthView, generics.ListCreateAPIView):
     serializer_class = serializers.ProjectSerializer
@@ -45,6 +67,7 @@ class ProjectList(TokenAuthView, generics.ListCreateAPIView):
         project.save(user=request.user)
         serializer = serializers.ProjectSerializer(project)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
 
 # For retrieving, updating, or detroying a project
 class ProjectDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
