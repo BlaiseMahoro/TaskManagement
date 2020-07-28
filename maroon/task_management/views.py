@@ -161,7 +161,8 @@ def deleteuser(request):
     if request.method == 'POST':
         delete_form = UserDeleteForm(request.POST, instance=request.user)
         user = request.user
-        user.delete()
+        user.is_active = False
+        user.save()
         messages.info(request, 'Your account has been deleted.')
         return redirect('login')
     else:
