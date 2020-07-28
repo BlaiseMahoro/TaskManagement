@@ -60,9 +60,13 @@
 
         <h3>Description</h3>
         <textarea name="description" cols="24" rows="6">{{project.description}}</textarea>
-        <input id="section" name="section" type="hidden" value="detail">
-        <button class="btn btn-primary" type="submit">Save</button>
+        <input id="section" name="section" type="hidden" value="detail"> 
+        <div class="save"><button class="btn btn-primary" type="submit">Save</button></div>            
+        <div class="delete_project">
+        <button class="btn btn-primary" type="delete">Delete Project</button>
+        </div>
     </form>
 </div>
+
 
 {% endblock content %}
