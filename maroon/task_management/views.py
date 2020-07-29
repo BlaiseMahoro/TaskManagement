@@ -89,9 +89,11 @@ class Project(LoginRequiredMixin,View):
     def get(self, request):
         project = "Project one"
         project_2 = "Project two"
+        ticket_project = {'states': [{'state_name':'New','color':'red'}, {'state_name':'To-Do','color':'orange'}, {'state_name':'Doing','color':'yellow'}, {'state_name':'Done','color':'green'}], 'types': [{'type_name': 'Bug'}, {'type_name': 'Feature'}], 'attributes': [{'name': 'Example'}, {'name': 'Example 2'}], 'relationships': [{'title': 'Null Pointer on update'}, {'title': 'Ticket Edit Wireframe'}]}
         context = {
             'some_value': project,
             'some_other_value': project_2,
+            'project': ticket_project
         }
         return render(request, self.template_name, context)
     

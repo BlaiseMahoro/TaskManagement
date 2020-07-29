@@ -1,1 +1,79 @@
-<p>Ticket Template page</p>
+
+{% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/ticket_template.css' %}">
+
+<div class="flex-container">
+    <div class="states-container">
+        <div class="content-header">
+            <p class="content-title">States</p>
+            <button class="content-button"><i class="fa fa-plus" aria-hidden="true"></i>  Add</button>
+        </div>
+        <br>
+        <div class="template-content-container">
+            <ul class="ticket-template-content sortable">
+                {% for state in project.states %}
+                    <li class="content-item">
+                        <div class="position">{{ forloop.counter }}</div>
+                        <div class="inner-content-item">
+                            <i class="fa fa-bars" aria-hidden="true" style="text-align: center;"></i>
+                            <div class="content-color" style="background-color:{{ state.color }}"></div>
+                            <input value="{{ state.state_name }}"></input>
+                            <button><i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="types-container">
+        <div class="content-header">
+            <p class="content-title">Types</p>
+            <button class="content-button"><i class="fa fa-plus" aria-hidden="true"></i>  Add</button>
+        </div>
+        <br>
+        <div class="template-content-container">
+            <ul class="ticket-template-content sortable">
+                {% for type in project.types %}
+                    <li><i class="fa fa-bars" aria-hidden="true"></i> {{ type.type_name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="attributes-container">
+        <div class="content-header">
+            <p class="content-title">Additional Attributes</p>
+            <button class="content-button"><i class="fa fa-plus" aria-hidden="true"></i>  Add</button>
+        </div>
+        <br>
+        <div class="template-content-container">
+            <ul class="ticket-template-content sortable">
+                {% for attribute in project.attributes %}
+                    <li><i class="fa fa-bars" aria-hidden="true"></i> {{ attribute.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="relationships-container">
+        <div class="content-header">
+            <p class="content-title">Relationships</p>
+            <button class="content-button"><i class="fa fa-plus" aria-hidden="true"></i>  Add</button>
+        </div>
+        <br>
+        <div class="template-content-container">
+            <ul class="ticket-template-content sortable">
+                {% for relationship in project.relationships %}
+                    <li><i class="fa fa-bars" aria-hidden="true"></i> {{ relationship.title }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    $( function() {
+        $( ".sortable" ).sortable({
+            placeholder: "ui-state-highlight"
+        });
+        $( ".sortable" ).disableSelection();
+    } );
+</script>
