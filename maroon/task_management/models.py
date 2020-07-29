@@ -11,7 +11,6 @@ class Profile(models.Model):
 
     def get_user_projects(self, admin=None):
         query = Role.objects.filter(profile=self)
-        print(query)
         if admin is True:
             query = query.filter(role="is_admin")
         elif admin is False:

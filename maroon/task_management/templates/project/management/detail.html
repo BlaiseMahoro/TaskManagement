@@ -31,7 +31,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'project_avatar' project.pk %}" method="post" enctype="multipart/form-data">
+                <form action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <p>
                         <input id="id_image" accept="image/*" type="file" class="" name="image">
@@ -39,6 +39,7 @@
                     <p>
                         ** Just click submit without selecting file to delete profile picture. **
                     </p>
+                    <input id="section" name="section" type="hidden" value="upload_pic"> 
                     <div class="modal-footer">
                         <input type="submit" value="Submit" class="btn btn-primary" />
                     </div>
@@ -60,12 +61,21 @@
 
         <h3>Description</h3>
         <textarea name="description" cols="24" rows="6">{{project.description}}</textarea>
-        <input id="section" name="section" type="hidden" value="detail"> 
+        <input id="section" name="section" type="hidden" value="edit_project"> 
         <div class="save"><button class="btn btn-primary" type="submit">Save</button></div>            
-        <div class="delete_project">
-        <button class="btn btn-primary" type="delete">Delete Project</button>
-        </div>
     </form>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="delete_project">
+            {% if role == "is_admin" %}
+                <button class="btn btn-primary" type="submit">Delete Project</button>
+            {% endif %}
+            <input id="section" name="section" type="hidden" value="delete_project"> 
+            
+        </div>
+
+    </form>
+    
 </div>
 
 
