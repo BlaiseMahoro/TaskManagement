@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
-from .models import Profile, Project, Role
+from .models import Profile, Project, Role, Ticket
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
