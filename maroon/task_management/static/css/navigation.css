@@ -60,6 +60,11 @@
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
+.no-collapse {
+    min-width: 250px;
+    display: block;
+}
+
 .list-header {
     width: 100%;
     background-color: #570e28;
@@ -90,8 +95,10 @@
     height: 20px;
     vertical-align: middle;
     float: left;
-    /* padding-right: 10px; */
-    margin: 10px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 10px;
+    /* margin: 10px; */
 }
 
 .project-list button:hover{

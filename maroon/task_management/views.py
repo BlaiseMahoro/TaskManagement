@@ -1,4 +1,3 @@
-from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.http import HttpResponse
@@ -43,7 +42,7 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
 
     def get(self, request, *args, **kwargs):
         project = get_object_or_404(Project, pk=kwargs['pk'])
-        context = {'project': project}
+        context = {'project': project, 'new_project_form': NewProjectForm()}
         return render(request, self.template_name, context)
 
 
@@ -116,7 +115,7 @@ class UploadProjectAvatar(LoginRequiredMixin, View):
     
     def post(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
-        print(project_id)
+        #print(project_id)
         form = ProfilePicForm(request.POST, request.FILES)
         project = get_object_or_404(Project, pk=project_id)
         if form.is_valid():
@@ -126,6 +125,7 @@ class UploadProjectAvatar(LoginRequiredMixin, View):
         project.avatar = None #Delete profile
         project.save()
         return render(request, self.template_name, {'project':project})
+
 class ProjectSettings(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "project/management/container.html"
@@ -150,12 +150,30 @@ class ProjectSettings(LoginRequiredMixin,View):
         context = {'project': project}
         return render(request, self.template_name, context)
 
-class NewProjectView(BSModalCreateView):
-    template_name = 'project/new_project.html'
+class CreateProject(LoginRequiredMixin, BSModalCreateView):
+    login_url = 'login' 
+    template_name = 'landing.html'
     form_class = NewProjectForm
-    success_message = 'Success: Project was created.'
-    success_url = reverse_lazy('index')
+    #success_message = 'Success: Project was created.'
+    #success_url = reverse_lazy('index')
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        print(request.POST)
+
+        #Processes request if valid
+        if form.is_valid():
+            # form.save()
+            name = form.cleaned_data.get('name')
+            project = Project(name=name)
+            project.save(user=request.user)
+            context = {'project': project, 'new_project_form': form}
+            #Redirect to new project
+            return redirect('landing', pk=project.pk) #render(request, self.template_name, context)
+
+        #Redirect to invalid form
+        context = {'project': Project.objects.get(pk=kwargs.get('pk')),'new_project_form': form}
+        return render(request, self.template_name, context)
 
 def deleteuser(request):
     if request.method == 'POST':

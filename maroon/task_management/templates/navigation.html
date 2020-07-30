@@ -1,22 +1,6 @@
 <!-- Loads Static Referneces -->
 {% load static %}
 
-<!-- Loads Bootstrap -->
-
-<head>
-    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.css' %}">
-</head>
-
-<!-- Required for AJAX driven Django forms in Bootstrap modal -->
-
-<body>
-    <script src="{% static 'assets/js/bootstrap.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.js' %}"></script>
-    <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
-    <!-- You can alternatively load the minified version -->
-    <script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
-</body>
-
 <div class="sidenav">
     <div class="icon">
         <p>M</p>
@@ -53,7 +37,7 @@
                         <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
                         {% endif %}
                         <!-- <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"> -->
-                        <a href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a>
+                        <a class="no-collapse" href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a>
                     </td>
                 {% endfor %}
             </tr>
@@ -64,21 +48,21 @@
         <div id="normal-list" class="collapse in">
             <tr>
                 {% for project in normal_projects %} 
-                    <td><a href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a></td>
+                    <td>
+                        {% if project.avatar%}
+                        <img src="/{{project.avatar}}" alt="Avatar" class="project_img">
+                        {% else %}
+                        <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+                        {% endif %}
+                        <a class="no-collapse"href="{% url 'landing' project.pk %}"><strong>{{project.name}}</strong></a>
+                    </td>
                 {% endfor %}
             </tr>
         </div>
     </div>
-	
-	<!-- New Project Modal Button -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content"></div>
-        </div>
-    </div>
 
     <!-- New Project button -->
-    <button id="new-project" class="btn btn-primary" type="button" name="button">New Project</button>
+    <button type="button" class="fa fa-plus" data-toggle="modal" data-target="#create-project">New Project</button>
   </div>
 
 <script type="text/javascript">
@@ -93,12 +77,3 @@
 </script>
 
 <!-- Binds the modalForm to the button trigger -->
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        $("#new-project").modalForm({
-            formURL: "{% url 'new_project' %}"
-        });
-
-    });
-</script>
