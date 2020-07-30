@@ -15,7 +15,7 @@ from .models import Profile, Project, Role
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
-
+import json
 
 class Redirect(RedirectView):
     permanent = False
@@ -208,3 +208,14 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
+class UpdateTicketState(View):
+    login_url = 'login'
+
+    def post(self, request, *args, **kwargs):
+        print(request.is_ajax())
+        
+        print(kwargs.get('pk'))
+        json_response = {'user': ""}
+
+        return HttpResponse(json.dumps(json_response),
+            content_type='application/json')
