@@ -1,0 +1,38 @@
+<!-- Modal (Following https://www.w3schools.com/bootstrap/bootstrap_modal.asp) -->
+
+<div id="create-project" class="modal fade {% if new_project_form.errors %} show {% endif %}" role="dialog">
+    <div class="modal-dialog">
+      <form action="{% url 'create_project' project.pk %}" method="POST">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <!-- Body -->
+          <div class="modal-body">
+            {% csrf_token %}
+            <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+              {% for error in new_project_form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+        
+            {% for field in new_project_form %}
+              <div class="form-group">
+                <label class="popup-label add-company-left" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input class="modal_input" type="text" name="name" />
+                <div class="{% if field.errors %} invalid{% endif %}">
+                  {% for error in field.errors %}
+                    <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+  
+          <!-- Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" value="Submit" class="btn btn-primary" />
+          </div>
+        </div>
+      </form>
+    </div>
+</div>

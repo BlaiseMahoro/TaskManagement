@@ -24,7 +24,7 @@
   <li class="nav tab"><a data-toggle="tab" href="#board">Board</a></li>
   <div class="add-task">
     <!-- Trigger the modal with a button -->
-    <button type="button" class="fa fa-plus" data-toggle="modal" data-target="#myModal">Add Task</button>
+    <button type="button" class="fa fa-plus" data-toggle="modal" data-target="#create-ticket">Add Task</button>
   </div>
 </ul>
 <div class="tab-content">
@@ -40,5 +40,6 @@
 </div>
 
 {% include "ticket/create_ticket.html" %}
+{% include "project/create_project.html" %}
 
 {% endblock content %}
