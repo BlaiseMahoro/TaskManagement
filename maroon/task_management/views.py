@@ -10,8 +10,9 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
+from rest_framework import status
 # from .forms import UserDeleteForm
-from .models import Profile, Project, Role
+from .models import Profile, Project, Role, Ticket
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
@@ -212,10 +213,12 @@ class UpdateTicketState(View):
     login_url = 'login'
 
     def post(self, request, *args, **kwargs):
-        print(request.is_ajax())
-        
         print(kwargs.get('pk'))
-        json_response = {'user': ""}
+        ticket  = get_object_or_404(Ticket, pk=kwargs.get('pk'))
+        print(ticket)
+        print(request.body)
+        # if ticket:
+        #     ticket.state.state_name = request.data
 
-        return HttpResponse(json.dumps(json_response),
+        return HttpResponse({'sdfsf':''},status=status.HTTP_404_NOT_FOUND,
             content_type='application/json')
