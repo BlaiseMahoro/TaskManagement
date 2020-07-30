@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
 # from .forms import UserDeleteForm
-from .models import Profile, Project, Role, Ticket
+from .models import Profile, Project, Role, Ticket, State
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
@@ -211,14 +211,16 @@ def deleteuser(request):
     return render(request, 'user/delete.html', context)
 class UpdateTicketState(View):
     login_url = 'login'
-
+    
     def post(self, request, *args, **kwargs):
-        print(kwargs.get('pk'))
-        ticket  = get_object_or_404(Ticket, pk=kwargs.get('pk'))
-        print(ticket)
-        print(request.body)
-        # if ticket:
-        #     ticket.state.state_name = request.data
-
-        return HttpResponse({'sdfsf':''},status=status.HTTP_404_NOT_FOUND,
+        try:
+            state_name = json.loads(request.body)['state']
+            state = State.objects.get(state_name=state_name)
+            ticket = Ticket.objects.get(pk=kwargs.get('pk'))
+            ticket.state = state
+            ticket.save()
+            return HttpResponse({'':''},status=status.HTTP_200_OK,
+            content_type='application/json')
+        except:
+            return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
             content_type='application/json')
