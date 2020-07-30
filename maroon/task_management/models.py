@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-
+from colorful.fields import RGBColorField
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.DO_NOTHING) #Need to change to CASCADE.
@@ -87,6 +87,8 @@ class State(models.Model):
     # The name of the state
     state_name = models.TextField(max_length=50)
 
+    #color
+    color = RGBColorField(default="#0000FF")
     def __str__(self):
         return self.state_name
 
@@ -96,7 +98,9 @@ class Type(models.Model):
 
     # The name of the type
     type_name = models.TextField(max_length=50)
-
+    
+    #color
+    color = RGBColorField(default="#0000FF")
     def __str__(self):
         return self.type_name
 
@@ -131,7 +135,7 @@ class Ticket(models.Model):
     assignees = models.ManyToManyField(Profile, related_name="assignees", blank=True)
 
     #The ticket id within the project
-    id_in_project = models.IntegerField(editable=False)
+    id_in_project = models.IntegerField(editable=False, default=0)
 
     # The title of the Ticket
     title = models.CharField(max_length=50)

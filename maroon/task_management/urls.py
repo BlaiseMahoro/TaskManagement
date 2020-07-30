@@ -11,5 +11,6 @@ urlpatterns = [
     path('user/avatar', views.UploadAvatar.as_view(), name = 'user_avatar'),
     path('project/<int:pk>/avatar', views.UploadProjectAvatar.as_view(), name = 'project_avatar'),
     path('project/<int:pk>/create', views.CreateProject.as_view(), name='create_project'),
-    path('delete', views.deleteuser, name='delete')  
+    path('delete', views.deleteuser, name='delete'),
+    path('ticket/<pk>/changestate', views.UpdateTicketState.as_view(), name='changeState') 
 ]
