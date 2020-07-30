@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
-from .models import Profile, Project
+from .models import Profile, Project, Role
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
@@ -133,22 +133,39 @@ class ProjectSettings(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
         project = get_object_or_404(Project, pk=project_id)
-        context = {'project': project}
+        profile = Profile.objects.get(user=request.user)
+        role = Role.objects.get(profile= profile, project= project).role
+        # is_admin = role =='is_admin'
+        print(role)
+        context = {'project': project, 'role':role}
         return render(request, self.template_name, context)
    
     def post(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
         project = get_object_or_404(Project, pk=project_id)
         response = request.POST
-        #For Project Detail Tab
-        if response.get('section') =='detail':
+        #For Update Project in Detatil Tab
+        if response.get('section') =='edit_project':
             project.name = response['title']
             project.description = response['description']
             project.save()
             return render(request, self.template_name, {'project': project})
-
-        context = {'project': project}
-        return render(request, self.template_name, context)
+        #For Upload Profile Picture
+        if response.get('section') == 'upload_pic':
+            project_id = kwargs.get('pk')
+            print(project_id)
+            form = ProfilePicForm(request.POST, request.FILES)
+            project = get_object_or_404(Project, pk=project_id)
+            if form.is_valid():
+                project.avatar = form.cleaned_data['image']
+                project.save()
+                return render(request, self.template_name, {'project':project})
+            project.avatar = None #Delete profile
+            project.save()
+        if response.get('section') =='delete_project':
+            project.delete()   
+            return redirect('landingNoneSelected')
+        return render(request, self.template_name, {'project':project})
 
 class CreateProject(LoginRequiredMixin, BSModalCreateView):
     login_url = 'login' 
@@ -179,7 +196,8 @@ def deleteuser(request):
     if request.method == 'POST':
         delete_form = UserDeleteForm(request.POST, instance=request.user)
         user = request.user
-        user.delete()
+        user.is_active = False
+        user.save()
         messages.info(request, 'Your account has been deleted.')
         return redirect('login')
     else:
@@ -190,7 +208,3 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-
-def logout_view(request):
-    logout(request)
-    return redirect('login')

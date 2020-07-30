@@ -1,7 +1,7 @@
 venv/
 env/
 *.pyc
-*.sqlite
+*.sqlite*
 
 settings.json
 *.ps1

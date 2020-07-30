@@ -8,6 +8,16 @@
 		position: relative;
 	}
 
+	.centered_screen_container {
+		height: 750px;
+		width: 550px;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		margin-top: -375px;
+		margin-left: -275px;
+	}
+
 	/* Center Div in container */
 	.center {
 		margin: 0;
@@ -59,44 +69,46 @@
 	}
 </style>
 
-<h3>Register</h3>
-<div class=bordered>
+<div class="centered_screen_container">
+	<h3>Register</h3>
+	<div class=bordered>
 
-	<form method="POST">
-		{% csrf_token %}
-    	<!-- {{form.as_p}} -->
-		<p>
-			<label class=left_aligned_label for="id_username">Username</label>
-			<input Class=right_aligned type="text" name="username" maxlength="150" required=true id="id_username">
-		</p>
-		<p>
-			<label class=left_aligned_label for="id_first_name">First name</label> <label
-				class="optional_label">Optional</label>
-			<input type="text" name="first_name" maxlength="30" id="id_first_name">
-		</p>
-		<p>
-			<label class=left_aligned_label for="id_last_name">Last name</label> <label
-				class="optional_label">Optional</label>
-			<input type="text" name="last_name" maxlength="30" id="id_last_name">
-		</p>
-		<p>
-			<label class=left_aligned_label for="id_email">Email</label>
-			<input type="email" name="email" maxlength="254" required=true id="id_email">
-		</p>
-		<p>
-			<label class=left_aligned_label for="id_password1">Password</label>
-			<input type="password" name="password1" autocomplete="new-password" required=true id="id_password1">
-		</p>
-		<p>
-			<label class=left_aligned_label for="id_password2">Password confirmation</label>
-			<input type="password" name="password2" autocomplete="new-password" required=true id="id_password2">
-		</p>
+		<form method="POST">
+			{% csrf_token %}
+			<!-- {{form.as_p}} -->
+			<p>
+				<label class=left_aligned_label for="id_username">Username</label>
+				<input Class=right_aligned type="text" name="username" maxlength="150" required=true id="id_username">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_first_name">First name</label> <label
+					class="optional_label">Optional</label>
+				<input type="text" name="first_name" maxlength="30" id="id_first_name">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_last_name">Last name</label> <label
+					class="optional_label">Optional</label>
+				<input type="text" name="last_name" maxlength="30" id="id_last_name">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_email">Email</label>
+				<input type="email" name="email" maxlength="254" required=true id="id_email">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_password1">Password</label>
+				<input type="password" name="password1" autocomplete="new-password" required=true id="id_password1">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_password2">Password confirmation</label>
+				<input type="password" name="password2" autocomplete="new-password" required=true id="id_password2">
+			</p>
 
-		<div class="container">
-			<div class="center">
-				<button type="submit">Register</button>
+			<div class="container">
+				<div class="center">
+					<button type="submit">Register</button>
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
 </div>
 {% endblock content %}

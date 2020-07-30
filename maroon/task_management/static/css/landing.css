@@ -30,6 +30,12 @@
     
 }
 
+#arrow i {
+    font-size: 70px;
+    float: right;
+    position: relative;
+    bottom: 61px;    
+}
 .nav li.active{
     border: none;
     border-bottom: 5px solid;

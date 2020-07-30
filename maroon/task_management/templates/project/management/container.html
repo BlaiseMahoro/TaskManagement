@@ -3,6 +3,7 @@
 {% block content %} 
 <div class="header">
     <p class="title">{{project.name}}</p>
+   <div id="arrow"><a href="{% url 'landing' project.pk %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a></div>
 </div>
 
     <!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
