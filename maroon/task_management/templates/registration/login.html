@@ -1,40 +1,117 @@
-{% extends "base_generic.html" %}
+{% extends "registration/base_auth.html" %}
 
 {% block content %}
+<style>
+	/* Simple Container for Button */
+	.container {
+		height: 50px;
+		position: relative;
+	}
 
-{% if form.errors %}
-  <p class="errorlist">Your username and password didn't match. Please try again.</p>
-{% endif %}
+	.centered_screen_container {
+		height: 450px;
+		width: 550px;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		margin-top: -225px;
+		margin-left: -275px;
+	}
 
-{% if next %}
-  {% if user.is_authenticated %}
-    <p class="errorlist">Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-  {% else %}
-    <p class="errorlist">Please login to see this page.</p>
-  {% endif %}
-{% endif %}
-<h3>Login</h3>
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-<table>
+	/* Center Div in container */
+	.center {
+		margin: 0;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-ms-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
 
-<tr>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
-</tr>
+	/* Moqup styled Border */
+	.bordered {
+		width: 500px;
+		height: auto;
+		padding: 20px;
+		border: 1px solid gray;
+		border-radius: 5px;
+	}
 
-<tr>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
-</tr>
-</table>
+	/* Moqup styled Button */
+	button {
+		background-color: #bb285c;
+		border-radius: 4px;
+		padding: 8px;
+		width: 100px;
+		color: white;
+	}
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
-</form>
+	/* left aligned label */
+	.left_aligned_label {
+		display: inline-block;
+		width: 82%;
+		text-align: left;
+	}
 
-<p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-<p><a href="{% url 'register' %}">Create new account</a></p>
+	/* Input Fields */
+	input {
+		width: 100%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		box-sizing: border-box;
+		border: 2px solid black;
+		border-radius: 5px;
+	}
+
+	a {
+		color: #bb285c;
+		font-size: 75%;
+	}
+</style>
+
+<div class="centered_screen_container">
+	{% if form.errors %}
+	<p class="errorlist">Your username and password didn't match. Please try again.</p>
+	{% endif %}
+
+	{% if next %}
+	{% if user.is_authenticated %}
+	<p class="errorlist">Your account doesn't have access to this page. To proceed,
+		please login with an account that has access.</p>
+	{% else %}
+	<p class="errorlist">Please login to see this page.</p>
+	{% endif %}
+	{% endif %}
+
+	<h3>Login</h3>
+	<div class=bordered>
+		<form method="post" action="{% url 'login' %}">
+			{% csrf_token %}
+			<p>
+				<label for="id_username" class=left_aligned_label>Username</label>
+				<input type="text" name="username" maxlength="150" required id="id_username">
+			</p>
+
+			<p>
+				<label for="id_password" class=left_aligned_label>Password</label>
+				<input type="password" name="password" required id="id_password">
+				<a href="{% url 'password_reset' %}">Forgot your password?</a>
+			</p>
+
+			<p>
+				<a href="{% url 'register' %}">Don't have an account? Register now</a>
+			</p>
+
+			<div class="container">
+				<div class="center">
+					<button type="submit">Login</button>
+				</div>
+			</div>
+
+			<input type="hidden" name="next" value="{{ next }}" />
+		</form>
+	</div>
+</div>
+
 
 {% endblock %}

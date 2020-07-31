@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'task_management.apps.TaskManagementConfig',
     'api.apps.ApiConfig',
+    'bootstrap_modal_forms',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'task_management.project_context.get_projects'
             ],
         },
     },
@@ -135,3 +137,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'task_management')
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

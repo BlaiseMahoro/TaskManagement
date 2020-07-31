@@ -1,0 +1,85 @@
+.title {
+    display: inline;
+    margin: 10px;
+}
+
+.image {
+    width: 120px;
+    height: 100px;
+    vertical-align: middle;
+}
+
+.project_img{
+    vertical-align: middle;
+    width: 180px;
+    height: 180px;
+    
+}
+.header i {
+    float: right;
+    color: gray;
+    margin-top: 30px;
+
+}
+
+.header {
+    padding: 40px;
+    padding-left: 0px;
+    vertical-align: middle;
+    font-size: 40px;
+    
+}
+
+#arrow i {
+    font-size: 70px;
+    float: right;
+    position: relative;
+    bottom: 61px;    
+}
+.nav li.active{
+    border: none;
+    border-bottom: 5px solid;
+    border-color: #ffbf68;
+}
+
+.nav li a {
+    color: gray;
+}
+
+.nav-tabs {
+    margin-right: 30px;
+}
+
+.add-task {
+    /* display: inline; */
+    float: right;
+    margin-top: 15px;
+    color: gray;
+}
+
+/* left aligned label */
+.left_aligned_label {
+display: inline-block;
+width: 82%;
+text-align: left;
+}
+
+/* Modal Input Fields */
+.modal_input {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid black;
+border-radius: 5px;
+}
+
+/* Modal Select Fields */
+.modal_select {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid black;
+border-radius: 5px;
+}

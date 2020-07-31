@@ -1,0 +1,133 @@
+.profile_photod button {
+    /* position:absolute;
+    top: 50%;    
+    left: 12%; */
+    background-color: #bb285c;
+    color:white;
+    /* margin-left: 15px; */
+    border-radius: 6px;
+    border-color: #bb285c;
+    position: relative;
+}
+
+.profile_photod {
+    float: left;
+    margin: 50px;
+    text-align: center;
+    /* display: block; */
+}
+
+.project_details {
+    /* position: absolute; */
+    float: left;
+    margin: 20px;
+    /* right: 50%; */
+}
+
+.project_details input {
+    background-color: #ebebeb;
+    border-color: #ebebeb;
+}
+
+.save button {
+    background-color: #bb285c;
+    color:white;
+    /* margin-left: 15px; */
+    border-radius: 6px;
+    border-color: #bb285c;
+    float: left;
+}
+
+.delete_project button {
+    background-color: #bb285c;
+    color:white;
+    border-radius: 6px;
+    border-color: #bb285c;
+    position: relative;
+    top: 200px;
+    float: right;
+    font-size: 20px;
+}
+.project_details textarea {
+    background-color: #ebebeb;
+    border-color: #ebebeb;    
+}
+
+.user-row {
+    border-bottom: 2px solid;
+    border-color: lightgray;
+    padding: 20px;
+    margin: 20px;
+    font-size: 16px;
+    width: 70%;
+}
+.collab-row {
+    border-bottom: 2px solid;
+    border-color: lightgray;
+    padding: 20px;
+    margin: 20px;
+    font-size: 16px;
+    width: 70%;
+    position: relative;
+    top: 50px;
+}
+.user-row i{
+    float: left;
+
+}
+
+.collab-row #circ2 {
+    float: left;
+}
+
+.user-info {
+    /* float: left; */
+    display: block;
+    margin-left: 100px;
+}
+
+.collab-info {
+    display: block;
+    margin-left: 100px;
+}
+
+.collabheader {
+    position: relative;
+    top: 50px;
+}
+
+.collab-info #trash1 {
+    float: right;
+}
+.access1 hr {
+	border-top: 3px solid #cccccc;
+    width: 30%;
+}
+
+.access1 #circ2 {
+    color: dimgray;
+    font-size: 40px;
+}
+
+.button1, .button2 {
+    color: white;
+    background-color: limegreen;
+    border-color: limegreen;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 20px;   
+}
+
+.access1 .button1 {
+    position: relative;
+    top: 30px;
+}
+
+.button2 {    
+    position: relative;
+    top: 80px;
+}
+.access1 #trash1 {
+    color: dimgray;
+    font-size: 30px;
+}

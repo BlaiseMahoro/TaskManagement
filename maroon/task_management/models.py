@@ -6,13 +6,20 @@ from rest_framework.authtoken.models import Token
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
-    avatar = models.ImageField(upload_to="avatars/",help_text="Profile picture", blank=True )
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) #Need to change to CASCADE.
+    avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
-    def get_user_projects(self):
+    def get_user_projects(self, admin=None):
+        query = Role.objects.filter(profile=self)
+        if admin is True:
+            query = query.filter(role="is_admin")
+        elif admin is False:
+            query = query.filter(role="is_normal")
+        
         projects = []
-        for role in Role.objects.filter(profile=self):
+        for role in query:
             projects.append(role.project)
+
         return projects
 
     def __str__(self):
@@ -32,6 +39,7 @@ def save_user_profile(sender, instance, **kwargs):
 class Project(models.Model):
     name = models.CharField(max_length=30, blank=False)
     description = models.TextField(max_length=200, blank=True)
+    avatar = models.ImageField(upload_to="avatars/projects",help_text="Project Avatar", blank=True )
     
     #function to override model.save(). Does not override Model.objects.create(kwargs)
     def save(self, *args, **kwargs):

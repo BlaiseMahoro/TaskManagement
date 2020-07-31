@@ -1,0 +1,39 @@
+{% load static %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="access1">
+    <h2>Administrators</h2>    
+    <!-- <i class="fa fa-user-circle" id="circ1"></i>   -->
+    
+    <div class="user-row">
+    
+        <i class="fa fa-user-circle" id="circ2"></i>  
+        <div class="user-info">
+            <p><strong>Username</strong></p>
+            <p>user.email@gmail.com</p>
+        </div>
+        <!-- <p id="pending">Pending.....</p> -->
+    </div>
+
+    <button class="button button1">Add administrator</button>
+    
+    <div class="collabheader"><h2>Collaborators</h2></div> 
+    
+    <div class="collab-row">   
+        <i class="fa fa-user-circle" id="circ2"></i> 
+        <div class="collab-info">
+            <p><strong>Username</strong></p>
+            <i class="fa fa-trash" id="trash1"></i>
+            <p>user.email@gmail.com</p>            
+        </div>        
+    </div> 
+    <button class="button button2">Add collaborator</button>
+    
+</div>
+
+{% endblock content %}
