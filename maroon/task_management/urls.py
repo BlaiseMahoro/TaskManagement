@@ -3,7 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.Redirect.as_view()),
-    path('landing', views.LandingNoneSelected.as_view(), name='landingNoneSelected'),
     path('landing/<int:pk>', views.Landing.as_view(), name='landing'),
     path('account', views.Account.as_view(), name='account'),
     path('project/<int:pk>', views.ProjectSettings.as_view(), name='project'),

@@ -20,20 +20,12 @@ from bootstrap_modal_forms.generic import BSModalCreateView
 class Redirect(RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'landingNoneSelected'
+    pattern_name = 'landing'
 
-class LandingNoneSelected(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
-    login_url = 'login'
-    template_name = "landing_none_selected.html"
-
-    def get(self, request):
-        project = "Project one"
-        project_2 = "Project two"
-        context = {
-            'some_value': project,
-            'some_other_value': project_2,
-        }
-        return render(request, self.template_name, context)
+    def get_redirect_url(self, *args, **kwargs):
+        profile = Profile.objects.get(user=self.request.user)
+        kwargs['pk'] = profile.get_user_projects()[0].pk
+        return super().get_redirect_url(*args, **kwargs)
 
 
 class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
