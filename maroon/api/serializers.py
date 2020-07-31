@@ -5,7 +5,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ['username','first_name','last_name','email','password']
+        fields = ['username','first_name','last_name','email']
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    
+    class Meta:
+        model = models.Profile
+        fields = ['user']
 
 class CustomSlugRelatedField(serializers.SlugRelatedField):
     def to_internal_value(self, data):
@@ -50,12 +57,8 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
             if attribute.name not in names:
                 attribute.delete()
 
-class FlatUserName(serializers.CharField):
-    def to_representation(self, value):
-        return value.user.username
-
 class RoleSerializer(serializers.ModelSerializer):
-    username = FlatUserName(source="profile")
+    username = serializers.CharField(source='profile.user.username')
 
     def update(self, instance, validated_data):
         print(validated_data)
@@ -98,3 +101,23 @@ class ProjectSerializer(serializers.ModelSerializer):
         for role in models.Role.objects.filter(project=instance):
             if role.profile.user.username not in roles:
                 role.delete()
+
+class AttributeSerialier(serializers.ModelSerializer):
+    attribute_type = serializers.CharField(source='attribute_type.name')
+
+    class Meta:
+        model = models.Attribute
+        fields = ('attribute_type','value')
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    project = serializers.CharField(source='project.name')
+    state = serializers.CharField(source='state.state_name')
+    type = serializers.CharField(source='type.type_name')
+    assignees = ProfileSerializer(many=True)
+    attributes = AttributeSerialier(many=True)
+
+    class Meta:
+        model = models.Ticket
+        fields = ['title', 'description','project', 'id_in_project', 'state', 'type', 'attributes','assignees']
+    

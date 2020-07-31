@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework import authentication
+from django.shortcuts import get_object_or_404
 import json
 
 class TokenAuthView(APIView):
@@ -112,6 +113,29 @@ class ProjectDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
         #Don't this the following line works
         serializer.data['roles'] = role_serializer.data
 
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# For retrieving all projects and creating a project
+class TicketList(TokenAuthView, generics.ListCreateAPIView):
+    serializer_class = serializers.TicketSerializer
+    queryset = models.Ticket.objects.all()
+
+    def get_queryset(self):
+        """
+        This view should set the list of projects
+        for the currently authenticated user.
+        """ 
+        project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
+        print(models.Ticket.objects.filter(project=project))
+        return models.Ticket.objects.filter(project=project)
+
+    def post(self, request, format=None):
+        #print(pretty_request(request))
+        body = json.loads(request.body)
+
+        project = models.Project(name=body['name'], description=body['description'])
+        project.save(user=request.user)
+        serializer = serializers.ProjectSerializer(project)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
