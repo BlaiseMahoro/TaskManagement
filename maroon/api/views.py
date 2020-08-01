@@ -135,37 +135,11 @@ class TicketList(TokenAuthView, generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
         if ProjectCollaborator.has_object_permission(request, self, project):
-            # body = json.loads(request.body)
-            print(request.data)
+
+
+
             request.data['project_pk'] = self.kwargs['pk']
-            #Check that state is in the ticket template
-            state = validated_data.pop('state')
-            if state not in project.ticket_template.states.all().values('state_name'):
-                raise serializers.ValidationError("The state is not valid")
-
-        #Check that type is in the ticket template
-        type = validated_data.pop('type')
-        if type not in project.ticket_template.types.all().values('type_name'):
-            raise serializers.ValidationError("The type is not valid")
-
-            #check that all attributes are in the ticket template
-            attributes = validated_data.pop('attributes')
-            attribute_types = [ attribute['attribute_type'] for attribute in attributes]
-            project_attribute_types = project.ticket_template.attributeTypes.all().values('name')
-            for attribute_type in attribute_types:
-                if attribute_type not in project_attribute_types:
-                    raise serializers.ValidationError("An attribute type is not valid.")
-                #attribute = ticket.attributes.get(name=)
-
-            #Check that all assignees are part of the project
-            # assignees = validated_data.pop('assignees')
-            # current_users = 
-            # for user in assignees:
-            #     if user not in project.
-            # if assignees
-            #project_pk = validated_data.pop('project')['name']
-            ticket = super().post(request, *args, **kwargs)
-            print(ticket)
+            return super().post(request, *args, **kwargs)
         else:
              return Response("You do not have permission to access to this project.", status=status.HTTP_403_FORBIDDEN)
 

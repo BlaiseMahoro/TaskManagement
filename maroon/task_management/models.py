@@ -180,7 +180,7 @@ class Ticket(models.Model):
 
 class Attribute(models.Model):
     # The parent of the attribute
-    attribute_type = models.OneToOneField(AttributeType, on_delete=models.CASCADE, related_name="attribute")
+    attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attributes")
     # For simplicity value will be a text field to accept any alphanumeric value
     value = models.TextField()
     # For ticket to have more than one Attributes

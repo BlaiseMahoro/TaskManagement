@@ -2,10 +2,10 @@ from rest_framework import serializers
 from task_management import models
 
 class UserSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = models.User
-        fields = ['username','first_name','last_name','email']
+        fields = ['username']
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -123,22 +123,22 @@ class TypeSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     project = serializers.CharField(source='project.name', required=False)
-    project_pk = serializers.IntegerField(source='project.pk', required=False)
-    state = serializers.CharField(source='state.state_name', required=False)
+    project_pk = serializers.IntegerField(source='project.pk', required=False, write_only=True)
+    state = serializers.CharField(source='state.state_name')
     type = serializers.CharField(source='type.type_name')
-    assignees = ProfileSerializer(many=True, required=False)
+    assignee_list = serializers.ListField(child=serializers.CharField(), required=False, write_only=True)
+    assignees = ProfileSerializer(many=True, read_only=True)
     attributes = AttributeSerialier(many=True, required=False)
 
     class Meta:
         model = models.Ticket
-        fields = ['title', 'description','project', 'project_pk','id_in_project', 'state', 'type', 'attributes','assignees']
+        fields = ['title','description','project', 'project_pk','id_in_project', 'state', 'type', 'attributes','assignee_list','assignees']
         extra_kwargs = {'id_in_project': {'required' : False}}
 
     def create(self, validated_data):
         """
         Create and return a new `Ticket` instance, given the validated data.
         """
-        #print(validated_data)
         project = models.Project.objects.get(pk=validated_data.pop('project')['pk'])
         
         #Check that state is in the ticket template
@@ -151,32 +151,57 @@ class TicketSerializer(serializers.ModelSerializer):
         if type not in project.ticket_template.types.all().values('type_name'):
             raise serializers.ValidationError("The type is not valid")
 
-        #check that all attributes are in the ticket template
-        attributes = validated_data.pop('attributes')
-        attribute_types = [ attribute['attribute_type'] for attribute in attributes]
-        project_attribute_types = project.ticket_template.attributeTypes.all().values('name')
-        for attribute_type in attribute_types:
-            if attribute_type not in project_attribute_types:
-                raise serializers.ValidationError("An attribute type is not valid.")
-            #attribute = ticket.attributes.get(name=)
-
-        #Check that all assignees are part of the project
-        # assignees = validated_data.pop('assignees')
-        # current_users = 
-        # for user in assignees:
-        #     if user not in project.
-        # if assignees
-        #project_pk = validated_data.pop('project')['name']
-
+        #Create ticket on required values
         ticket = models.Ticket(
             title=validated_data['title'], 
             description=validated_data['description'],
             state=project.ticket_template.states.all().get(state_name=state['state_name']),
             type=project.ticket_template.types.all().get(type_name=type['type_name']),
-            project=project, 
-            attributes=AttributeSerialier(attributes))
-        ticket.attributes.set(AttributeSerialier(attributes))
-        
-        #ticket.save()
+            project=project)
+        ticket.save()
+
+        #Update attributes and assignees
+        if(validated_data.hasOwnProperty('attributes')):
+            self.update_attributes(validated_data.pop('attributes'), ticket)
+        if(validated_data.hasOwnProperty('assignee_list')):
+            self.update_assignees(validated_data.pop('assignee_list'), ticket)
+
         return ticket
+
+    def update_attributes(self, validated_data, ticket):
+        #Get the attribute type names to check requested names against
+        project_attributes = ticket.project.ticket_template.attributeTypes.all().values('name')
+
+        #For each attribute in the request
+        for attribute in validated_data:
+            #Raise an error if the attribute type is not in the ticket template
+            if attribute['attribute_type'] not in project_attributes:
+                raise serializers.ValidationError("A listed attribute type is not valid.")
+                
+            #Update or create the attribute on the ticket
+            name = attribute['attribute_type']['name']
+            db_project_attribute = models.AttributeType.objects.get(ticket_template=ticket.project.ticket_template,name=name)
+            db_attribute, created = models.Attribute.objects.all().get_or_create(ticket=ticket, attribute_type=db_project_attribute)
+            db_attribute.value = attribute['value']
+            db_attribute.save()
+
+    def update_assignees(self, validated_data, ticket):
+        #Get the project users to check request users against
+        project_usernames = [ role.profile.user.username for role in ticket.project.roles.all()]
+
+        #For each username in the request
+        for username in validated_data:
+            #Raise error if the user does not have a role in the project
+            if username not in project_usernames:
+                raise serializers.ValidationError("A listed user is not a collaborator on this project.")
+    
+            #Add user to ticket if they are not already there
+            db_profile = models.Profile.objects.get(user=models.User.objects.get(username = username))
+            if db_profile not in ticket.assignees.all():
+                ticket.assignees.add(db_profile)
+
+
+
+        
+
     
