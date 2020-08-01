@@ -1,21 +1,23 @@
 <!-- https://www.codeply.com/go/YEFHXEnn0v -->
 <div class="container-fluid pt-3">
     <div class="row flex-row flex-sm-nowrap py-3">
+        {% for state in project.ticket_template.states.all %}
         <div class="column col-sm-6 col-md-4 col-xl-3">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h6 class="card-title text-uppercase text-truncate py-2">To Do</h6>
+                    <h6 class="card-title text-uppercase text-truncate py-2">{{state.state_name}}</h6>
                     <div class="items border border-light">
-                        {% for ticket in project.tickets.all %}
+                        {% for ticket in state.tickets.all %}
+                       
                         <div class="dropzone rounded" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="clearDrop(event)"> &nbsp; </div>
                         <div class="card draggable shadow-sm" id="cd1" draggable="true" ondragstart="drag(event)">
                             <div class="task card-body p-2">
-                                <div class="state-color" style="background-color: red;"></div>
+                                <div class="state-color" style="background-color:{{state.color}};"></div>
                                 <div class="task-details">
                                     <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
                                     <div class="sub-details">
                                         <p class="task-number">{{ticket.description}}</p>
-                                        <p class="task-type" style="background-color: green;">{{ticket.type}}</p>
+                                        <p class="task-type" style="background-color: {{ticket.type.color}};">{{ticket.type}}</p>
                                     </div>
                                 </div>
                                 {% if ticket.assignees.all %}
@@ -52,7 +54,8 @@
                 </div>
             </div>
         </div>
-        <div class="column col-sm-6 col-md-4 col-xl-3">
+        {% endfor %}
+        <!-- <div class="column col-sm-6 col-md-4 col-xl-3">
             <div class="card bg-light">
                 <div class="card-body">
                     <h6 class="card-title text-uppercase text-truncate py-2">In-progess</h6>
@@ -87,7 +90,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
