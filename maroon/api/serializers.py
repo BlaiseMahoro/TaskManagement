@@ -42,7 +42,6 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         #Delete Types and States before the new ones are added to the database
-        #print("template internal value")
         models.Type.objects.filter(ticket_template=self.instance).delete()
         models.State.objects.filter(ticket_template=self.instance).delete()
         return super(TicketTemplateSerializer, self).to_internal_value(data=data)
@@ -61,8 +60,9 @@ class RoleSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='profile.user.username')
 
     def update(self, instance, validated_data):
-        print(validated_data)
-        profile = models.Profile.objects.get(user=models.User.objects.get(username=validated_data['profile']))
+        #Validated data embeds username weirdly
+        valid_username = validated_data['profile']['user']['username']
+        profile = models.Profile.objects.get(user=models.User.objects.get(username=valid_username))
 
         #'instance' in this case is the project to find the role
         role, created = models.Role.objects.all().get_or_create(profile=profile, project=instance)
@@ -85,7 +85,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create and return a new `Snippet` instance, given the validated data.
+        Create and return a new `Project` instance, given the validated data.
         """
         return Project.objects.create(**validated_data)
 
@@ -120,4 +120,4 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Ticket
         fields = ['title', 'description','project', 'id_in_project', 'state', 'type', 'attributes','assignees']
-    
+   

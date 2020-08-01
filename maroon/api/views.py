@@ -10,6 +10,7 @@ from rest_framework import permissions
 from rest_framework import authentication
 from django.shortcuts import get_object_or_404
 import json
+from api.permissions import ProjectAdmin, ProjectCollaborator
 
 class TokenAuthView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
@@ -74,46 +75,40 @@ class ProjectList(TokenAuthView, generics.ListCreateAPIView):
 class ProjectDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
+    permission_classes = [ProjectAdmin]
 
     def put(self, request, *args, **kwargs):
         body = json.loads(request.body)
 
-        project = None
-        profile = models.Profile.objects.get(user=self.request.user)
-        for user_project in profile.get_user_projects():
-            if(user_project.pk == kwargs.get('pk')):
-                project = user_project
+        project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
 
-        if not project:
-            return Response("Project not found", status=status.HTTP_404_NOT_FOUND)
-            
-        #Update Project details
-        serializer = serializers.ProjectSerializer(project, data=body)
-        serializer.is_valid()
-        serializer.save()
+        if ProjectAdmin.has_object_permission(request, self, project):
+            #Update Project details
+            serializer = serializers.ProjectSerializer(project, data=body)
+            serializer.is_valid()
+            serializer.save()
+            # Update Ticket Template
+            template_serializer = serializers.TicketTemplateSerializer(instance=project.ticket_template, data=body['ticket_template'])
+            template_serializer.is_valid()
+            template_serializer.save()
+            serializer.data.ticket_template = template_serializer.data
+            # Update the roles
+            serialized_roles = []
+            for role in body['roles']:
+                role_serializer = serializers.RoleSerializer(instance=project, data=role)
+                role_serializer.is_valid()
+                role_serializer.save()
+                #serialized_roles.append({'role': role_serializer.validated_data['role'], 'username': role_serializer.validated_data['profile']})
 
-        # Update Ticket Template
-        template_serializer = serializers.TicketTemplateSerializer(instance=project.ticket_template, data=body['ticket_template'])
-        template_serializer.is_valid()
-        template_serializer.save()
-        serializer.data.ticket_template = template_serializer.data
+            serializer.delete_removed_roles(project, body['roles'])
+            #The roles data sent back is not getting assigned correctly
+            #Don't this the following line works
+            serializer.data['roles'] = role_serializer.data
 
-        # Update the roles
-        serialized_roles = []
-        for role in body['roles']:
-            role_serializer = serializers.RoleSerializer(instance=project, data=role)
-            role_serializer.is_valid()
-            role_serializer.save()
-
-            #serialized_roles.append({'role': role_serializer.validated_data['role'], 'username': role_serializer.validated_data['profile']})
-
-        serializer.delete_removed_roles(project, body['roles'])
-
-        #The roles data sent back is not getting assigned correctly
-        #Don't this the following line works
-        serializer.data['roles'] = role_serializer.data
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        else:
+            return Response("You do not have permission to update this project.", status=status.HTTP_403_FORBIDDEN)
 
 # For retrieving all projects and creating a project
 class TicketList(TokenAuthView, generics.ListCreateAPIView):
