@@ -140,33 +140,40 @@ class TicketSerializer(serializers.ModelSerializer):
         Create and return a new `Ticket` instance, given the validated data.
         """
         project = models.Project.objects.get(pk=validated_data.pop('project')['pk'])
-        
+
+        #Create ticket for project
+        ticket = models.Ticket(project=project)
+        self.update(instance=ticket, validated_data=validated_data)
+
+        return ticket
+
+    def update(self, instance, validated_data):
         #Check that state is in the ticket template
+        ticket_template = instance.project.ticket_template
         state = validated_data.pop('state')
-        if state not in project.ticket_template.states.all().values('state_name'):
+        if state not in ticket_template.states.all().values('state_name'):
             raise serializers.ValidationError("The state is not valid")
+        instance.state = ticket_template.states.all().get(state_name=state['state_name'])
 
         #Check that type is in the ticket template
         type = validated_data.pop('type')
-        if type not in project.ticket_template.types.all().values('type_name'):
+        if type not in ticket_template.types.all().values('type_name'):
             raise serializers.ValidationError("The type is not valid")
+        instance.type = ticket_template.types.all().get(type_name=type['type_name'])
 
         #Create ticket on required values
-        ticket = models.Ticket(
-            title=validated_data['title'], 
-            description=validated_data['description'],
-            state=project.ticket_template.states.all().get(state_name=state['state_name']),
-            type=project.ticket_template.types.all().get(type_name=type['type_name']),
-            project=project)
-        ticket.save()
+        instance.title = validated_data['title']
+        instance.description = validated_data['description']
+        instance.save()
 
         #Update attributes and assignees
-        if(validated_data.hasOwnProperty('attributes')):
-            self.update_attributes(validated_data.pop('attributes'), ticket)
-        if(validated_data.hasOwnProperty('assignee_list')):
-            self.update_assignees(validated_data.pop('assignee_list'), ticket)
+        if 'attributes' in validated_data:
+            self.update_attributes(validated_data.pop('attributes'), instance)
+        if 'assignee_list' in validated_data:
+            self.update_assignees(validated_data.pop('assignee_list'), instance)
 
-        return ticket
+        return instance
+
 
     def update_attributes(self, validated_data, ticket):
         #Get the attribute type names to check requested names against
@@ -199,6 +206,10 @@ class TicketSerializer(serializers.ModelSerializer):
             db_profile = models.Profile.objects.get(user=models.User.objects.get(username = username))
             if db_profile not in ticket.assignees.all():
                 ticket.assignees.add(db_profile)
+
+        for profile in ticket.assignees.all():
+            if profile.user.username not in validated_data:
+                ticket.assignees.remove(profile)
 
 
 

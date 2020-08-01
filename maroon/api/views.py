@@ -82,33 +82,29 @@ class ProjectDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
 
         project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
 
-        if ProjectAdmin.has_object_permission(request, self, project):
-            #Update Project details
-            serializer = serializers.ProjectSerializer(project, data=body)
-            serializer.is_valid()
-            serializer.save()
-            # Update Ticket Template
-            template_serializer = serializers.TicketTemplateSerializer(instance=project.ticket_template, data=body['ticket_template'])
-            template_serializer.is_valid()
-            template_serializer.save()
-            serializer.data.ticket_template = template_serializer.data
-            # Update the roles
-            serialized_roles = []
-            for role in body['roles']:
-                role_serializer = serializers.RoleSerializer(instance=project, data=role)
-                role_serializer.is_valid()
-                role_serializer.save()
-                #serialized_roles.append({'role': role_serializer.validated_data['role'], 'username': role_serializer.validated_data['profile']})
+        serializer = serializers.ProjectSerializer(project, data=body)
+        serializer.is_valid()
+        serializer.save()
+        # Update Ticket Template
+        template_serializer = serializers.TicketTemplateSerializer(instance=project.ticket_template, data=body['ticket_template'])
+        template_serializer.is_valid()
+        template_serializer.save()
+        serializer.data.ticket_template = template_serializer.data
+        # Update the roles
+        serialized_roles = []
+        for role in body['roles']:
+            role_serializer = serializers.RoleSerializer(instance=project, data=role)
+            role_serializer.is_valid()
+            role_serializer.save()
+            #serialized_roles.append({'role': role_serializer.validated_data['role'], 'username': role_serializer.validated_data['profile']})
 
-            serializer.delete_removed_roles(project, body['roles'])
-            #The roles data sent back is not getting assigned correctly
-            #Don't this the following line works
-            serializer.data['roles'] = role_serializer.data
+        serializer.delete_removed_roles(project, body['roles'])
+        #The roles data sent back is not getting assigned correctly
+        #Don't this the following line works
+        serializer.data['roles'] = role_serializer.data
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         
-        else:
-            return Response("You do not have permission to update this project.", status=status.HTTP_403_FORBIDDEN)
 
 # For retrieving all projects and creating a project
 class TicketList(TokenAuthView, generics.ListCreateAPIView):
@@ -122,27 +118,25 @@ class TicketList(TokenAuthView, generics.ListCreateAPIView):
         for the currently authenticated user.
         """ 
         project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
-        #print(models.Ticket.objects.filter(project=project))
         return models.Ticket.objects.filter(project=project)
 
-    def get(self, request, *args, **kwargs):
-        project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
-        if ProjectCollaborator.has_object_permission(request, self, project):
-            return super().get(request, *args, **kwargs)
-        else:
-             return Response("You do not have permission to access to this project.", status=status.HTTP_403_FORBIDDEN)
-
     def post(self, request, *args, **kwargs):
+        request.data['project_pk'] = self.kwargs['pk']
+        return super().post(request, *args, **kwargs)
+        
+class TicketDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Ticket.objects.all()
+    serializer_class = serializers.TicketSerializer
+    permission_classes = [ProjectCollaborator]
+
+    def get_object(self):
+        print("Getting object")
         project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
-        if ProjectCollaborator.has_object_permission(request, self, project):
+        return get_object_or_404(models.Ticket, project=project, id_in_project=self.kwargs['ticket_pk'])
 
-
-
-            request.data['project_pk'] = self.kwargs['pk']
-            return super().post(request, *args, **kwargs)
-        else:
-             return Response("You do not have permission to access to this project.", status=status.HTTP_403_FORBIDDEN)
-
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+        return Response("Ticket successfully deleted", status=status.HTTP_202_ACCEPTED)
 
 
     '''For printing post requests if needed.'''
