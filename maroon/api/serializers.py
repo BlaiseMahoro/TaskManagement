@@ -110,14 +110,73 @@ class AttributeSerialier(serializers.ModelSerializer):
         fields = ('attribute_type','value')
 
 
+class StateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.State
+        fields = ('state_name','color')
+        extra_kwargs = {'color': {'required' : False}}
+class TypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Type
+        fields = ('type_name','color')
+        extra_kwargs = {'color': {'required' : False}}
+
 class TicketSerializer(serializers.ModelSerializer):
-    project = serializers.CharField(source='project.name')
-    state = serializers.CharField(source='state.state_name')
+    project = serializers.CharField(source='project.name', required=False)
+    project_pk = serializers.IntegerField(source='project.pk', required=False)
+    state = serializers.CharField(source='state.state_name', required=False)
     type = serializers.CharField(source='type.type_name')
-    assignees = ProfileSerializer(many=True)
-    attributes = AttributeSerialier(many=True)
+    assignees = ProfileSerializer(many=True, required=False)
+    attributes = AttributeSerialier(many=True, required=False)
 
     class Meta:
         model = models.Ticket
-        fields = ['title', 'description','project', 'id_in_project', 'state', 'type', 'attributes','assignees']
-   
+        fields = ['title', 'description','project', 'project_pk','id_in_project', 'state', 'type', 'attributes','assignees']
+        extra_kwargs = {'id_in_project': {'required' : False}}
+
+    def create(self, validated_data):
+        """
+        Create and return a new `Ticket` instance, given the validated data.
+        """
+        #print(validated_data)
+        project = models.Project.objects.get(pk=validated_data.pop('project')['pk'])
+        
+        #Check that state is in the ticket template
+        state = validated_data.pop('state')
+        if state not in project.ticket_template.states.all().values('state_name'):
+            raise serializers.ValidationError("The state is not valid")
+
+        #Check that type is in the ticket template
+        type = validated_data.pop('type')
+        if type not in project.ticket_template.types.all().values('type_name'):
+            raise serializers.ValidationError("The type is not valid")
+
+        #check that all attributes are in the ticket template
+        attributes = validated_data.pop('attributes')
+        attribute_types = [ attribute['attribute_type'] for attribute in attributes]
+        project_attribute_types = project.ticket_template.attributeTypes.all().values('name')
+        for attribute_type in attribute_types:
+            if attribute_type not in project_attribute_types:
+                raise serializers.ValidationError("An attribute type is not valid.")
+            #attribute = ticket.attributes.get(name=)
+
+        #Check that all assignees are part of the project
+        # assignees = validated_data.pop('assignees')
+        # current_users = 
+        # for user in assignees:
+        #     if user not in project.
+        # if assignees
+        #project_pk = validated_data.pop('project')['name']
+
+        ticket = models.Ticket(
+            title=validated_data['title'], 
+            description=validated_data['description'],
+            state=project.ticket_template.states.all().get(state_name=state['state_name']),
+            type=project.ticket_template.types.all().get(type_name=type['type_name']),
+            project=project, 
+            attributes=AttributeSerialier(attributes))
+        ticket.attributes.set(AttributeSerialier(attributes))
+        
+        #ticket.save()
+        return ticket
+    
