@@ -17,15 +17,33 @@ from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
 
 
+# We need to handle three different cases
+# 1. User is logged in with atleast one project
+# 2. User is logged in without any projects
+# 3. User is not logged in
 class Redirect(RedirectView):
     permanent = False
     query_string = True
     pattern_name = 'landing'
 
     def get_redirect_url(self, *args, **kwargs):
-        profile = Profile.objects.get(user=self.request.user)
-        kwargs['pk'] = profile.get_user_projects()[0].pk
-        return super().get_redirect_url(*args, **kwargs)
+        if self.request.user.is_authenticated:
+            profile = Profile.objects.get(user=self.request.user)
+            
+            if len(profile.get_user_projects()) > 0:
+                # User has atleast one project
+                kwargs['pk'] = profile.get_user_projects()[0].pk
+                return super().get_redirect_url(*args, **kwargs)              
+            else:
+                # User does not have any projects
+                
+                # This return statement is not working yet
+                # This should be sending the user to the landing page where they have an option to add a project
+                return render(self.request, 'landing')
+        else:
+            # This return statement is not working yet
+            # This should be sending the user to the login page
+            return redirect('/registration/login')
 
 
 class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
