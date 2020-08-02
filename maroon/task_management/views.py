@@ -7,13 +7,14 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
 from .models import Profile, Project, Role
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
+from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 
 
@@ -24,27 +25,14 @@ from bootstrap_modal_forms.generic import BSModalCreateView
 class Redirect(RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'landing'
+    pattern_name = 'landingNoneSelected'
 
-    def get_redirect_url(self, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            # User is logged in
-            profile = Profile.objects.get(user=self.request.user)
-            
-            if len(profile.get_user_projects()) > 0:
-                # User has atleast one project
-                kwargs['pk'] = profile.get_user_projects()[0].pk
-                return super().get_redirect_url(*args, **kwargs)              
-            else:
-                # User does not have any projects
-                
-                # This return statement is not working yet
-                # This should be sending the user to the landing page where they have an option to add a project
-                return render(self.request, 'landing')
-        else:
-            # This return statement is not working yet
-            # This should be sending the user to the login page
-            return redirect('/registration/login')
+class LandingNoneSelected(LoginRequiredMixin, View):
+    login_url = 'login'
+    template_name = "landing_none_selected.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
 
 
 class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
@@ -53,7 +41,7 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
 
     def get(self, request, *args, **kwargs):
         project = get_object_or_404(Project, pk=kwargs['pk'])
-        context = {'project': project, 'new_project_form': NewProjectForm()}
+        context = {'project': project}
         return render(request, self.template_name, context)
 
 
@@ -102,7 +90,7 @@ class Register(View):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user) #authenticate user and redirect them to landing page
-            return redirect('landing')
+            return redirect('landingNoneSelected')
         context = {'form': form}
         return render(request, self.template_name, context)
 
@@ -188,7 +176,6 @@ class CreateProject(LoginRequiredMixin, BSModalCreateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         print(request.POST)
-
         #Processes request if valid
         if form.is_valid():
             # form.save()
@@ -199,9 +186,13 @@ class CreateProject(LoginRequiredMixin, BSModalCreateView):
             #Redirect to new project
             return redirect('landing', pk=project.pk) #render(request, self.template_name, context)
 
-        #Redirect to invalid form
-        context = {'project': Project.objects.get(pk=kwargs.get('pk')),'new_project_form': form}
-        return render(request, self.template_name, context)
+        #If invalid, show form is not working
+        #Decided to redirect to previous page for now
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
+        #context = {'project': Project.objects.get(pk=kwargs.get('pk')),'new_project_form': form}
+        #return redirect('landing', pk=kwargs.get('pk'), form=form )
+        #return render(request, self.template_name, context)
 
 def deleteuser(request):
     if request.method == 'POST':

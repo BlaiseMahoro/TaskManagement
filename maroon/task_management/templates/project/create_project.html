@@ -1,8 +1,8 @@
 <!-- Modal (Following https://www.w3schools.com/bootstrap/bootstrap_modal.asp) -->
 
-<div id="create-project" class="modal fade {% if new_project_form.errors %} show {% endif %}" role="dialog">
+<div id="create-project" class="modal {% if new_project_form.errors %} show {%else%} fade in {% endif %}" role="dialog">
     <div class="modal-dialog">
-      <form action="{% url 'create_project' project.pk %}" method="POST">
+      <form action="{{form_redirect}}" method="POST">
         <!-- Modal content-->
         <div class="modal-content">
           <!-- Body -->
@@ -29,6 +29,7 @@
   
           <!-- Footer -->
           <div class="modal-footer">
+            <input type="hidden" name="next" value="{{ request.path }}">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input type="submit" value="Submit" class="btn btn-primary" />
           </div>
