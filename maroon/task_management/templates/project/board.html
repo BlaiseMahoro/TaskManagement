@@ -12,11 +12,11 @@
                             <div class="task card-body p-2">
                                 <div class="state-color" style="background-color: red;"></div>
                                 <div class="task-details">
-                                    <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
                                     <div class="sub-details">
-                                        <p class="task-number">{{ticket.description}}</p>
+                                        <p class="task-title"><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
                                         <p class="task-type" style="background-color: green;">{{ticket.type}}</p>
                                     </div>
+                                    <p class="task-description">{{ticket.description}}</p>
                                 </div>
                                 {% if ticket.assignees.all %}
                                 <div class="task-users collapse-container">
