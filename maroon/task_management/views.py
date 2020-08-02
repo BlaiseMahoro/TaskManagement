@@ -26,7 +26,7 @@ import json
 class Redirect(RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'landingNoneSelected'
+    pattern_name = 'landing'
 
 
 class Landing(LoginRequiredMixin,View): 
@@ -37,18 +37,36 @@ class Landing(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         if 'pk' in kwargs:
             project = get_object_or_404(Project, pk=kwargs['pk'])
-            project_profiles = [ role.profile for role in project.roles.all()]
             context = {'project': project, 
                 'template_name': self.landing_template, 
                 'ticket_form': TicketForm(), 
-                'project_profiles': project_profiles}
+                'project_profiles': [ role.profile for role in project.roles.all()]}
             return render(request, self.landing_template, context)
         else:
             return render(request, self.landing_empty_template)
 
-    def post(self, request, *args, **kwards):
+    def post(self, request, *args, **kwargs):
         form = TicketForm(request.POST)
-        print(form)
+        project = get_object_or_404(Project, pk=kwargs['pk'])
+        context = {'project': project, 
+                'template_name': self.landing_template, 
+                'project_profiles': [ role.profile for role in project.roles.all()]}
+
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            type = form.cleaned_data.get('type')
+            state = project.ticket_template.states.all()[0]
+            description = form.cleaned_data.get('description')
+            assignees = form.cleaned_data.get('assignees')
+
+            ticket = Ticket(project=project, title=title, type=type, state=state, description=description)
+            ticket.save()
+            ticket.assignees.set(assignees)
+            context['ticket_form'] = TicketForm() 
+            return render(request, self.landing_template, context)
+        context['ticket_form'] = form
+        return render(request, self.landing_template, context)
+
 
 
 class Account(LoginRequiredMixin,View):

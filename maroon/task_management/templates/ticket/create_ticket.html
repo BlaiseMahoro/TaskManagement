@@ -1,5 +1,5 @@
 <!-- Modal (Following https://www.w3schools.com/bootstrap/bootstrap_modal.asp) -->
-<div id="create-ticket" class="modal {% if ticket_form.errors %} show {%else%} fade in {% endif %}" role="dialog">
+<div id="create-ticket" class="modal {% if ticket_form.errors %} fade in modal-display{% endif %}" role="dialog">
     <div class="modal-dialog">
       <form action="{% url 'landing' project.pk %}" method="POST">
         <!-- Modal content-->
@@ -14,28 +14,28 @@
             </div>
             {% for field in ticket_form %}
               <div class="form-group">
+                <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                 <div class="{% if field.errors %} invalid{% endif %}">
                   {% for error in field.errors %}
                     <p class="help-block">{{ error }}</p>
                   {% endfor %}
                 </div>
-                <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {% if field.label == "Type" %}
-                <select class="mdb-select md-form modal_input">
+                <select class="mdb-select md-form modal_input" name="{{field.name}}">
                   <option value='' disabled selected>Select Type</option>
                   {% for type in project.ticket_template.types.all %}
-                  <option value='type'>{{type.type_name}}</option>
+                  <option value='{{type.pk}}'>{{type.type_name}}</option>
                   {% endfor %}
                 </select>
                 {% elif field.label == "Assignees" %}
-                <select class="mdb-select md-form modal_input" multiple>
+                <select class="mdb-select md-form modal_input" name="{{field.name}}" multiple>
                   <option value='' disabled selected>Select assignees</option>
                   {% for profile in project_profiles %}
-                  <option value='profile'>{{profile.user.username}}</option>
+                  <option value='{{profile.pk}}'>{{profile.user.username}}</option>
                   {% endfor %}
                 </select>
                 {% else %}
-                <input class="modal_input" type="text" name="name" />
+                <input class="modal_input" type="text" name="{{field.name}}" />
                 {% endif %}
               </div>
             {% endfor %}
@@ -44,9 +44,12 @@
           <!-- Footer -->
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Add Task</button>
+            <input type="submit" value="Add Task" class="btn btn-primary" />
           </div>
         </div>
       </form>
     </div>
   </div>
+  {% if ticket_form.errors %}
+  <div class="modal-backdrop fade in"></div>
+  {% endif %}

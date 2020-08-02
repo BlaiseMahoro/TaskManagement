@@ -43,6 +43,7 @@ class NewProjectForm(BSModalModelForm):
         fields = ['name']
 
 class TicketForm(BSModalModelForm):
+    description = forms.CharField(required=False)
     class Meta:
         model = Ticket
         fields = ['title','type','description','assignees']
