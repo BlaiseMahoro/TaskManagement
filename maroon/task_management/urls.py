@@ -13,4 +13,5 @@ urlpatterns = [
     path('project/<int:pk>/create', views.CreateProject.as_view(), name='create_project_pk'), #pk in this url is for redirecting
     path('project/create', views.CreateProject.as_view(), name='create_project'), 
     path('delete', views.deleteuser, name='delete')  
+    path('ticket/<pk>/changestate', views.UpdateTicketState.as_view(), name='changeState') 
 ]

@@ -1,0 +1,103 @@
+.card.draggable {
+    cursor: grab;
+    padding: 20px;
+    border: solid;
+    border-color: #eff0f1;
+    font-size: 16px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.card-title {
+    font-size: 16px;
+    /* margin-top: -10px; */
+    padding-left: 10px;
+    color: gray;
+}
+
+.droppable {
+    background-color: var(--success);
+    min-height: 120px;
+    margin-bottom: 1rem;
+}
+
+.column {
+    background-color: rgb(228, 228, 228);
+    margin: 10px;
+    border-radius: 15px;
+    padding: 7px;
+    display: table-cell;
+    min-width: 300px;
+    max-width: 400px;
+    /* Couldn't get height to work */
+    height: 100%;
+}
+
+.items {
+    background-color: white;
+}
+
+.state-color {
+    height: 60px;
+    width: 5px;
+    float: left;
+    text-align: center;
+
+}
+
+.task-details {
+    display: inline-block;
+    margin: 3px; 
+    padding-left: 5px;
+    width: 90%;
+}
+
+.task-description {
+    display: inline-block;
+}
+
+.task-title {
+    float: left;
+}
+
+.task-type {
+    float: right;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.user-toggle {
+    background-color: white;
+    color: #333333;
+    border: none;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+.user-toggle:hover, .user-toggle:focus, .user-toggle:active {
+    background-color: lightgray;
+    border-color: transparent;
+}
+
+.user-img {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    float: left;
+    border-radius: 100%;
+    margin-right: 20px;
+    margin-left: 20px;
+    /* margin-bottom: 10px; */
+}
+
+.user-row {
+    padding: 5px;
+}
+
+.collapse-container {
+    margin: 0;
+    margin-left: 20px;
+}
