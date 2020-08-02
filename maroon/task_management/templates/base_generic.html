@@ -23,7 +23,7 @@
   {% endblock stylesheets %}
           
 </head>
-<body>
+<body class="{% if ticket_form.errors %} modal-open {% endif %}">
   {% include "navigation.html" %}
   </div> 
     <div class="content"> 
