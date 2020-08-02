@@ -15,6 +15,7 @@ from .models import Profile, Project, Role
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
+from rest_framework.authtoken.models import Token
 # Create your views here.
 
 
@@ -51,7 +52,8 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile}
+        token = Token.objects.get(user=request.user)
+        context = {"profile":profile, "user_token":token}
         return render(request, self.template_name, context)
 
     def post(self, request):
