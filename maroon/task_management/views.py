@@ -27,25 +27,22 @@ class Redirect(RedirectView):
     query_string = True
     pattern_name = 'landingNoneSelected'
 
-class LandingNoneSelected(LoginRequiredMixin, View):
+
+class Landing(LoginRequiredMixin,View): 
     login_url = 'login'
-    template_name = "landing_none_selected.html"
+    landing_template = "landing.html"
+    landing_empty_template = "landing_none_selected.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        if 'pk' in kwargs:
+            project = get_object_or_404(Project, pk=kwargs['pk'])
+            context = {'project': project, 'template_name': self.landing_template}
+            return render(request, self.landing_template, context)
+        else:
+            return render(request, self.landing_empty_template)
 
 
-class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
-    login_url = 'login'
-    template_name = "landing.html"
-
-    def get(self, request, *args, **kwargs):
-        project = get_object_or_404(Project, pk=kwargs['pk'])
-        context = {'project': project}
-        return render(request, self.template_name, context)
-
-
-class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+class Account(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "user/account.html"
 
@@ -182,11 +179,12 @@ class CreateProject(LoginRequiredMixin, BSModalCreateView):
             name = form.cleaned_data.get('name')
             project = Project(name=name)
             project.save(user=request.user)
-            context = {'project': project, 'new_project_form': form}
+            #context = {'project': project, 'new_project_form': form}
             #Redirect to new project
             return redirect('landing', pk=project.pk) #render(request, self.template_name, context)
 
-        #If invalid, show form is not working
+        #If invalid, show form is not working because you would need to 
+        #reload previous page and pass POST data as well.
         #Decided to redirect to previous page for now
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
