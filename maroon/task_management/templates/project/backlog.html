@@ -1,1 +1,80 @@
-<p>Backlog content coming soon</p>
+{% load static %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'css/backlog.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="wrapper">
+    
+    <div class="search_field">        
+        <input class="search_box" type="search" name="search" placeholder="Search..">
+        <i class="fa fa-search"></i>
+        
+        <div class="dropdown">
+        <div class="type">
+            <select name="type" id="type">
+            <option value="">Type</option>
+            <option value="bug">Bug</option>
+            <option value="feature">Feature</option>
+            <option value="document">Document</option>
+            </select>
+        </div>
+        <div class="assignee">
+            <select name="assignees" id="assignee" multiple="">
+            <option value="">Assignee(s)</option>
+            <option value="user1">brooke.dobbins</option>
+            <option value="user2">james.hannah</option>
+            <option value="user3">divergentNate</option>
+            </select>
+        </div>
+        <div class="state">
+            <select name="state" id="state">
+            <option value="">State</option>
+            <option value="new">New</option>
+            <option value="inprogress">In Progress</option>
+            <option value="done">Done</option>
+            </select>
+        </div>
+    </div>
+        
+    </div>
+    
+</div>
+
+<div class="tickets">
+    <table>
+    <col style="width:5%">
+    <col style="width:15%">
+    <col style="width:20%">
+    <col style="width:15%">
+    <col style="width:10%">
+      <th>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Title</th>
+          <th>Assignee(s)</th>
+          <th>State</th>      
+        </tr>
+      </th>
+      <tbody>
+        <tr>
+        <!-- Simply for demonstration but should be in a for loop -->
+          <td>1</td>
+          <td>Bug</td>
+          <td>Null pointer on update</td>
+          <td>lauren.woods</td>
+          <td id="new"><p>New</p></td>
+        </tr>    
+        <tr>
+          <td>2</td>
+          <td>Feature</td>
+          <td>Edit Account Wireframe</td>
+          <td>lauren.woods</td>
+          <td id="done"><p>Done</p></td>
+        </tr>    
+      </tbody>
+    </table>
+</div>
+{% endblock content %}
