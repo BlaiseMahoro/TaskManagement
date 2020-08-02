@@ -2,13 +2,13 @@
 
 <div id="create-project" class="modal {% if new_project_form.errors %} show {%else%} fade in {% endif %}" role="dialog">
     <div class="modal-dialog">
-      <form action="{{form_redirect}}" method="POST">
+      <form action="{% url 'create_project' %}" method="POST">
         <!-- Modal content-->
         <div class="modal-content">
           <!-- Body -->
           <div class="modal-body">
             {% csrf_token %}
-            <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+            <div class="{% if new_project_form.non_field_errors %}invalid{% endif %} mb-2">
               {% for error in new_project_form.non_field_errors %}
                 {{ error }}
               {% endfor %}

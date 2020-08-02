@@ -13,7 +13,7 @@ from django.contrib.auth import logout
 from rest_framework import status
 # from .forms import UserDeleteForm
 from .models import Profile, Project, Role, Ticket, State
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
@@ -37,10 +37,18 @@ class Landing(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         if 'pk' in kwargs:
             project = get_object_or_404(Project, pk=kwargs['pk'])
-            context = {'project': project, 'template_name': self.landing_template}
+            project_profiles = [ role.profile for role in project.roles.all()]
+            context = {'project': project, 
+                'template_name': self.landing_template, 
+                'ticket_form': TicketForm(), 
+                'project_profiles': project_profiles}
             return render(request, self.landing_template, context)
         else:
             return render(request, self.landing_empty_template)
+
+    def post(self, request, *args, **kwards):
+        form = TicketForm(request.POST)
+        print(form)
 
 
 class Account(LoginRequiredMixin,View):
