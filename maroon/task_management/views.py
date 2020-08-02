@@ -28,6 +28,7 @@ class Redirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         if self.request.user.is_authenticated:
+            # User is logged in
             profile = Profile.objects.get(user=self.request.user)
             
             if len(profile.get_user_projects()) > 0:
