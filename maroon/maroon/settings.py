@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'task_management.apps.TaskManagementConfig',
     'api.apps.ApiConfig',
     'bootstrap_modal_forms',
+    'colorful',
 ]
 
 MIDDLEWARE = [

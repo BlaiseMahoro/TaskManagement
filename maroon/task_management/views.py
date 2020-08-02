@@ -10,23 +10,19 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
+from rest_framework import status
 # from .forms import UserDeleteForm
-from .models import Profile, Project, Role
+from .models import Profile, Project, Role, Ticket, State
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
+import json
 
-
-# We need to handle three different cases
-# 1. User is logged in with atleast one project
-# 2. User is logged in without any projects
-# 3. User is not logged in
 class Redirect(RedirectView):
     permanent = False
     query_string = True
     pattern_name = 'landingNoneSelected'
-
 
 class Landing(LoginRequiredMixin,View): 
     login_url = 'login'
@@ -39,8 +35,7 @@ class Landing(LoginRequiredMixin,View):
             context = {'project': project, 'template_name': self.landing_template}
             return render(request, self.landing_template, context)
         else:
-            return render(request, self.landing_empty_template)
-
+            return render(request, self.landing_empty_template) 
 
 class Account(LoginRequiredMixin,View):
     login_url = 'login'
@@ -69,8 +64,6 @@ class Account(LoginRequiredMixin,View):
 
         return render(request, self.template_name, context)
     
-
-
 class Register(View):
     template_name = "registration/register.html"
 
@@ -208,3 +201,18 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
+class UpdateTicketState(View):
+    login_url = 'login'
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            state_name = json.loads(request.body)['state']
+            state = State.objects.get(state_name=state_name)
+            ticket = Ticket.objects.get(pk=kwargs.get('pk'))
+            ticket.state = state
+            ticket.save()
+            return HttpResponse({'':''},status=status.HTTP_200_OK,
+            content_type='application/json')
+        except:
+            return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
+            content_type='application/json')
