@@ -131,3 +131,10 @@
     color: dimgray;
     font-size: 30px;
 }
+.add-user {
+    /* display: inline; */
+    float: right;
+    margin-top: 15px;
+    color: gray;
+}
+
