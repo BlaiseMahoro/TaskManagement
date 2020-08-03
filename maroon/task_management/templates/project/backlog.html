@@ -8,7 +8,7 @@
 <div class="wrapper">
     
     <div class="search_field">        
-        <input class="search_box" type="search" name="search" placeholder="Search..">
+        <input class="search_box" id="searchbox" name="q" type="text" value="{{ request.GET.q }}" placeholder="Search...">
         <i class="fa fa-search"></i>
         
         <div class="dropdown">
@@ -59,21 +59,23 @@
         </tr>
       </th>
       <tbody>
+        {% for ticket in ticket_list %}
         <tr>
-        <!-- Simply for demonstration but should be in a for loop -->
-          <td>1</td>
-          <td>Bug</td>
-          <td>Null pointer on update</td>
-          <td>lauren.woods</td>
-          <td id="new"><p>New</p></td>
-        </tr>    
-        <tr>
+        
+          <td>{{ project.ticket.id }}</td>
+          <td>{{ project.ticket.type }}</td>
+          <td>{{ project.ticket.title }}</td>
+          <td>{{ project.ticket.author }}</td>
+          <td id="new"><p>{{ ticket.state }}</p></td>
+        </tr>  
+        {% endfor %}  
+        <!-- <tr>
           <td>2</td>
           <td>Feature</td>
           <td>Edit Account Wireframe</td>
           <td>lauren.woods</td>
           <td id="done"><p>Done</p></td>
-        </tr>    
+        </tr>     -->
       </tbody>
     </table>
 </div>

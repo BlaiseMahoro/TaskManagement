@@ -212,3 +212,34 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
+
+class Backlog(LoginRequiredMixin,View):  
+    login_url = 'login'
+    template_name = "templates/landing.html"
+
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        role = Role.objects.get(profile= profile, project= project).role
+        # users = User.objects.all().filter(profile= profile)
+        # is_admin = role =='is_admin'
+        print(role)
+        context = {'project': project, 'role':role}
+        return render(request, self.template_name, context)
+
+    def search_view(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        tickets = Ticket.objects.all()
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            if form.cleaned_data["q"]:
+                tickets = tickets.filter(title__icontains=form.cleaned_data["q"])
+            elif form.cleaned_data["ticket_author"]:
+                tickets = tickets.filter(author__icontains=form.cleaned_data["ticket_author"])
+            elif form.cleaned_data["state"]:
+                tickets = tickets.filter(state__icontains=form.cleaned_data["state"])
+        return render(request, "project/backlog.html",
+                {"form": form, "ticket_list": tickets})
