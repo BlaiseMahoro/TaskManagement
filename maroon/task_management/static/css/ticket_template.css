@@ -1,6 +1,7 @@
 .flex-container {
     margin: 20px 0px;
     width: 98%;
+    min-width: 1272px;
     display: grid;
     grid-template: auto auto / 50% 45%;
     grid-gap: 45px;
@@ -132,7 +133,7 @@
 
 .empty-message {
     padding: 15px 10px;
-    margin: 13px 0px 10px 0px;
+    margin: 13px 0px 13px 0px;
     background-color: #ffffff;
     box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.93);
     border-radius: 25px;

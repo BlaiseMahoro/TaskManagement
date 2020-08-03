@@ -133,21 +133,21 @@
 
                 var nextPosition = document.getElementsByClassName('type-content-item').length + 1;
 
-                $('#type').append('<li class="type-content-item" id="type-li' + nextPosition + '"><input class="content-color" type="color" value="#' + Math.floor(Math.random()*16777215).toString(16) + '"></input><input class="content-name" value=""></input><button class="content-item-button" id="type-item-button' + nextPosition + '" onclick="deleteElement(\'type' + nextPosition + '\')"><i class="fa fa-trash" aria-hidden="true"></i></button></li>');
+                $('#type').append('<li class="type-content-item" id="type-li' + nextPosition + '"><input class="content-color" type="color" value="#' + Math.floor(Math.random()*16777215).toString(16) + '"></input><input class="content-name" value=""></input><button class="content-item-button" id="type-item-button' + nextPosition + '"><i class="fa fa-trash" aria-hidden="true"></i></button></li>');
                 break;
             case "attribute":
                 $("#attribute-empty").css("display", "none");
 
                 var nextPosition = document.getElementsByClassName('attribute-content-item').length + 1;
 
-                $('#attribute').append('<li class="attribute-content-item" id="attribute-li' + nextPosition + '"><input class="content-name" value=""></input><button class="content-item-button" id="attribute-item-button' + nextPosition + '" onclick="deleteElement(\'' + nextPosition + '\')"><i class="fa fa-trash" aria-hidden="true"></i></button></li>');
+                $('#attribute').append('<li class="attribute-content-item" id="attribute-li' + nextPosition + '"><input class="content-name" value=""></input><button class="content-item-button" id="attribute-item-button' + nextPosition + '"><i class="fa fa-trash" aria-hidden="true"></i></button></li>');
                 break;
             case "relationship":
                 $("#relationship-empty").css("display", "none");
 
                 var nextPosition = document.getElementsByClassName('relationship-content-item').length + 1;
 
-                $('#relationship').append('<li class="relationship-content-item" id="relationship-li' + nextPosition + '"><input class="content-name" value="" style="width: 450px"></input><button class="content-item-button" id="relationship-item-button' + nextPosition + '" onclick="deleteElement(\'relationship' + nextPosition + '\')"><i class="fa fa-trash" aria-hidden="true"></i></button></li>');
+                $('#relationship').append('<li class="relationship-content-item" id="relationship-li' + nextPosition + '"><input class="content-name" value="" style="width: 450px"></input><button class="content-item-button" id="relationship-item-button' + nextPosition + '"><i class="fa fa-trash" aria-hidden="true"></i></button></li>');
                 break;
         }
     }
