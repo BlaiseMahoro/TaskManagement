@@ -6,9 +6,10 @@
 {% block content %}
 
 <div class="wrapper">
-    
-    <div class="search_field">        
-        <input class="search_box" id="searchbox" name="q" type="text" value="{{ request.GET.q }}" placeholder="Search...">
+  <form method="get"> 
+    {{myFilter.form}}
+    <!-- <div class="search_field">        
+        <input class="search_box" id="searchbox" name="q" method='GET' action="." type="text" value="{{ request.GET.q }}" placeholder="Search...">
         <i class="fa fa-search"></i>
         
         <div class="dropdown">
@@ -20,8 +21,9 @@
             <option value="document">Document</option>
             </select>
         </div>
+        
         <div class="assignee">
-            <select name="assignees" id="assignee" multiple="">
+            <select name="assignees" id="assignee" >
             <option value="">Assignee(s)</option>
             <option value="user1">brooke.dobbins</option>
             <option value="user2">james.hannah</option>
@@ -36,9 +38,11 @@
             <option value="done">Done</option>
             </select>
         </div>
-    </div>
+    </div> -->
+    <input type="submit" name="submit" value="Search"/>
         
     </div>
+  </form>
     
 </div>
 
@@ -59,13 +63,13 @@
         </tr>
       </th>
       <tbody>
-        {% for ticket in ticket_list %}
+        {% for ticket in tickets %}
         <tr>
         
-          <td>{{ project.ticket.id }}</td>
-          <td>{{ project.ticket.type }}</td>
-          <td>{{ project.ticket.title }}</td>
-          <td>{{ project.ticket.author }}</td>
+          <td>{{ ticket.id }}</td>
+          <td>{{ ticket.type }}</td>
+          <td>{{ ticket.title }}</td>
+          <td>{{ ticket.assignees }}</td>
           <td id="new"><p>{{ ticket.state }}</p></td>
         </tr>  
         {% endfor %}  
@@ -79,4 +83,5 @@
       </tbody>
     </table>
 </div>
+
 {% endblock content %}

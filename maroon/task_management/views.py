@@ -11,11 +11,13 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
-from .models import Profile, Project, Role
+from .models import Profile, Project, Role, Ticket
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
+from django.db.models import Q
+from .filters import OrderFilter
 # Create your views here.
 
 
@@ -42,7 +44,11 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
 
     def get(self, request, *args, **kwargs):
         project = get_object_or_404(Project, pk=kwargs['pk'])
-        context = {'project': project}
+        tickets = Ticket.objects.filter(project=project)
+        myFilter = OrderFilter(request.GET, queryset=tickets)
+        tickets = myFilter.qs
+        context = {'project': project, 'myFilter':myFilter, 'tickets':tickets}
+        
         return render(request, self.template_name, context)
 
 
@@ -213,33 +219,33 @@ def deleteuser(request):
 
     return render(request, 'user/delete.html', context)
 
-class Backlog(LoginRequiredMixin,View):  
-    login_url = 'login'
-    template_name = "templates/landing.html"
+# class Backlog(LoginRequiredMixin,ListView):
+#     model = Project  
+#     login_url = 'login'
+#     template_name = "templates/landing.html"
 
-    def get(self, request, *args, **kwargs):
-        project_id = kwargs.get('pk')
-        project = get_object_or_404(Project, pk=project_id)
-        profile = Profile.objects.get(user=request.user)
-        role = Role.objects.get(profile= profile, project= project).role
-        # users = User.objects.all().filter(profile= profile)
-        # is_admin = role =='is_admin'
-        print(role)
-        context = {'project': project, 'role':role}
-        return render(request, self.template_name, context)
+#     def get(self, request, *args, **kwargs):
+#         project_id = kwargs.get('pk')
+#         project = get_object_or_404(Project, pk=project_id)
+#         profile = Profile.objects.get(user=request.user)
+#         role = Role.objects.get(profile= profile, project= project).role
+#         # users = User.objects.all().filter(profile= profile)
+#         # is_admin = role =='is_admin'
+#         print(role)
+#         context = {'project': project, 'role':role}
+#         return render(request, self.template_name, context)
 
-    def search_view(self, request, *args, **kwargs):
-        project_id = kwargs.get('pk')
-        project = get_object_or_404(Project, pk=project_id)
-        profile = Profile.objects.get(user=request.user)
-        tickets = Ticket.objects.all()
-        form = SearchForm(request.GET)
-        if form.is_valid():
-            if form.cleaned_data["q"]:
-                tickets = tickets.filter(title__icontains=form.cleaned_data["q"])
-            elif form.cleaned_data["ticket_author"]:
-                tickets = tickets.filter(author__icontains=form.cleaned_data["ticket_author"])
-            elif form.cleaned_data["state"]:
-                tickets = tickets.filter(state__icontains=form.cleaned_data["state"])
-        return render(request, "project/backlog.html",
-                {"form": form, "ticket_list": tickets})
+#     def search(request):
+#         query = request.GET.get('q','')
+#         #The empty string handles an empty "request"
+#         if query:
+#             queryset = (Q(title__icontains=query))
+#             #I assume "text" is a field in your model
+#             #i.e., text = model.TextField()
+#             #Use | if searching multiple fields, i.e., 
+#             #queryset = (Q(text__icontains=query))|(Q(other__icontains=query))
+#             results = Ticket.objects.filter(queryset).distinct()
+#         else:
+#             results = []
+#         return render(request, self.template_name, {'results':results, 'query':query})
+    
