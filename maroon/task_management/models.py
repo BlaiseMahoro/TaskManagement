@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from colorfield.fields import ColorField
+import random
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
@@ -78,12 +80,18 @@ class State(models.Model):
     # The name of the state
     state_name = models.TextField(max_length=50)
 
+    # The color of the state
+    color = ColorField(default="%06x" % random.randint(0, 0xFFFFFF))
+
 class Type(models.Model):
     # The ticket template that contains these types
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="types")   
 
     # The name of the type
     type_name = models.TextField(max_length=50)
+
+    # The color of the type
+    color = ColorField(default="%06x" % random.randint(0, 0xFFFFFF))
 
 class Attribute(models.Model):
     # The parent of the attribute

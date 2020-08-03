@@ -1,9 +1,8 @@
 .flex-container {
-    margin-top: 20px;
-    width: 90%;
-    max-width: 90%;
+    margin: 20px 0px;
+    width: 98%;
     display: grid;
-    grid-template: auto auto / auto auto;
+    grid-template: auto auto / 50% 45%;
     grid-gap: 45px;
 }
 
@@ -39,7 +38,7 @@
 .template-content-container {
     border-radius: 25px;
     background-color: #ebebeb;
-    padding: 12px 10px 5px 5px;
+    padding: 5px 20px 5px 20px;
 }
 
 .ticket-template-content {
@@ -48,33 +47,93 @@
     padding-left: 0px;
 }
 
-.content-item {
+.state-content-item {
     display: grid;
-    grid-template: 100% / 50px auto;
-    height: 50px;
+    grid-template: 80px / 50px auto;
     text-align: center;
+    column-gap: 20px;
+    margin: 20px 0px;
+}
+
+.content-button {
+    background-color: #ebebeb;
+    border: none;
+    color: #7a7a7a;
+    width: 120px;
+    font-size: 80%;
 }
 
 .position {
-    padding: 10% 10%;
+    padding: 40% 10%;
     background-color: #ffffff;
-    margin-left: 10px;
 }
 
-.inner-content-item {
+.inner-state-content-item {
     display: grid;
-    grid-template: 100% / auto 30px auto 70px;
+    grid-template: 100% / 50px 30px auto 70px;
     background-color: #ffffff !important;
     margin: 0px 5px;
     box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.93);
+    align-items: center;
 }
 
-input.inner-content-item {
-    height: 70%;
-    width: 100px;
+.type-content-item {
+    display: grid;
+    grid-template: 100% / 30px auto 70px;
+    background-color: #ffffff !important;
+    margin: 0px 5px;
+    box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.93);
+    align-items: center;
+    margin: 20px 0px;
+    text-align: center;
+    padding: 16px 0px 16px 12px;
+}
+
+.attribute-content-item {
+    display: grid;
+    grid-template: 100% / auto 70px;
+    background-color: #ffffff !important;
+    margin: 0px 5px;
+    box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.93);
+    align-items: center;
+    margin: 20px 0px;
+    text-align: center;
+    padding: 16px 0px 16px 12px;
+}
+
+.relationship-content-item {
+    display: grid;
+    grid-template: 100% / auto 70px;
+    background-color: #ffffff !important;
+    margin: 0px 5px;
+    box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.93);
+    align-items: center;
+    margin: 20px 0px;
+    text-align: center;
+    padding: 16px 0px 16px 12px;
+}
+
+.content-name {
+    height: 38px !important;
+    width: 250px;
 }
 
 .content-color {
+    height: 48px !important;
     width: 25px;
-    height: 100%;
+    outline: none;
+}
+
+.content-item-button {
+    background-color: #ffffff;
+    border: none;
+    color: #7a7a7a
+}
+
+.empty-message {
+    padding: 15px 10px;
+    margin: 13px 0px 10px 0px;
+    background-color: #ffffff;
+    box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.93);
+    border-radius: 25px;
 }

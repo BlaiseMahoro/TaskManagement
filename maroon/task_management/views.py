@@ -89,7 +89,8 @@ class Project(LoginRequiredMixin,View):
     def get(self, request):
         project = "Project one"
         project_2 = "Project two"
-        ticket_project = {'states': [{'state_name':'New','color':'red'}, {'state_name':'To-Do','color':'orange'}, {'state_name':'Doing','color':'yellow'}, {'state_name':'Done','color':'green'}], 'types': [{'type_name': 'Bug'}, {'type_name': 'Feature'}], 'attributes': [{'name': 'Example'}, {'name': 'Example 2'}], 'relationships': [{'title': 'Null Pointer on update'}, {'title': 'Ticket Edit Wireframe'}]}
+        ticket_project = {'states': [{'state_name':'New','color':'#ff0000'}, {'state_name':'To-Do','color':'#ff9500'}, {'state_name':'Doing','color':'#fffb00'}, {'state_name':'Done','color':'#00ff00'}, {'state_name':'Extra','color':'#fb00ff'}], 'types': [{'type_name': 'Bug','color':'#ff9500'}, {'type_name': 'Feature','color':'#0077ff'}], 'attributes': [{'name': 'Example'}, {'name': 'Example 2'}], 'relationships': [{'title': 'Null Pointer on update'}, {'title': 'Ticket Edit Wireframe'}]}
+        #ticket_project = {'states': [], 'types': [], 'attributes': [], 'relationships': []}
         context = {
             'some_value': project,
             'some_other_value': project_2,
