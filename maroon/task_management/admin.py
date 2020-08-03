@@ -13,6 +13,7 @@ class CommentInlineAdmin(admin.TabularInline):
 class RelationshipInlineAdmin(admin.TabularInline):
     model = Relationship
     extra = 0
+    fk_name = "ticket_1"
 class FileInlineAdmin(admin.TabularInline):
     model = File
     extra = 0
@@ -36,6 +37,9 @@ class TicketTemplateAdmin(admin.ModelAdmin):
     inlines = [StateInlineAdmin, TypeInlineAdmin, AttributeTypeInlineAdmin, RelationshipTypeInlineAdmin]
     list_display=('project',)
 
+class RelationshipAdmin(admin.ModelAdmin):
+    list_display=('__str__','ticket_1','ticket_2')
+
 class RoleInlineAdmin(admin.TabularInline):
     model = Role
     extra = 0
@@ -54,4 +58,4 @@ admin.site.register(File)
 #admin.site.register(State)
 #admin.site.register(Type)
 #admin.site.register(AttributeType)
-admin.site.register(Relationship)
+admin.site.register(Relationship, RelationshipAdmin)

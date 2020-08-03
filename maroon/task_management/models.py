@@ -117,6 +117,9 @@ class RelationshipType(models.Model):
     # The ticket template the relationship belongs to
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="relationshipTypes")
 
+    def __str__(self):
+        return self.name
+
 class Comment(models.Model):
     # The ticket of the comment
     ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
@@ -181,9 +184,12 @@ class Relationship(models.Model):
     # The parent of the attribute
     relationship_type = models.ForeignKey(RelationshipType, on_delete=models.CASCADE, related_name="relationships")
     # Ticket that has the relationships
-    ticket = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="relationships", blank=True)
+    ticket_1 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="relationships", blank=True, null=True)
     # Other ticket that is in this instance of a relationship
-    ticket = models.OneToOneField(Ticket, on_delete=models.DO_NOTHING, related_name="related_ticket", blank=True)
+    ticket_2 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="related_ticket", blank=True)
+
+    def __str__(self):
+        return self.relationship_type.name
 
 class File(models.Model):
     # The parent of the file
