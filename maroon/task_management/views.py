@@ -11,11 +11,12 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
-# from .forms import UserDeleteForm
-from .models import Profile, Project, Role, Ticket, State
+from .models import Profile, Project, Role, User, Ticket, State
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
+from rest_framework.authtoken.models import Token
+
 # Create your views here.
 import json
 
@@ -70,7 +71,8 @@ class Account(LoginRequiredMixin,View):
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile}
+        token = Token.objects.get(user=request.user)
+        context = {"profile":profile, "user_token":token}
         return render(request, self.template_name, context)
 
     def post(self, request):
@@ -243,3 +245,29 @@ class UpdateTicketState(View):
         except:
             return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
             content_type='application/json')
+
+class AccessSettings(LoginRequiredMixin,View):
+    login_url = 'login'
+    template_name = "project/management/container.html"
+
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        role = Role.objects.get(profile= profile, project= project).role
+        # users = User.objects.all().filter(profile= profile)
+        # is_admin = role =='is_admin'
+        print(role)
+        context = {'project': project, 'role':role}
+        return render(request, self.template_name, context)
+    
+    def add_user_to_project(request, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        if request.method == "POST":
+            form = AddUserForm(request.POST)
+            if form.is_valid():
+                project.users.add(form.cleaned_data["user"])
+                return redirect("access")
+        else:
+            form = AddUserForm()
+        return render(request, "add_user.html", {"project": project, "form": form})
