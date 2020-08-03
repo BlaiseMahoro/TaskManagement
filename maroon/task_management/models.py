@@ -111,6 +111,12 @@ class AttributeType(models.Model):
     def __str__(self):
         return self.name
 
+class RelationshipType(models.Model):
+    # Name of the relationship type
+    name = models.TextField()
+    # The ticket template the relationship belongs to
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="relationshipTypes")
+
 class Comment(models.Model):
     # The ticket of the comment
     ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
@@ -145,10 +151,9 @@ class Ticket(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     #state of ticket
     state = models.ForeignKey(State, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
-    #state = models.OneToOneField('State', on_delete=models.DO_NOTHING)
     #type of ticket
     type = models.ForeignKey(Type, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
-    #ticket_type = models.OneToOneField('Type', on_delete=models.DO_NOTHING)
+    
   
     class Meta:
         ordering = ["created_date"]
@@ -171,6 +176,14 @@ class Attribute(models.Model):
     value = models.TextField()
     # For ticket to have more than one Attributes
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="attributes", blank=True)
+
+class Relationship(models.Model):
+    # The parent of the attribute
+    relationship_type = models.ForeignKey(RelationshipType, on_delete=models.CASCADE, related_name="relationships")
+    # Ticket that has the relationships
+    ticket = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="relationships", blank=True)
+    # Other ticket that is in this instance of a relationship
+    ticket = models.OneToOneField(Ticket, on_delete=models.DO_NOTHING, related_name="related_ticket", blank=True)
 
 class File(models.Model):
     # The parent of the file
