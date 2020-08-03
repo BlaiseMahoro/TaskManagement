@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Project
+from .models import Profile, Project, Role
 from django import forms
 from bootstrap_modal_forms.forms import BSModalModelForm
 
@@ -41,3 +41,14 @@ class NewProjectForm(BSModalModelForm):
     class Meta:
         model = Project
         fields = ['name']
+
+# class AddUserForm(forms.Form):
+#     username = forms.TextInput()
+#     role = forms.SelectMultiple()
+#     class Meta:
+#         model = Project
+#         fields = ['roles']
+    
+
+
+    

@@ -1,1 +1,11 @@
-<p>Backlog content coming soon</p>
+{% extends 'base_generic.html' %}
+{% block content %} 
+
+<form method="GET" action="" id="searchform">
+    <input class="searchfield" id="searchbox" name="q" type="text" value="{{ request.GET.q }}" placeholder="Search..."/>
+</form>
+
+
+
+
+{% endblock content %}

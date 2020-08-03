@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
-from .models import Profile, Project, Role
+from .models import Profile, Project, Role, User, Ticket
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 # Create your views here.
@@ -137,7 +137,7 @@ class ProjectSettings(LoginRequiredMixin,View):
         role = Role.objects.get(profile= profile, project= project).role
         # is_admin = role =='is_admin'
         print(role)
-        context = {'project': project, 'role':role}
+        context = {'project': project, 'role':role,}
         return render(request, self.template_name, context)
    
     def post(self, request, *args, **kwargs):
@@ -166,6 +166,7 @@ class ProjectSettings(LoginRequiredMixin,View):
             project.delete()   
             return redirect('landingNoneSelected')
         return render(request, self.template_name, {'project':project})
+
 
 class CreateProject(LoginRequiredMixin, BSModalCreateView):
     login_url = 'login' 
@@ -208,3 +209,65 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
+
+class AccessSettings(LoginRequiredMixin,View):
+    login_url = 'login'
+    template_name = "project/management/container.html"
+
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        role = Role.objects.get(profile= profile, project= project).role
+        # users = User.objects.all().filter(profile= profile)
+        # is_admin = role =='is_admin'
+        print(role)
+        context = {'project': project, 'role':role}
+        return render(request, self.template_name, context)
+    
+    def add_user_to_project(request, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        if request.method == "POST":
+            form = AddUserForm(request.POST)
+            if form.is_valid():
+                project.users.add(form.cleaned_data["user"])
+                return redirect("access")
+        else:
+            form = AddUserForm()
+        return render(request, "add_user.html", {"project": project, "form": form})
+
+class Backlog(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+    login_url = 'login'
+    template_name = "templates/landing.html"
+
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        role = Role.objects.get(profile= profile, project= project).role
+        # users = User.objects.all().filter(profile= profile)
+        # is_admin = role =='is_admin'
+        print(role)
+        context = {'project': project, 'role':role}
+        return render(request, self.template_name, context)
+
+    def search_view(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        tickets = Ticket.objects.filter( project= project)
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            if form.cleaned_data["q"]:
+                tickets = tickets.filter(title__icontains=form.cleaned_data["q"])
+            elif form.cleaned_data["ticket_author"]:
+                tickets = tickets.filter(author__icontains=form.cleaned_data["ticket_author"])
+            elif form.cleaned_data["state"]:
+                tickets = tickets.filter(state__icontains=form.cleaned_data["state"])
+        return render(request, "project/backlog.html",
+                {"form": form, "ticket_list": tickets})
+
+
+
+
+    
