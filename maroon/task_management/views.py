@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from .filters import OrderFilter
+from django.core.paginator import Paginator
 # Create your views here.
 
 
@@ -47,7 +48,10 @@ class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
         tickets = Ticket.objects.filter(project=project)
         myFilter = OrderFilter(request.GET, queryset=tickets)
         tickets = myFilter.qs
-        context = {'project': project, 'myFilter':myFilter, 'tickets':tickets}
+        paginator = Paginator(tickets, 1)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {'project': project, 'myFilter':myFilter, 'tickets':tickets, 'page_obj': page_obj}
         
         return render(request, self.template_name, context)
 
