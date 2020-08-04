@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="{% static 'css/avatar.css' %}">
   <link rel="stylesheet" href="{% static 'css/landing.css' %}">
   <link rel="stylesheet" href="{% static 'css/account.css' %}">
+  <link rel="stylesheet" href="{% static 'css/board.css' %}">
   <script src="https://kit.fontawesome.com/92ed4f50f3.js" crossorigin="anonymous"></script>
   <script type="text/javascript" src="{% static 'jquery/jquery-ui.js' %}"></script>
   <link rel="stylesheet" href="{% static 'jquery/jquery-ui.css' %}">
@@ -26,7 +27,7 @@
   {% endblock stylesheets %}
           
 </head>
-<body>
+<body class="{% if ticket_form.errors %} modal-open {% endif %}">
   {% include "navigation.html" %}
   </div> 
     <div class="content"> 
@@ -34,6 +35,7 @@
         {% block content %}
          <!--The content of the page goes here-->
         {% endblock %}
+        {% include "project/create_project.html" %}
 
       </div>
     </div>

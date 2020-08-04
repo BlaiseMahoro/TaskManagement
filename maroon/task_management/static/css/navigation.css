@@ -19,6 +19,7 @@
 .icon {
     background-color: #570e28;
     color: #94194d;
+    height: 70px;
 }
 
 .icon p {
@@ -43,4 +44,112 @@
 
 .sidenav a:hover {
     color: gray;
+}
+
+/* The side navigation menu */
+.project-list {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 80px;
+    background-color: #bb285c; 
+    color: white;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+.no-collapse {
+    min-width: 250px;
+    display: block;
+}
+
+.list-header {
+    width: 100%;
+    background-color: #570e28;
+    overflow: hidden;
+    height: 70px;
+}
+
+.list-header p {
+    /* float: left; */
+    margin:auto;
+    background-color: #570e28;
+}
+
+.project-list button {
+    background-color: transparent;
+    border-color: transparent;
+    width: 100%;  
+}
+
+.project-list p {
+    float: left;
+    /* padding: 10px; */
+    margin: auto;
+}
+
+.project-list img {
+    width: 30px;
+    height: 20px;
+    vertical-align: middle;
+    float: left;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 10px;
+    /* margin: 10px; */
+}
+
+.project-list button:hover{
+    background-color: #94194d;
+    border-color: transparent;
+}
+
+.project-list button:focus {
+    background-color: #94194d;
+    border-color: transparent;
+}
+
+.project-list i {
+    float:right;
+    /* padding-left: 20px; */
+    vertical-align: middle;
+}
+  
+  /* The navigation menu links */
+  .project-list a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 16px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .project-list a:hover {
+    color: lightgray;
+  }
+  
+  /* Position and style the close button (top right corner) */
+  .project-list .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    /* float: right; */
+  }
+
+  .collapse-container {
+      margin: 10px;
+  }
+
+  div.absolute {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    height: auto;
+    padding: 5px;
 }

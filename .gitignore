@@ -1,5 +1,7 @@
 venv/
 env/
 *.pyc
-*.sqlite
-maroon/db.sqlite3
+*.sqlite*
+
+settings.json
+*.ps1

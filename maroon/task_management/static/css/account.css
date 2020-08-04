@@ -1,60 +1,76 @@
-h1,h2,h3, label{
+.account h1, .account h2,.account h3, .account label{
     font-family: Helvetica, sans-serif;
     font-weight: lighter;
 }
 
-h2, h3 {
+.account h1 {
+    padding-bottom: 5px;
+}
+
+.account h2, .account h3 {
     padding-left: 10px;
 }
+
 .personal_info label {
     font-size: 80%;
     font-weight: bold;
     padding-left: 15px;
 }
-.personal_info, .change_pw, .delete_account {
+
+.personal_info, .change_pw, .delete_account, .acc_api_key {
     width: 500px;
     height:auto;
     position: relative;
     border: 1px solid gray;
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 10px;    
     margin-bottom: 2em;
 }
 
-#firstname {
-    margin-left: 5px;
+.acc_api_key {
+    position: relative;
+    float: right;
+    width: auto;
+    font-size: 20px;
 }
 
-#lastname {
-    margin-left: 7px;
+.personal_info input {
+    margin-left: 10%;
 }
 
-#username {
-    margin-left: 9px;
-}
-
-#email {
-    margin-left:  35px;
-}
-
-button{
+.profile_photo button, .personal_info button {
     background-color: #bb285c;
-    color:white;
+    color:white; 
     margin-left: 15px;
+    border-radius: 6px;
+    border-color: #bb285c;
+}
+
+.profile_photo button, .personal_info button {
+    width: auto;
+    border-color: lightgray;
 }
 
 .profile_photo {
-    width: 200px;
-    height: 30%;
+    width: 18%;
+    height: 400px;
     border: 1px solid gray;
+    border-radius: 10px;
     position: relative;
-    margin-right: 20px;
-    float:right;
+    margin-right: 40px;
+    float: right;
     padding: 10px;
-    }
+}
+
 .profile_photo button {
-    position: absolute;
-    top: 80%;
-    left: 38%;
-    margin: auto;
+    position: relative;
+    margin-top: 30px; 
+    margin-left: 40%;
+}
+
+.profile_photo img {
+    position: relative;
+    display: block;    
+    margin-left: auto;
+    margin-right: auto;
 }

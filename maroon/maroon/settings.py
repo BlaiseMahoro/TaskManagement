@@ -37,8 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'task_management.apps.TaskManagementConfig',
-    'colorfield',
+    'api.apps.ApiConfig',
+    'bootstrap_modal_forms',
+    'colorful',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'task_management.project_context.get_projects'
             ],
         },
     },
@@ -100,6 +105,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+#REST Authentication 
+#https://florimondmanca.github.io/djangorestframework-api-key/guide/
+#https://www.django-rest-framework.org/api-guide/authentication/
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        #"rest_framework_api_key.permissions.HasAPIKey",
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 
 # Internationalization

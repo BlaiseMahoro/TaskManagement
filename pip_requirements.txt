@@ -3,4 +3,6 @@ Django==3.0.8
 Pillow==7.2.0
 pytz==2020.1
 sqlparse==0.3.1
-django-colorfield
+djangorestframework==3.11.0
+django-bootstrap-modal-forms==2.0.0
+django-colorful==1.3

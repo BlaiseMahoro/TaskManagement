@@ -1,34 +1,44 @@
 {% extends 'base_generic.html' %}
 
-{% block content %} 
+{% block content %}
+
 <div class="header">
-    <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
-    <p class="title">Project Leia</p>
-    <a href="project">
-      <i class="fa fa-cog" aria-hidden="true"></i>
-    </a>
+  <!-- <img class="image" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"> -->
+  {% if project.avatar%}
+  <img src="/{{project.avatar}}" alt="Avatar" class="project_img">
+  {% else %}
+  <img class="project_img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+  {% endif %}
+
+  <p class="title">{{project.name}}</p>
+  <a href="{% url 'project' project.pk %}">
+    <i class="fa fa-cog" aria-hidden="true"></i>
+  </a>
 </div>
 
-    <!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
+<!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
 
-  <ul class="nav nav-tabs">
-    <!-- This tab selected from 'active' class -->
-    <li class="nav tab active"><a data-toggle="tab" href="#backlog">Backlog</a></li>
-    <li class="nav tab"><a data-toggle="tab" href="#board">Board</a></li>
-    <div class="add-task">
-        <i class="fa fa-plus" aria-hidden="true">  Add Task</i>
-      </div>
-  </ul>
-  <div class="tab-content">
-  
-    <!-- Show this tab by adding `active` class -->
-    <div class="tab-pane fade in active" id="backlog">
-        {% include "project/backlog.html" %}
-    </div>
-    <div class="tab-pane fade" id="board">
-        {% include "project/board.html" %}
-    </div>
-  
+<ul class="nav nav-tabs">
+  <!-- This tab selected from 'active' class -->
+  <li class="nav tab active"><a data-toggle="tab" href="#backlog">Backlog</a></li>
+  <li class="nav tab"><a data-toggle="tab" href="#board">Board</a></li>
+  <div class="add-task">
+    <!-- Trigger the modal with a button -->
+    <button type="button" class="fa fa-plus" data-toggle="modal" data-target="#create-ticket">Add Task</button>
   </div>
-{% endblock content %} 
+</ul>
+<div class="tab-content">
 
+  <!-- Show this tab by adding `active` class -->
+  <div class="tab-pane fade in active" id="backlog">
+    {% include "project/backlog.html" %}
+  </div>
+  <div class="tab-pane fade" id="board">
+    {% include "project/board.html" %}
+  </div>
+
+</div>
+
+{% include "ticket/create_ticket.html" %}
+
+{% endblock content %}
