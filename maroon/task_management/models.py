@@ -164,9 +164,6 @@ class Ticket(models.Model):
     def __str__(self):
         return self.title
 
-    # The color of the type
-    color = ColorField(default="%06x" % random.randint(0, 0xFFFFFF))
-
 class Attribute(models.Model):
     # The parent of the attribute
     attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attributes")

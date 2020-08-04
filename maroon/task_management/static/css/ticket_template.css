@@ -1,7 +1,6 @@
 .flex-container {
     margin: 20px 0px;
     width: 98%;
-    min-width: 1272px;
     display: grid;
     grid-template: auto auto / 50% 45%;
     grid-gap: 45px;
