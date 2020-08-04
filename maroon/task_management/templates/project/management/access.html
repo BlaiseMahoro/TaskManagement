@@ -9,31 +9,42 @@
 <div class="access1">
     <h2>Administrators</h2>    
     <!-- <i class="fa fa-user-circle" id="circ1"></i>   -->
-    
+    {% for role in project.roles.all %}
+    {% if role.role == "is_admin" %} 
     <div class="user-row">
-    
-        <i class="fa fa-user-circle" id="circ2"></i>  
+        <i class="fa fa-user-circle" id="circ2"></i> 
         <div class="user-info">
-            <p><strong>Username</strong></p>
-            <p>user.email@gmail.com</p>
+            <p><strong>{{ role.profile.user.username }}</strong></p>
+            {% if role == "is_admin" %}
+            <button class="button2">Demote</button>
+            {% endif %}
+            <!-- <p>{{ role.email }}</p>   -->
         </div>
         <!-- <p id="pending">Pending.....</p> -->
     </div>
-
-    <button class="button button1">Add administrator</button>
+    {% endif %}
+    {% endfor %}
+    <button class="button button1" data-toggle="modal" data-target="#add-user">Add administrator</button>
     
     <div class="collabheader"><h2>Collaborators</h2></div> 
-    
-    <div class="collab-row">   
+    {% for role in project.roles.all %}
+    {% if role.role == "is_normal" %} 
+    <div class="collab-row"> 
         <i class="fa fa-user-circle" id="circ2"></i> 
         <div class="collab-info">
-            <p><strong>Username</strong></p>
+            <p><strong>{{ role.profile.user.username }}</strong></p>
             <i class="fa fa-trash" id="trash1"></i>
-            <p>user.email@gmail.com</p>            
-        </div>        
+            <!-- <p>{{ user.email }}</p>             -->
+        </div>   
     </div> 
-    <button class="button button2">Add collaborator</button>
+    {% endif %}
+    {% endfor %}  
+    <button class="button button2" data-toggle="modal" data-target="#add-user">Add collaborator</button>
     
 </div>
+
+
+
+{% include "user/add_user.html" %}
 
 {% endblock content %}

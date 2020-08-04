@@ -10,43 +10,62 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
-# from .forms import UserDeleteForm
-from .models import Profile, Project, Role
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, UserUpdate
+from rest_framework import status
+from .models import Profile, Project, Role, User, Ticket, State
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
+
 # Create your views here.
+import json
 
-
-# We need to handle three different cases
-# 1. User is logged in with atleast one project
-# 2. User is logged in without any projects
-# 3. User is not logged in
 class Redirect(RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'landingNoneSelected'
+    pattern_name = 'landing'
 
-class LandingNoneSelected(LoginRequiredMixin, View):
+class Landing(LoginRequiredMixin,View): 
     login_url = 'login'
-    template_name = "landing_none_selected.html"
+    landing_template = "landing.html"
+    landing_empty_template = "landing_none_selected.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        if 'pk' in kwargs:
+            project = get_object_or_404(Project, pk=kwargs['pk'])
+            context = {'project': project, 
+                'template_name': self.landing_template, 
+                'ticket_form': TicketForm(), 
+                'project_profiles': [ role.profile for role in project.roles.all()]}
+            return render(request, self.landing_template, context)
+        else:
+            return render(request, self.landing_empty_template)
 
-
-class Landing(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
-    login_url = 'login'
-    template_name = "landing.html"
-
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        form = TicketForm(request.POST)
         project = get_object_or_404(Project, pk=kwargs['pk'])
-        context = {'project': project}
-        return render(request, self.template_name, context)
+        context = {'project': project, 
+                'template_name': self.landing_template, 
+                'project_profiles': [ role.profile for role in project.roles.all()]}
+
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            type = form.cleaned_data.get('type')
+            state = project.ticket_template.states.all()[0]
+            description = form.cleaned_data.get('description')
+            assignees = form.cleaned_data.get('assignees')
+
+            ticket = Ticket(project=project, title=title, type=type, state=state, description=description)
+            ticket.save()
+            ticket.assignees.set(assignees)
+            context['ticket_form'] = TicketForm() 
+            return render(request, self.landing_template, context)
+        context['ticket_form'] = form
+        return render(request, self.landing_template, context)
 
 
-class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
+
+class Account(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "user/account.html"
 
@@ -68,7 +87,6 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
         context = {"profile":profile, 'form':form}
         return render(request, self.template_name, context)        
     
-
 class Register(View):
     template_name = "registration/register.html"
 
@@ -177,11 +195,12 @@ class CreateProject(LoginRequiredMixin, BSModalCreateView):
             name = form.cleaned_data.get('name')
             project = Project(name=name)
             project.save(user=request.user)
-            context = {'project': project, 'new_project_form': form}
+            #context = {'project': project, 'new_project_form': form}
             #Redirect to new project
             return redirect('landing', pk=project.pk) #render(request, self.template_name, context)
 
-        #If invalid, show form is not working
+        #If invalid, show form is not working because you would need to 
+        #reload previous page and pass POST data as well.
         #Decided to redirect to previous page for now
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
@@ -205,3 +224,44 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
+class UpdateTicketState(View):
+    login_url = 'login'
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            state_name = json.loads(request.body)['state']
+            state = State.objects.get(state_name=state_name)
+            ticket = Ticket.objects.get(pk=kwargs.get('pk'))
+            ticket.state = state
+            ticket.save()
+            return HttpResponse({'':''},status=status.HTTP_200_OK,
+            content_type='application/json')
+        except:
+            return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
+            content_type='application/json')
+
+class AccessSettings(LoginRequiredMixin,View):
+    login_url = 'login'
+    template_name = "project/management/container.html"
+
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        role = Role.objects.get(profile= profile, project= project).role
+        # users = User.objects.all().filter(profile= profile)
+        # is_admin = role =='is_admin'
+        print(role)
+        context = {'project': project, 'role':role}
+        return render(request, self.template_name, context)
+    
+    def add_user_to_project(request, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        if request.method == "POST":
+            form = AddUserForm(request.POST)
+            if form.is_valid():
+                project.users.add(form.cleaned_data["user"])
+                return redirect("access")
+        else:
+            form = AddUserForm()
+        return render(request, "add_user.html", {"project": project, "form": form})

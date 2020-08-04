@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 from colorful.fields import RGBColorField
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) #Need to change to CASCADE.
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) 
     avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
     def get_user_projects(self, admin=None):
@@ -77,7 +77,6 @@ class TicketTemplate(models.Model):
     def __str__(self):
         return self.project.name
 
-
 class State(models.Model):
     # The ticket template that contains these states
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="states")
@@ -100,7 +99,6 @@ class Type(models.Model):
     
     #color
     color = RGBColorField(default="#0000FF")
-
     def __str__(self):
         return self.type_name
 
@@ -146,19 +144,17 @@ class Ticket(models.Model):
     # The date that the ticket was created
     created_date = models.DateTimeField(auto_now_add=True)
     #state of ticket
-    state = models.ForeignKey(State, on_delete=models.SET_NULL,related_name="tickets", null=True)
+    state = models.ForeignKey(State, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
+    #state = models.OneToOneField('State', on_delete=models.DO_NOTHING)
     #type of ticket
-    type = models.ForeignKey(Type, on_delete=models.SET_NULL, related_name="tickets", null=True)
+    type = models.ForeignKey(Type, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
+    #ticket_type = models.OneToOneField('Type', on_delete=models.DO_NOTHING)
   
     class Meta:
         ordering = ["created_date"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print(args)
-        #
-         
+        
     def save(self, *args, **kwargs):
+        print("Saving")
         if self.pk == None:
             self.id_in_project = self.project.max_ticket_id + 1
             self.project.max_ticket_id = self.id_in_project

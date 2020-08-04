@@ -83,3 +83,8 @@ box-sizing: border-box;
 border: 2px solid black;
 border-radius: 5px;
 }
+
+.modal-display {
+    display: block; 
+    padding-left: 16px;
+}
