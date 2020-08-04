@@ -21,8 +21,8 @@
                         </div>
                         {% if ticket.assignees.all %}
                                 <div class="task-users collapse-container">
-                                    {% if profiles.0.avatar%}
-                                    <img src="/{{ticket.assignees.all.0.profile.avatar}}" alt="Avatar" class="user-img">
+                                    {% if ticket.assignees.all.0.avatar %}
+                                    <img src="/{{ticket.assignees.all.0.avatar}}" alt="Avatar" class="user-img">
                                     {% else %}
                                     <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
                                     {% endif %}
