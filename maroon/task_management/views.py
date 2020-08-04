@@ -251,6 +251,8 @@ class AccessSettings(LoginRequiredMixin,View):
         role = Role.objects.get(profile= profile, project= project).role
         # users = User.objects.all().filter(profile= profile)
         # is_admin = role =='is_admin'
+        ticket_project = {'states': [{'state_name':'New','color':'#ff0000'}, {'state_name':'To-Do','color':'#ff9500'}, {'state_name':'Doing','color':'#fffb00'}, {'state_name':'Done','color':'#00ff00'}, {'state_name':'Extra','color':'#fb00ff'}], 'types': [{'type_name': 'Bug','color':'#ff9500'}, {'type_name': 'Feature','color':'#0077ff'}], 'attributes': [{'name': 'Example'}, {'name': 'Example 2'}], 'relationships': [{'title': 'Null Pointer on update'}, {'title': 'Ticket Edit Wireframe'}]}
+        #ticket_project = {'states': [], 'types': [], 'attributes': [], 'relationships': []}
         print(role)
         context = {'project': project, 'role':role}
         return render(request, self.template_name, context)
