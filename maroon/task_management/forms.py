@@ -41,3 +41,8 @@ class NewProjectForm(BSModalModelForm):
     class Meta:
         model = Project
         fields = ['name']
+
+class UserUpdate(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email',)

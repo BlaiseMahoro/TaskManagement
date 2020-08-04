@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 # from .forms import UserDeleteForm
 from .models import Profile, Project, Role
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, UserUpdate
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
@@ -53,28 +53,21 @@ class Account(LoginRequiredMixin,View):  # Will later add: LoginRequredMixin
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
         token = Token.objects.get(user=request.user)
-        context = {"profile":profile, "user_token":token}
+        form = UserUpdate()
+        context = {"profile":profile, "user_token":token, 'form':form}
         return render(request, self.template_name, context)
 
     def post(self, request):
-        error_message =""
-        try:
-            response = request.POST
-            user = request.user
-            user.first_name = response['fname']
-            user.last_name = response['lname']
-            user.username = response['username']
-            user.email = response['email']
-            user.save()
-        except:
-            error_message = "Username already exists!"
-
+        form = UserUpdate(data=request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            profile = Profile.objects.get(user=request.user)
+            context = {"profile":profile}
+            return render(request, self.template_name, context)
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile, "error":error_message}
-
-        return render(request, self.template_name, context)
+        context = {"profile":profile, 'form':form}
+        return render(request, self.template_name, context)        
     
-
 
 class Register(View):
     template_name = "registration/register.html"
