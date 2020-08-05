@@ -230,8 +230,10 @@ class UpdateTicketState(View):
     def post(self, request, *args, **kwargs):
         try:
             state_name = json.loads(request.body)['state']
-            state = State.objects.get(state_name=state_name)
             ticket = Ticket.objects.get(pk=kwargs.get('pk'))
+            print(ticket.project.name)
+            state = ticket.project.ticket_template.states.get(state_name=state_name)
+            print(state.state_name)
             ticket.state = state
             ticket.save()
             return HttpResponse({'':''},status=status.HTTP_200_OK,
