@@ -31,6 +31,7 @@ class Landing(LoginRequiredMixin,View):
     landing_empty_template = "landing_none_selected.html"
 
     def get(self, request, *args, **kwargs):
+        print(kwargs)
         if 'pk' in kwargs:
             project = get_object_or_404(Project, pk=kwargs['pk'])
             context = {'project': project, 
@@ -103,7 +104,7 @@ class Register(View):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user) #authenticate user and redirect them to landing page
-            return redirect('landingNoneSelected')
+            return redirect('landing')
         context = {'form': form}
         return render(request, self.template_name, context)
 
@@ -176,7 +177,7 @@ class ProjectSettings(LoginRequiredMixin,View):
             project.save()
         if response.get('section') =='delete_project':
             project.delete()   
-            return redirect('landingNoneSelected')
+            return redirect('landing')
         return render(request, self.template_name, {'project':project})
 
 class CreateProject(LoginRequiredMixin, BSModalCreateView):
