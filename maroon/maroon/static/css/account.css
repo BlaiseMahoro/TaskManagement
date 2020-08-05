@@ -1,0 +1,60 @@
+h1,h2,h3, label{
+    font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+}
+
+h2, h3 {
+    padding-left: 10px;
+}
+.personal_info label {
+    font-size: 80%;
+    font-weight: bold;
+    padding-left: 15px;
+}
+.personal_info, .change_pw, .delete_account {
+    width: 500px;
+    height:auto;
+    position: relative;
+    border: 1px solid gray;
+    border-radius: 6px;
+    padding: 10px;    
+    margin-bottom: 2em;
+}
+
+#firstname {
+    margin-left: 5px;
+}
+
+#lastname {
+    margin-left: 7px;
+}
+
+#username {
+    margin-left: 9px;
+}
+
+#email {
+    margin-left:  35px;
+}
+
+button{
+    background-color: #bb285c;
+    color:white;
+    margin-left: 15px;
+}
+
+.profile_photo {
+    width: 200px;
+    height: 30%;
+    border: 1px solid gray;
+    position: relative;
+    margin-right: 20px;
+    float:right;
+    padding: 10px;
+    }
+.profile_photo button {
+    position: absolute;
+    top: 80%;
+    left: 38%;
+    margin: auto;
+}
