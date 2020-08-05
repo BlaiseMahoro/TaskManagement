@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
 from .models import Profile, Project, Role, User, Ticket, State
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate, TicketDetailForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
@@ -224,6 +224,7 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
+
 class UpdateTicketState(View):
     login_url = 'login'
     
@@ -267,3 +268,18 @@ class AccessSettings(LoginRequiredMixin,View):
         else:
             form = AddUserForm()
         return render(request, "add_user.html", {"project": project, "form": form})
+
+class TicketDetail(LoginRequiredMixin,View):
+    login_url = 'login'
+    template_name = "ticket/ticket_detail.html"
+
+    def get(self, request, *args, **kwargs):
+        ticket = Ticket.objects.get(pk=kwargs.get('pk'))
+        form = TicketDetailForm(initial=ticket.__dict__)
+        context = {
+            'form': form, 
+            'ticket': ticket, 
+            'project':ticket.project,
+            'project_profiles': [ role.profile for role in ticket.project.roles.all()]
+        }
+        return render(request, self.template_name, context)
