@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
 from .models import Profile, Project, Role, User, Ticket, State
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
@@ -72,26 +72,20 @@ class Account(LoginRequiredMixin,View):
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
         token = Token.objects.get(user=request.user)
-        context = {"profile":profile, "user_token":token}
+        form = UserUpdate()
+        context = {"profile":profile, "user_token":token, 'form':form}
         return render(request, self.template_name, context)
 
     def post(self, request):
-        error_message =""
-        try:
-            response = request.POST
-            user = request.user
-            user.first_name = response['fname']
-            user.last_name = response['lname']
-            user.username = response['username']
-            user.email = response['email']
-            user.save()
-        except:
-            error_message = "Username already exists!"
-
+        form = UserUpdate(data=request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            profile = Profile.objects.get(user=request.user)
+            context = {"profile":profile}
+            return render(request, self.template_name, context)
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile, "error":error_message}
-
-        return render(request, self.template_name, context)
+        context = {"profile":profile, 'form':form}
+        return render(request, self.template_name, context)        
     
 class Register(View):
     template_name = "registration/register.html"
@@ -257,6 +251,8 @@ class AccessSettings(LoginRequiredMixin,View):
         role = Role.objects.get(profile= profile, project= project).role
         # users = User.objects.all().filter(profile= profile)
         # is_admin = role =='is_admin'
+        ticket_project = {'states': [{'state_name':'New','color':'#ff0000'}, {'state_name':'To-Do','color':'#ff9500'}, {'state_name':'Doing','color':'#fffb00'}, {'state_name':'Done','color':'#00ff00'}, {'state_name':'Extra','color':'#fb00ff'}], 'types': [{'type_name': 'Bug','color':'#ff9500'}, {'type_name': 'Feature','color':'#0077ff'}], 'attributes': [{'name': 'Example'}, {'name': 'Example 2'}], 'relationships': [{'title': 'Null Pointer on update'}, {'title': 'Ticket Edit Wireframe'}]}
+        #ticket_project = {'states': [], 'types': [], 'attributes': [], 'relationships': []}
         print(role)
         context = {'project': project, 'role':role}
         return render(request, self.template_name, context)
