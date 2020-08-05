@@ -2,6 +2,18 @@
 
 {% block content %}
 <style>
+	.overflow {
+		overflow-y:auto;
+		height: 800px;
+		width: 600px;
+		margin: 0;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-ms-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+
 	/* Simple Container for Button */
 	.container {
 		height: 50px;
@@ -57,22 +69,25 @@
 	}
 </style>
 
-<div class="centered_screen_container">
-	<h3>Register</h3>
-	<div class=bordered>
+<div class="overflow">
+	<div class="centered_screen_container">
+		<h3>Register</h3>
+		<div class=bordered>
 
-		<form method="POST">
-			{% csrf_token %}
+			<form method="POST">
+				{% csrf_token %}
 
-			<!-- Styles are still applied to inputs generated from this -->
-			{{form.as_p}}
+				<!-- Styles are still applied to inputs generated from this -->
+				{{form.as_p}}
 
-			<div class="container">
-				<div class="center">
-					<button type="submit">Register</button>
+				<div class="container">
+					<div class="center">
+						<button type="submit">Register</button>
+					</div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</div>
 </div>
+
 {% endblock content %}
