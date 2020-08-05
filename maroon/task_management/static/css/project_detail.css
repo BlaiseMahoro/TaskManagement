@@ -44,9 +44,9 @@
     border-radius: 6px;
     border-color: #bb285c;
     position: relative;
-    top: 200px;
+    top: 0px;
     float: right;
-    font-size: 20px;
+    font-size: 14px;
 }
 .project_details textarea {
     background-color: #ebebeb;
