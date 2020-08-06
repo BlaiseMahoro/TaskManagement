@@ -144,17 +144,14 @@ class Ticket(models.Model):
     # The date that the ticket was created
     created_date = models.DateTimeField(auto_now_add=True)
     #state of ticket
-    state = models.ForeignKey(State, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
-    #state = models.OneToOneField('State', on_delete=models.DO_NOTHING)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, related_name="tickets", null=True)
     #type of ticket
-    type = models.ForeignKey(Type, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
-    #ticket_type = models.OneToOneField('Type', on_delete=models.DO_NOTHING)
+    type = models.ForeignKey(Type, on_delete=models.SET_NULL, related_name="tickets", null=True)
   
     class Meta:
         ordering = ["created_date"]
         
     def save(self, *args, **kwargs):
-        print("Saving")
         if self.pk == None:
             self.id_in_project = self.project.max_ticket_id + 1
             self.project.max_ticket_id = self.id_in_project
