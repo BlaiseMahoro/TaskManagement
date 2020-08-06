@@ -1,6 +1,6 @@
 .title {
     display: inline;
-    /* margin: 36px; */
+    margin: 10px;
 }
 
 .image {
@@ -18,7 +18,7 @@
 .header i {
     float: right;
     color: gray;
-    /* margin-top: 30px; */
+    margin-top: 30px;
 
 }
 
@@ -31,12 +31,10 @@
 }
 
 #arrow i {
-    /* font-size: 20px; */
-    float: left;
-    /* position: relative; */
-    padding-right: 30px;
-    padding-top: 10px;
-          
+    font-size: 70px;
+    float: right;
+    position: relative;
+    bottom: 61px;    
 }
 .nav li.active{
     border: none;
@@ -46,7 +44,6 @@
 
 .nav li a {
     color: gray;
-    /* margin-left: 35px; */
 }
 
 .nav-tabs {
@@ -85,9 +82,4 @@ margin: 8px 0;
 box-sizing: border-box;
 border: 2px solid black;
 border-radius: 5px;
-}
-
-.modal-display {
-    display: block; 
-    padding-left: 16px;
 }
