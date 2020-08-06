@@ -138,6 +138,29 @@ class TicketDetail(TokenAuthView, generics.RetrieveUpdateDestroyAPIView):
         super().delete(request, *args, **kwargs)
         return Response("Ticket successfully deleted", status=status.HTTP_202_ACCEPTED)
 
+class TicketUpdateState(TokenAuthView, APIView):
+    permission_classes = [ProjectCollaborator]
+
+    def post(self, request, **kwargs):
+        print("In here")
+        print(request.body)
+        #Get state out of request body
+        body = json.loads(request.body)
+        state = body['state']
+        print(state)
+        #Get ticket from url and confirm state is valid
+        ticket = models.Ticket.objects.get(pk=self.kwargs['ticket_pk'])
+        print(ticket.project.ticket_template.states.all().values('state_name'))
+        print(state)
+        print(ticket.project.ticket_template.states.filter(state_name=state))
+        if ticket.project.ticket_template.states.all().filter(state_name=state).exists():
+            #Update state
+            ticket.state = ticket.project.ticket_template.states.all().get(state_name=state)
+            ticket.save()
+            return Response("Ticket state updated", status=status.HTTP_202_ACCEPTED)
+
+        #State not valid
+        return Response("The state is not valid", status=status.HTTP_406_NOT_ACCEPTABLE)
 
     '''For printing post requests if needed.'''
 def pretty_request(request):

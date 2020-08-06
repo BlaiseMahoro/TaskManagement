@@ -224,23 +224,6 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-class UpdateTicketState(View):
-    login_url = 'login'
-    
-    def post(self, request, *args, **kwargs):
-        try:
-            state_name = json.loads(request.body)['state']
-            ticket = Ticket.objects.get(pk=kwargs.get('pk'))
-            print(ticket.project.name)
-            state = ticket.project.ticket_template.states.get(state_name=state_name)
-            print(state.state_name)
-            ticket.state = state
-            ticket.save()
-            return HttpResponse({'':''},status=status.HTTP_200_OK,
-            content_type='application/json')
-        except:
-            return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
-            content_type='application/json')
 
 class AccessSettings(LoginRequiredMixin,View):
     login_url = 'login'
