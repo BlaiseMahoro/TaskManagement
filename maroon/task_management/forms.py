@@ -58,6 +58,5 @@ class TicketForm(BSModalModelForm):
 #         model = Project
 #         fields = ['roles']
     
-
-
-    
+# class TicketTemplateForm(forms.Form):
+#     pass
