@@ -270,4 +270,3 @@ class AccessSettings(LoginRequiredMixin,View):
         else:
             form = AddUserForm()
         return render(request, "add_user.html", {"project": project, "form": form})
-
