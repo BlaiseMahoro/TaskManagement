@@ -36,7 +36,8 @@ class Landing(LoginRequiredMixin,View):
             context = {'project': project, 
                 'template_name': self.landing_template, 
                 'ticket_form': TicketForm(), 
-                'project_profiles': [ role.profile for role in project.roles.all()]}
+                'project_profiles': [ role.profile for role in project.roles.all()], 
+                'token':Token.objects.get_or_create(user=request.user)[0]}
             return render(request, self.landing_template, context)
         else:
             return render(request, self.landing_empty_template)

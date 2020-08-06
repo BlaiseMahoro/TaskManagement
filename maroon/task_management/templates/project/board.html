@@ -82,19 +82,16 @@ const drag = event => {
 };
 
 const drop = event => {
-    const project_id = $("#project_id").val();
-    console.log(project_id)
-    const token = $("#token").val();
+    const project_id = "{{project.pk}}";
+    const token = "{{token}}";
     const el = document.querySelector(`[data-id="${event.dataTransfer.getData('text/plain')}"]`);
     const ticket_id = el.getElementsByClassName("ticket_id")[0].value;
-    console.log(event.currentTarget.querySelector(".column-title").innerHTML);
     Array.from(document.querySelectorAll('.column'))
          .forEach(column => column.classList.remove('drop'));
 
    
         document.querySelector(`[data-id="${event.dataTransfer.getData('text/plain')}"]`).remove();
 
-        console.log("dropped",event.currentTarget)
         event.currentTarget.innerHTML = event.currentTarget.innerHTML + event.dataTransfer.getData('text/html');
         event.currentTarget.querySelector(".state-color").style.backgroundColor = event.currentTarget.querySelector(".color").value;
         const cards = event.currentTarget.querySelectorAll('div.state-color')
@@ -102,7 +99,7 @@ const drop = event => {
             cards[i].style.backgroundColor = event.currentTarget.querySelector(".color").value;
         }
     $.ajax({
-        url:`/api/project/${project_id}/ticket/${project_id}/changestate`,
+        url:`/api/project/${project_id}/ticket/${ticket_id}/changestate`,
         type:"POST",
         contentType: 'application/json',
         data:JSON.stringify({state:event.currentTarget.querySelector(".column-title").innerHTML}),
@@ -110,6 +107,7 @@ const drop = event => {
         success: function(data, textStatus, jqXHR)
         {
         //data - response from server
+        //This request will always work, unless the server is down.
          
         },
         error: function (jqXHR, textStatus, errorThrown)
