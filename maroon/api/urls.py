@@ -9,6 +9,5 @@ urlpatterns = [
     path('project/<int:pk>/ticket/<int:ticket_pk>', views.TicketDetail.as_view(), name='ticket_detail'),
     path('profiles/', views.ProfileCreate.as_view(), name='profile_create'),
     path('profiles/myprofile/', views.ProfileDetail.as_view(), name='profile_update'),
-    path('ticket/<int:pk>/changestate', views.TicketUpdateState.as_view(), name='update_state'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
