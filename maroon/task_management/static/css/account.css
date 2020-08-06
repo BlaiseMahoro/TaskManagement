@@ -17,7 +17,7 @@
     padding-left: 15px;
 }
 
-.personal_info, .change_pw, .delete_account, .acc_api_key {
+.personal_info, .change_pw, .delete_account {
     width: 500px;
     height:auto;
     position: relative;
@@ -27,27 +27,20 @@
     margin-bottom: 2em;
 }
 
-.acc_api_key {
-    position: relative;
-    float: right;
-    width: auto;
-    font-size: 20px;
-}
-
 .personal_info input {
     margin-left: 10%;
 }
 
-.profile_photo button, .personal_info button {
+.profile_photo button, .personal_info button, .delete_account button {
     background-color: #bb285c;
-    color:white; 
+    color:white;
     margin-left: 15px;
     border-radius: 6px;
-    border-color: #bb285c;
+    
 }
 
 .profile_photo button, .personal_info button {
-    width: auto;
+    width: 30%;
     border-color: lightgray;
 }
 
@@ -60,16 +53,16 @@
     margin-right: 40px;
     float: right;
     padding: 10px;
-}
+    }
 
 .profile_photo button {
-    position: relative;
-    margin-top: 30px; 
-    margin-left: 40%;
+    position: absolute;
+    top: 75%;
+    left: 35%;
+    margin: auto;
 }
 
 .profile_photo img {
-    position: relative;
     display: block;    
     margin-left: auto;
     margin-right: auto;
