@@ -146,14 +146,16 @@ class TicketUpdateState(TokenAuthView, APIView):
         #Get state out of request body
         body = json.loads(request.body)
         state = body['state']
-        print(state)
+        
+        #Get project from url
+        project = models.Project.objects.get(pk=self.kwargs['pk'])
 
-        #Get ticket from url and confirm state is valid
-        ticket = models.Ticket.objects.get(pk=self.kwargs['pk'])
-        print(ticket.project.ticket_template.states.all().values('state_name'))
-        if ticket.project.ticket_template.states.all().filter(state_name=state).exists():
+        #Get ticket by project id and confirm state is valid
+        ticket = project.tickets.get(id_in_project=self.kwargs['ticket_pk'])
+        #print(project.ticket_template.states.all().values('state_name'))
+        if project.ticket_template.states.all().filter(state_name=state).exists():
             #Update state
-            ticket.state = ticket.project.ticket_template.states.all().get(state_name=state)
+            ticket.state = project.ticket_template.states.all().get(state_name=state)
             ticket.save()
             return Response("Ticket state updated", status=status.HTTP_202_ACCEPTED)
         

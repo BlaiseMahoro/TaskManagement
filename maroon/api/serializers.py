@@ -124,8 +124,8 @@ class TypeSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     project = serializers.CharField(source='project.name', required=False)
     project_pk = serializers.IntegerField(source='project.pk', required=False, write_only=True)
-    state = serializers.CharField(source='state.state_name')
-    type = serializers.CharField(source='type.type_name')
+    state = serializers.CharField(source='state.state_name', default="None")
+    type = serializers.CharField(source='type.type_name', default="None")
     assignee_list = serializers.ListField(child=serializers.CharField(), required=False, write_only=True)
     assignees = ProfileSerializer(many=True, read_only=True)
     attributes = AttributeSerialier(many=True, required=False)
