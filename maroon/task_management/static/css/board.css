@@ -9,10 +9,9 @@
 }
 
 .card-title {
-    font-size: 16px;
-    /* margin-top: -10px; */
-    padding-left: 10px;
-    color: gray;
+    font-size: 20px;
+    margin-top: -10px;
+    padding: 10px;
 }
 
 .droppable {
@@ -42,7 +41,6 @@
     width: 5px;
     float: left;
     text-align: center;
-
 }
 
 .task-details {
@@ -52,11 +50,7 @@
     width: 90%;
 }
 
-.task-description {
-    display: inline-block;
-}
-
-.task-title {
+.task-number {
     float: left;
 }
 

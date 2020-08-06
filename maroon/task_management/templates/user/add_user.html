@@ -1,26 +1,30 @@
 <!-- Modal (Following https://www.w3schools.com/bootstrap/bootstrap_modal.asp) -->
 <div id="create-ticket" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <form action="" method="POST">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <!-- Body -->
-        <div class="modal-body">
-          {% csrf_token %}
-          <label class="left_aligned_label">Username</label>
-          <br />
-          <input class="modal_input" type="text" name="title" /><br />
-          <label class="left_aligned_label">Role</label> <br />
-          <select class="modal_select" id="type_name" name="type_name">
-          
-          </select> <br />
+    <div class="modal-dialog">
+      <form action="" method="POST">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <!-- Body -->
+          <div class="modal-body">
+            {% csrf_token %}
+            <label class="left_aligned_label">Username</label>
+            <br />
+            <input class="modal_input" type="text" name="username" /><br />
+            <label class="left_aligned_label">Role</label> <br />
+            <select class="modal_select" id="type_name" name="type_name">
+              <option>Administrator</option>
+              <option>Collaborator</option>
+            </select> <br />
+            
+            </select> <br />
+          </div>
+  
+          <!-- Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Add User</button>
+          </div>
         </div>
-        <!-- Footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Add User</button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
-</div>

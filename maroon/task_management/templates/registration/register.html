@@ -2,22 +2,6 @@
 
 {% block content %}
 <style>
-	.background_color {
-		background-color: #bb285c;
-	}
-
-	.overflow {
-		overflow-y:auto;
-		height: 800px;
-		width: 600px;
-		margin: 0;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		-ms-transform: translate(-50%, -50%);
-		transform: translate(-50%, -50%);
-	}
-
 	/* Simple Container for Button */
 	.container {
 		height: 50px;
@@ -46,7 +30,6 @@
 
 	/* Moqup styled Border */
 	.bordered {
-		background-color: white;
 		width: 500px;
 		height: auto;
 		padding: 20px;
@@ -63,6 +46,18 @@
 		color: white;
 	}
 
+	/* left aligned label */
+	.left_aligned_label {
+		display: inline-block;
+		width: 82%;
+		text-align: left;
+	}
+
+	/* Optional label */
+	.optional_label {
+		font-size: 75%;
+	}
+
 	/* Input Fields */
 	input {
 		width: 100%;
@@ -74,27 +69,46 @@
 	}
 </style>
 
-<body class="background_color">
-	<div class="overflow">
-		<div class="centered_screen_container">
-			<h3>Register</h3>
-			<div class=bordered>
+<div class="centered_screen_container">
+	<h3>Register</h3>
+	<div class=bordered>
 
-				<form method="POST">
-					{% csrf_token %}
+		<form method="POST">
+			{% csrf_token %}
+			<!-- {{form.as_p}} -->
+			<p>
+				<label class=left_aligned_label for="id_username">Username</label>
+				<input Class=right_aligned type="text" name="username" maxlength="150" required=true id="id_username">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_first_name">First name</label> <label
+					class="optional_label">Optional</label>
+				<input type="text" name="first_name" maxlength="30" id="id_first_name">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_last_name">Last name</label> <label
+					class="optional_label">Optional</label>
+				<input type="text" name="last_name" maxlength="30" id="id_last_name">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_email">Email</label>
+				<input type="email" name="email" maxlength="254" required=true id="id_email">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_password1">Password</label>
+				<input type="password" name="password1" autocomplete="new-password" required=true id="id_password1">
+			</p>
+			<p>
+				<label class=left_aligned_label for="id_password2">Password confirmation</label>
+				<input type="password" name="password2" autocomplete="new-password" required=true id="id_password2">
+			</p>
 
-					<!-- Styles are still applied to inputs generated from this -->
-					{{form.as_p}}
-
-					<div class="container">
-						<div class="center">
-							<button type="submit">Register</button>
-						</div>
-					</div>
-				</form>
+			<div class="container">
+				<div class="center">
+					<button type="submit">Register</button>
+				</div>
 			</div>
-		</div>
+		</form>
 	</div>
-</body>
-
+</div>
 {% endblock content %}
