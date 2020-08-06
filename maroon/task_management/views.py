@@ -224,7 +224,6 @@ class UpdateTicketState(View):
         except:
             return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
             content_type='application/json')
-<<<<<<< HEAD
 
 class AccessSettings(LoginRequiredMixin,View):
     login_url = 'login'
@@ -253,5 +252,14 @@ class AccessSettings(LoginRequiredMixin,View):
         else:
             form = AddUserForm()
         return render(request, "add_user.html", {"project": project, "form": form})
-=======
->>>>>>> parent of d95258f... Merge branch 'master' into board2
+
+    def delete_user(request, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        profile = Profile.objects.get(user=request.user)
+        roles = Role.objects.get(profile= profile, project= project).role
+        if request.method == "POST":
+            # Fetch list of items to delete, by ID
+            items_to_delete = request.POST.getlist('delete_items')
+            # Delete those items all in one go
+            Role.objects.filter(role__in=items_to_delete).delete()
+        return render(request, self.template_name, {"roles": roles})
