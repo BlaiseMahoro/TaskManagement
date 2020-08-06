@@ -1,1 +1,119 @@
-<p>Board content coming soon.</p>
+<!-- https://www.codeply.com/go/YEFHXEnn0v -->
+<div class="container-fluid pt-3 table">
+    <div class="row flex-row flex-sm-nowrap py-3">
+
+        <main class="board">
+            {% for state in project.ticket_template.states.all %}
+            <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2 class="column-title">{{state.state_name}}</h2>
+                <input type="hidden"  class="color" value="{{state.color}}" />
+                <input type="hidden"  class="state_name" value="{{state.state_name}}" />
+                {% for ticket in state.tickets.all %}
+                <article class="card carddraggable shadow-sm"  draggable="true" ondragstart="drag(event)" data-id="{{ticket.id_in_project}}">
+                    <div class="task card-body p-2">
+                        <div class="state-color" style="background-color:{{state.color}};"></div>
+                        <div class="task-details">
+                            <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
+                            <div class="sub-details">
+                                <p class="task-number">{{ticket.description}}</p>
+                                <p class="task-type" style="background-color: {{ticket.type.color}};">{{ticket.type}}</p>
+                            </div>
+                        </div>
+                        {% if ticket.assignees.all %}
+                                <div class="task-users collapse-container">
+                                    {% if ticket.assignees.all.0.avatar %}
+                                    <img src="/{{ticket.assignees.all.0.avatar}}" alt="Avatar" class="user-img">
+                                    {% else %}
+                                    <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+                                    {% endif %}
+                                    <button type="button" class="user-toggle btn btn-info" data-toggle="collapse" data-target="#user-list">
+                                        <p>{{ticket.assignees.all.0.user}}</p>
+                                        <i class="fa fa-caret-down" aria-hidden="true"></i></button>
+                                    <div id="user-list" class="collapse">
+                                        <tr class="user-row">
+                                            {% for profile in ticket.assignees.all|slice:"1:" %} 
+                                                <td>
+                                                    {% if profile.avatar%}
+                                                    <img src="/{{profile.avatar}}" alt="Avatar" class="user-img">
+                                                    {% else %}
+                                                    <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+                                                    {% endif %}
+                                                    s<p class="no-collapse">{{profile.user}}</p>
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    </div>
+                                </div>
+                                {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </main>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+const dragStart = target => {
+    target.classList.add('dragging');
+};
+
+const dragEnd = event => {
+    event.currentTarget.classList.remove('dragging');
+};
+
+const dragEnter = event => {
+    event.currentTarget.classList.add('drop');
+};
+
+const dragLeave = event => {
+    event.currentTarget.classList.remove('drop');
+};
+
+const drag = event => {
+    event.dataTransfer.setData('text/html', event.currentTarget.outerHTML);
+    event.dataTransfer.setData('text/plain', event.currentTarget.dataset.id);
+};
+
+const drop = event => {
+    Array.from(document.querySelectorAll('.column'))
+         .forEach(column => column.classList.remove('drop'));
+
+    document.querySelector(`[data-id="${event.dataTransfer.getData('text/plain')}"]`).remove();
+
+    console.log("dropped",event.currentTarget)
+    event.currentTarget.innerHTML = event.currentTarget.innerHTML + event.dataTransfer.getData('text/html');
+    event.currentTarget.querySelector(".state-color").style.backgroundColor = event.currentTarget.querySelector(".color").value;
+    const cards = event.currentTarget.querySelectorAll('div.state-color')
+    console.log(cards[0])
+     for(let i=0; i<cards.length; i++){
+        cards[i].style.backgroundColor = event.currentTarget.querySelector(".color").value;
+     }
+    
+    
+    //$.post('/ticket/<pk>/changestate')
+};
+
+const allowDrop = event => {
+    event.preventDefault();
+};
+
+Array.from(document.querySelectorAll('.card')).forEach(card => {
+    card.addEventListener('dragend', dragEnd);
+});
+
+Array.from(document.querySelectorAll('.column')).forEach(column => {
+    column.addEventListener('dragenter', dragEnter);
+    column.addEventListener('dragleave', dragLeave);
+});
+
+document.addEventListener('dragstart', e => {
+    if (e.target.className.includes('card')) {
+        dragStart(e.target);
+    }
+});
+
+</script>

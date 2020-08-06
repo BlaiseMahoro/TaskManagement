@@ -1,0 +1,182 @@
+.card.draggable {
+    cursor: grab;
+    padding: 20px;
+    border: solid;
+    border-color: #eff0f1;
+    font-size: 16px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.card-title {
+    font-size: 16px;
+    /* margin-top: -10px; */
+    padding-left: 10px;
+    color: gray;
+}
+
+.droppable {
+    background-color: var(--success);
+    min-height: 120px;
+    margin-bottom: 1rem;
+}
+
+.table {
+    display:table;
+    border-collapse:separate;
+    border-spacing:10px;
+    margin-top: -100px;
+}
+
+.column {
+    background-color: white;
+    border-radius: 15px;
+    display: table-cell;
+    min-width: 300px;
+    max-width: 800px;
+    border: solid;
+    border-color: #ebebeb;
+    border-width: 10px;
+} 
+
+.column-title{
+    background-color: #ebebeb;
+    margin: 0px;
+    padding: 10px;
+    font-size: 25px;
+}
+
+.state-color {
+    height: 60px;
+    width: 5px;
+    float: left;
+    text-align: center;
+
+}
+
+.task-details {
+    display: inline-block;
+    margin: 3px; 
+    padding-left: 5px;
+    width: 90%;
+}
+
+.task-description {
+    display: inline-block;
+}
+
+.task-title {
+    float: left;
+}
+
+.task-type {
+    float: right;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    color: white;
+    margin: 5px;
+}
+
+.user-toggle {
+    background-color: white;
+    color: #333333;
+    border: none;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+.user-toggle:hover, .user-toggle:focus, .user-toggle:active {
+    background-color: lightgray;
+    border-color: transparent;
+}
+
+.user-img {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    float: left;
+    border-radius: 100%;
+    margin-right: 20px;
+    margin-left: 20px;
+    /* margin-bottom: 10px; */
+}
+
+.user-row {
+    padding: 5px;
+}
+
+.collapse-container {
+    margin: 0;
+    margin-left: 20px;
+}
+
+.card {
+    margin: 10px;
+    font-size: 16px;
+    padding: 10px;
+    border: 2px solid lightgray;
+    border-radius: 3px;
+    /*margin-bottom: 10px;
+    cursor: pointer;
+    width: 150px;
+    height: 60px;
+    cursor: grab;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); */
+}
+
+.card:active {
+    cursor: grabbing;
+}
+
+.card.dragging {
+    opacity: .5;
+    transform: scale(.8);
+}
+
+/* .column {
+    padding: 10px;
+    background: #2c2c2c; 
+    border: 2px solid #2c2c2c;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    
+} */
+
+/* .column.column-todo h2 {
+    background: #3498DB;
+}
+
+.column.column-ip h2 {
+    background: #F39C12;
+}
+
+.column.column-ip {
+    margin: 0 20px;
+} */
+
+.column.drop {
+    border: 2px dashed #FFF;
+}
+
+.column.drop article {
+    pointer-events: none;
+}
+/* 
+h3 {
+    font-size: 21px;
+    font-family: Helvetica;
+    margin: 0;
+} */
+
+/* .card:last-child {
+    margin-bottom: 0;
+} */
+
+/* h2 {
+    background: green;
+    margin: -10px -10px 10px;
+    padding: 4px 10px;
+    font-family: Helvetica;
+    font-size: 21px;
+} */

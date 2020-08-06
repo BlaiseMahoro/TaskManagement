@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 from colorful.fields import RGBColorField
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) #Need to change to CASCADE.
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) 
     avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
     def get_user_projects(self, admin=None):
@@ -74,19 +74,8 @@ class TicketTemplate(models.Model):
     # The project that this template will be applied to
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="ticket_template")
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Call the "real" save() method.
-
-        # for ticket in self.project.tickets:
-        #     if not self.states.all().filter(state_name=ticket.state.state_name).exists():
-        #         ticket
-        #     profile = Profile.objects.get(user=user)
-        #     Role.objects.create(profile=profile, project= self)
-        #     TicketTemplate.objects.create(project=self)
-
     def __str__(self):
         return self.project.name
-
 
 class State(models.Model):
     # The ticket template that contains these states
@@ -110,7 +99,6 @@ class Type(models.Model):
     
     #color
     color = RGBColorField(default="#0000FF")
-
     def __str__(self):
         return self.type_name
 
@@ -119,6 +107,15 @@ class AttributeType(models.Model):
     ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="attributeTypes")
     # The name of the attribute
     name = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+class RelationshipType(models.Model):
+    # Name of the relationship type
+    name = models.TextField()
+    # The ticket template the relationship belongs to
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="relationshipTypes")
 
     def __str__(self):
         return self.name
@@ -156,18 +153,13 @@ class Ticket(models.Model):
     # The date that the ticket was created
     created_date = models.DateTimeField(auto_now_add=True)
     #state of ticket
-    state = models.ForeignKey(State, on_delete=models.SET_NULL,related_name="tickets", null=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, related_name="tickets", null=True)
     #type of ticket
     type = models.ForeignKey(Type, on_delete=models.SET_NULL, related_name="tickets", null=True)
   
     class Meta:
         ordering = ["created_date"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print(args)
-        #
-         
+        
     def save(self, *args, **kwargs):
         if self.pk == None:
             self.id_in_project = self.project.max_ticket_id + 1
@@ -185,6 +177,17 @@ class Attribute(models.Model):
     value = models.TextField()
     # For ticket to have more than one Attributes
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="attributes", blank=True)
+
+class Relationship(models.Model):
+    # The parent of the attribute
+    relationship_type = models.ForeignKey(RelationshipType, on_delete=models.CASCADE, related_name="relationships")
+    # Ticket that has the relationships
+    ticket_1 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="relationships", blank=True, null=True)
+    # Other ticket that is in this instance of a relationship
+    ticket_2 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="related_ticket", blank=True)
+
+    def __str__(self):
+        return self.relationship_type.name
 
 class File(models.Model):
     # The parent of the file

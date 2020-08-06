@@ -2,8 +2,7 @@
 
 {% block content %} 
 <div class="header">
-    <p class="title">{{project.name}}</p>
-   <div id="arrow"><a href="{% url 'landing' project.pk %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a></div>
+    <p class="title"><div id="arrow"><a href="{% url 'landing' project.pk %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a></div>{{project.name}}</p>
 </div>
 
     <!-- https://stackoverflow.com/questions/19846967/bootstrap3-tabs-in-django -->
@@ -24,7 +23,7 @@
         {% include "project/management/access.html" %}
     </div>
     <div class="tab-pane fade" id="ticket_template">
-        {% include "project/management/ticket_template.html" %}
+        {% include "project/management/ticket_template.html" with project=project %}
     </div>
   
   </div>
