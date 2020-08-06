@@ -2,17 +2,10 @@ from rest_framework import serializers
 from task_management import models
 
 class UserSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = models.User
-        fields = ['username']
-
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    
-    class Meta:
-        model = models.Profile
-        fields = ['user']
+        fields = ['username','first_name','last_name','email','password']
 
 class CustomSlugRelatedField(serializers.SlugRelatedField):
     def to_internal_value(self, data):
@@ -42,6 +35,7 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         #Delete Types and States before the new ones are added to the database
+        #print("template internal value")
         models.Type.objects.filter(ticket_template=self.instance).delete()
         models.State.objects.filter(ticket_template=self.instance).delete()
         return super(TicketTemplateSerializer, self).to_internal_value(data=data)
@@ -56,13 +50,16 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
             if attribute.name not in names:
                 attribute.delete()
 
+class FlatUserName(serializers.CharField):
+    def to_representation(self, value):
+        return value.user.username
+
 class RoleSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='profile.user.username')
+    username = FlatUserName(source="profile")
 
     def update(self, instance, validated_data):
-        #Validated data embeds username weirdly
-        valid_username = validated_data['profile']['user']['username']
-        profile = models.Profile.objects.get(user=models.User.objects.get(username=valid_username))
+        print(validated_data)
+        profile = models.Profile.objects.get(user=models.User.objects.get(username=validated_data['profile']))
 
         #'instance' in this case is the project to find the role
         role, created = models.Role.objects.all().get_or_create(profile=profile, project=instance)
@@ -85,7 +82,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create and return a new `Project` instance, given the validated data.
+        Create and return a new `Snippet` instance, given the validated data.
         """
         return Project.objects.create(**validated_data)
 
@@ -101,118 +98,3 @@ class ProjectSerializer(serializers.ModelSerializer):
         for role in models.Role.objects.filter(project=instance):
             if role.profile.user.username not in roles:
                 role.delete()
-
-class AttributeSerialier(serializers.ModelSerializer):
-    attribute_type = serializers.CharField(source='attribute_type.name')
-
-    class Meta:
-        model = models.Attribute
-        fields = ('attribute_type','value')
-
-
-class StateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.State
-        fields = ('state_name','color')
-        extra_kwargs = {'color': {'required' : False}}
-class TypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Type
-        fields = ('type_name','color')
-        extra_kwargs = {'color': {'required' : False}}
-
-class TicketSerializer(serializers.ModelSerializer):
-    project = serializers.CharField(source='project.name', required=False)
-    project_pk = serializers.IntegerField(source='project.pk', required=False, write_only=True)
-    state = serializers.CharField(source='state.state_name')
-    type = serializers.CharField(source='type.type_name')
-    assignee_list = serializers.ListField(child=serializers.CharField(), required=False, write_only=True)
-    assignees = ProfileSerializer(many=True, read_only=True)
-    attributes = AttributeSerialier(many=True, required=False)
-
-    class Meta:
-        model = models.Ticket
-        fields = ['title','description','project', 'project_pk','id_in_project', 'state', 'type', 'attributes','assignee_list','assignees']
-        extra_kwargs = {'id_in_project': {'required' : False}}
-
-    def create(self, validated_data):
-        """
-        Create and return a new `Ticket` instance, given the validated data.
-        """
-        project = models.Project.objects.get(pk=validated_data.pop('project')['pk'])
-
-        #Create ticket for project
-        ticket = models.Ticket(project=project)
-        self.update(instance=ticket, validated_data=validated_data)
-
-        return ticket
-
-    def update(self, instance, validated_data):
-        #Check that state is in the ticket template
-        ticket_template = instance.project.ticket_template
-        state = validated_data.pop('state')
-        if state not in ticket_template.states.all().values('state_name'):
-            raise serializers.ValidationError("The state is not valid")
-        instance.state = ticket_template.states.all().get(state_name=state['state_name'])
-
-        #Check that type is in the ticket template
-        type = validated_data.pop('type')
-        if type not in ticket_template.types.all().values('type_name'):
-            raise serializers.ValidationError("The type is not valid")
-        instance.type = ticket_template.types.all().get(type_name=type['type_name'])
-
-        #Create ticket on required values
-        instance.title = validated_data['title']
-        instance.description = validated_data['description']
-        instance.save()
-
-        #Update attributes and assignees
-        if 'attributes' in validated_data:
-            self.update_attributes(validated_data.pop('attributes'), instance)
-        if 'assignee_list' in validated_data:
-            self.update_assignees(validated_data.pop('assignee_list'), instance)
-
-        return instance
-
-
-    def update_attributes(self, validated_data, ticket):
-        #Get the attribute type names to check requested names against
-        project_attributes = ticket.project.ticket_template.attributeTypes.all().values('name')
-
-        #For each attribute in the request
-        for attribute in validated_data:
-            #Raise an error if the attribute type is not in the ticket template
-            if attribute['attribute_type'] not in project_attributes:
-                raise serializers.ValidationError("A listed attribute type is not valid.")
-                
-            #Update or create the attribute on the ticket
-            name = attribute['attribute_type']['name']
-            db_project_attribute = models.AttributeType.objects.get(ticket_template=ticket.project.ticket_template,name=name)
-            db_attribute, created = models.Attribute.objects.all().get_or_create(ticket=ticket, attribute_type=db_project_attribute)
-            db_attribute.value = attribute['value']
-            db_attribute.save()
-
-    def update_assignees(self, validated_data, ticket):
-        #Get the project users to check request users against
-        project_usernames = [ role.profile.user.username for role in ticket.project.roles.all()]
-
-        #For each username in the request
-        for username in validated_data:
-            #Raise error if the user does not have a role in the project
-            if username not in project_usernames:
-                raise serializers.ValidationError("A listed user is not a collaborator on this project.")
-    
-            #Add user to ticket if they are not already there
-            db_profile = models.Profile.objects.get(user=models.User.objects.get(username = username))
-            if db_profile not in ticket.assignees.all():
-                ticket.assignees.add(db_profile)
-
-        for profile in ticket.assignees.all():
-            if profile.user.username not in validated_data:
-                ticket.assignees.remove(profile)
-
-
-
-        
-
-    

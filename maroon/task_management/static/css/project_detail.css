@@ -44,9 +44,9 @@
     border-radius: 6px;
     border-color: #bb285c;
     position: relative;
-    top: 0px;
+    top: 200px;
     float: right;
-    font-size: 14px;
+    font-size: 20px;
 }
 .project_details textarea {
     background-color: #ebebeb;
@@ -131,10 +131,3 @@
     color: dimgray;
     font-size: 30px;
 }
-.add-user {
-    /* display: inline; */
-    float: right;
-    margin-top: 15px;
-    color: gray;
-}
-

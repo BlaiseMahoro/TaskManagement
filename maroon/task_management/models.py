@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 from colorful.fields import RGBColorField
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) 
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING) #Need to change to CASCADE.
     avatar = models.ImageField(upload_to="avatars/users",help_text="Profile picture", blank=True )
 
     def get_user_projects(self, admin=None):
@@ -60,6 +60,9 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+class ProjectAdmin(admin.ModelAdmin):
+    list_display=('pk','name','max_ticket_id')
+
 ROLES_CHOICES = (
     ("is_admin", "Admin"),
     ("is_normal","Normal"),
@@ -86,7 +89,6 @@ class State(models.Model):
 
     #color
     color = RGBColorField(default="#0000FF")
-    
     def __str__(self):
         return self.state_name
 
@@ -152,7 +154,7 @@ class Ticket(models.Model):
   
     class Meta:
         ordering = ["created_date"]
-        
+
     def save(self, *args, **kwargs):
         print("Saving")
         if self.pk == None:
@@ -164,13 +166,16 @@ class Ticket(models.Model):
     def __str__(self):
         return self.title
 
+class TicketAdmin(admin.ModelAdmin):
+    list_display=('title','project','id_in_project')
+
 class Attribute(models.Model):
     # The parent of the attribute
-    attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attributes")
+    attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attribute")
     # For simplicity value will be a text field to accept any alphanumeric value
     value = models.TextField()
     # For ticket to have more than one Attributes
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="attributes", blank=True)
+    ticket = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="attribute", blank=True)
 
 class File(models.Model):
     # The parent of the file
