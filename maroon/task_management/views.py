@@ -200,7 +200,6 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-<<<<<<< HEAD
 class UpdateTicketState(View):
     login_url = 'login'
     
@@ -246,5 +245,3 @@ class AccessSettings(LoginRequiredMixin,View):
         else:
             form = AddUserForm()
         return render(request, "add_user.html", {"project": project, "form": form})
-=======
->>>>>>> api
