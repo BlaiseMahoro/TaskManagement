@@ -1,6 +1,6 @@
 .title {
     display: inline;
-    margin: 10px;
+    margin: 36px;
 }
 
 .image {
@@ -32,9 +32,10 @@
 
 #arrow i {
     font-size: 70px;
-    float: right;
+    float: left;
     position: relative;
-    bottom: 61px;    
+    padding-right: 30px;
+          
 }
 .nav li.active{
     border: none;
@@ -44,6 +45,7 @@
 
 .nav li a {
     color: gray;
+    margin-left: 35px;
 }
 
 .nav-tabs {
@@ -82,4 +84,9 @@ margin: 8px 0;
 box-sizing: border-box;
 border: 2px solid black;
 border-radius: 5px;
+}
+
+.modal-display {
+    display: block; 
+    padding-left: 16px;
 }
