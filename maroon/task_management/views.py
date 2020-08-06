@@ -224,7 +224,6 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-
 class UpdateTicketState(View):
     login_url = 'login'
     
