@@ -28,11 +28,12 @@
                   {% endfor %}
                 </select>
                 {% elif field.label == "Assignees" %}
-                <select class="mdb-select md-form modal_input" name="{{field.name}}" multiple>
-                  <option value='' disabled selected>Select assignees</option>
-                  {% for profile in project_profiles %}
-                  <option value='{{profile.pk}}'>{{profile.user.username}}</option>
-                  {% endfor %}
+                <select class="selectpicker modal_input" name="{{field.name}}" multiple data-live-search="true">
+                    {% for profile in project_profiles %}
+                    <option value='{{profile.pk}}'>
+                    {{profile.user.username}}
+                    </option>
+                    {% endfor %}
                 </select>
                 {% else %}
                 <input class="modal_input" type="text" name="{{field.name}}" />

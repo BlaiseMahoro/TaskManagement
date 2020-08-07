@@ -194,7 +194,7 @@ class File(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="files")
 
     # The name of the File
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200)
     # The file
     file = models.FileField()
     # The date that the file was created

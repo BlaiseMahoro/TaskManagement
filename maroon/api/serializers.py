@@ -220,8 +220,30 @@ class TicketSerializer(serializers.ModelSerializer):
             if profile.user.username not in validated_data:
                 ticket.assignees.remove(profile)
 
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source='author.username', required=False, read_only=True)
+    created_date = serializers.DateTimeField(required=False, read_only=True)
 
+    class Meta:
+        model = models.Comment
+        fields = ('pk','author','created_date','body')
+
+class LinkSerializer(serializers.ModelSerializer):
+    relationship_type = serializers.CharField(source='relationship_type.name')
+    ticket_2 = serializers.CharField(source='ticket_2.title', required=False, read_only=True)
+
+    class Meta:
+        model = models.Comment
+        fields = ('pk','relationship_type','ticket_2')
+
+class FileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.File
+        fields = ('pk','name','created_date')
 
 
 
         
+
+    
