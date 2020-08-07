@@ -231,9 +231,7 @@ class File(TokenAuthView, TicketObjectView):
         file = request.data['file']
 
         ticket = self.get_ticket(**kwargs)
-        if models.File.objects.filter(ticket=ticket, name=file.name).exists():
-            return Response("File name not unique for ticket.", status=status.HTTP_406_NOT_ACCEPTABLE)
-
+    
         file_obj = models.File(ticket=ticket, file=file, name=file.name, created_date=datetime.now())
         file_obj.save()
         serializer = self.serializer_class(file_obj)
