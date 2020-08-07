@@ -12,7 +12,7 @@
                 <input type="hidden"  class="state_name" value="{{state.state_name}}" />
                 {% for ticket in state.tickets.all %}
                 <article class="card carddraggable shadow-sm"  draggable="true" ondragstart="drag(event)" data-id="{{ticket.id_in_project}}">
-                    <input type="hidden" class="ticket_id" value="{{ticket.pk}}" />
+                    <input type="hidden" class="ticket_id" value="{{ticket.id_in_project}}" />
                     <div class="task card-body p-2">
                         <div class="state-color" style="background-color:{{state.color}};"></div>
                         <div class="task-details">
@@ -31,10 +31,10 @@
                                     {% else %}
                                     <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
                                     {% endif %}
-                                    <button type="button" class="user-toggle btn btn-info" data-toggle="collapse" data-target="#user-list">
+                                    <button type="button" class="user-toggle btn btn-info" data-toggle="collapse" data-target="#user-list{{ticket.id_in_project}}">
                                         <p>{{ticket.assignees.all.0.user}}</p>
                                         <i class="fa fa-caret-down" aria-hidden="true"></i></button>
-                                    <div id="user-list" class="collapse">
+                                    <div id="user-list{{ticket.id_in_project}}" class="collapse">
                                         <tr class="user-row">
                                             {% for profile in ticket.assignees.all|slice:"1:" %} 
                                                 <td>
