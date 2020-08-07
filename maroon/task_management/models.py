@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from colorful.fields import RGBColorField
 from .upload_paths import get_file_upload_path
+import os
 
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
@@ -201,4 +202,7 @@ class File(models.Model):
     file = models.FileField(upload_to=get_file_upload_path)
     # The date that the file was created
     created_date = models.DateTimeField(auto_now_add=True)
+
+    def filesize(self):
+        return os.path.getsize(self.file.path)
 

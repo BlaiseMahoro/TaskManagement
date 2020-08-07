@@ -11,7 +11,7 @@
             {% endfor %}
         </div>
         {% for field in form %}
-            <div class="form-group">
+        <div class="form-group">
             <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
             <div class="{% if field.errors %} invalid{% endif %}">
                 {% for error in field.errors %}
@@ -44,10 +44,55 @@
             <input class="modal_input" type="text" name="{{field.name}}" value="{{field.value}}" />
             {% endif %}
             </div>
-        {% endfor %}
-        </div>    
+        {% endfor %}   
 
         <input type="submit" value="Save" class="btn btn-primary" />
 </form>
 
-  {% endblock content %} 
+<div class="comment-block">
+    <h1>Comments</h1>
+    {% for comment in ticket.comments.all %}
+    <div class="comment">
+        <p>({{comment.created_date}}) {{comment.author.username}} said: </p>
+        <p>{{comment.body}}</p>
+    </div>
+    {% endfor %}
+    <form id="comment-form">
+        <input id="comment-body" type="text">
+    </form>
+    <button form="comment-form" type="submit">Add</button>
+</div>
+<div class="relationship-block">
+    <h1>Relationships</h1>
+    <button>Add Link</button>
+    {% for relationship in ticket.relationships.all %}
+    <div class="relationships">
+        <p>{{relationship.relationship_type.name}}: 
+            <a href="{% url 'ticket' relationship.ticket_2.pk %}">
+                {{relationship.ticket_2.title}} (ID: {{relationship.ticket_2.id_in_project}}) 
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="file-block">
+    <h1>Files</h1>
+    <button>Add File</button>
+    <table class="files">
+        <tr>
+          <th>Name</th>
+          <th>Size</th>
+          <th>Date Uploaded</th>
+        </tr>
+        {% for file in ticket.files.all %}
+        <tr>
+          <td>{{file.name}}</td>
+          <td>{{file.filesize}}</td>
+          <td>{{file.created_date}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+</div>
+
+{% endblock content %} 
