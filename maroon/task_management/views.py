@@ -104,13 +104,14 @@ class Account(LoginRequiredMixin,View):
 
     def post(self, request):
         form = UserUpdate(data=request.POST, instance=request.user)
+        token = Token.objects.get(user=request.user)
         if form.is_valid():
             form.save()
             profile = Profile.objects.get(user=request.user)
-            context = {"profile":profile}
+            context = {"profile":profile, "user_token":token}
             return render(request, self.template_name, context)
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile, 'form':form}
+        context = {"profile":profile,"user_token":token, 'form':form}
         return render(request, self.template_name, context)        
     
 class Register(View):
