@@ -19,19 +19,18 @@
 
 .personal_info, .change_pw, .delete_account, .acc_api_key {
     width: 500px;
-    height:auto;
-    position: relative;
+    height:auto; 
     border: 1px solid gray;
     border-radius: 10px;
     padding: 10px;    
     margin-bottom: 2em;
+    overflow: auto;    
 }
 
-.acc_api_key {
-    position: relative;
+.acc_api_key {   
     float: right;
-    width: auto;
-    font-size: 20px;
+    font-size: 20px; 
+    margin-right: 40px;
 }
 
 .personal_info input {
@@ -52,25 +51,25 @@
 }
 
 .profile_photo {
-    width: 18%;
-    height: 400px;
+    min-width: 300px;
+    height: auto;
     border: 1px solid gray;
     border-radius: 10px;
     position: relative;
     margin-right: 40px;
     float: right;
     padding: 10px;
+    margin-bottom: 2em;
 }
 
-.profile_photo button {
-    position: relative;
+.profile_photo button {    
     margin-top: 30px; 
     margin-left: 40%;
+    margin-bottom: 10px;
 }
 
-.profile_photo img {
-    position: relative;
+.profile_photo img {    
     display: block;    
     margin-left: auto;
-    margin-right: auto;
+    margin-right: auto;    
 }
