@@ -37,9 +37,6 @@
 
   </div>
   </form>
-
-
-
 <div class="tickets">
   <table>
     <col style="width:5%">
@@ -57,13 +54,15 @@
       </tr>
     </th>
     <tbody>
-      {% for ticket in tickets %}
+      {% for ticket in tickets.all %}
       <tr>
 
         <td>{{ ticket.id }}</td>
         <td>{{ ticket.type }}</td>
         <td>{{ ticket.title }}</td>
-        <td>{{ ticket.assignees }}</td>
+        {% if ticket.assignees.all %}
+        <td>{{ ticket.assignees.all.0.user }}</td>
+        {% endif %}
         <td id="new">
           <p>{{ ticket.state }}</p>
         </td>
