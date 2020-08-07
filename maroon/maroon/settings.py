@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'bootstrap_modal_forms',
     'colorful',
     'django_cleanup.apps.CleanupConfig',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

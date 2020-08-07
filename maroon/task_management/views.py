@@ -16,6 +16,11 @@ from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm,
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
+# from .forms import UserDeleteForm
+from django.db.models import Q
+from .filters import OrderFilter
+from django.core.paginator import Paginator
+# Create your views here.
 
 # Create your views here.
 import json
@@ -33,7 +38,17 @@ class Landing(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         if 'pk' in kwargs:
             project = get_object_or_404(Project, pk=kwargs['pk'])
+            tickets = Ticket.objects.filter(project=project)
+            myFilter = OrderFilter(request.GET, queryset=tickets)
+            tickets = myFilter.qs
+            paginator = Paginator(tickets, 1)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             context = {'project': project, 
+                'project': project, 
+                'myFilter':myFilter, 
+                'tickets':tickets, 
+                'page_obj': page_obj, 
                 'template_name': self.landing_template, 
                 'ticket_form': TicketForm(), 
                 'project_profiles': [ role.profile for role in project.roles.all()]}
@@ -63,6 +78,17 @@ class Landing(LoginRequiredMixin,View):
         context['ticket_form'] = form
         return render(request, self.landing_template, context)
 
+    # def get(self, request, *args, **kwargs):
+    #     project = get_object_or_404(Project, pk=kwargs['pk'])
+    #     tickets = Ticket.objects.filter(project=project)
+    #     myFilter = OrderFilter(request.GET, queryset=tickets)
+    #     tickets = myFilter.qs
+    #     paginator = Paginator(tickets, 1)
+    #     page_number = request.GET.get('page')
+    #     page_obj = paginator.get_page(page_number)
+    #     context = {'project': project, 'myFilter':myFilter, 'tickets':tickets, 'page_obj': page_obj}
+        
+    #     return render(request, self.template_name, context)
 
 
 class Account(LoginRequiredMixin,View):
@@ -224,7 +250,7 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-
+    
 class UpdateTicketState(View):
     login_url = 'login'
     
