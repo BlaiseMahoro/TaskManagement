@@ -51,7 +51,8 @@ class Landing(LoginRequiredMixin,View):
                 'page_obj': page_obj, 
                 'template_name': self.landing_template, 
                 'ticket_form': TicketForm(), 
-                'project_profiles': [ role.profile for role in project.roles.all()]}
+                'project_profiles': [ role.profile for role in project.roles.all()], 
+                'token':Token.objects.get_or_create(user=request.user)[0]}
             return render(request, self.landing_template, context)
         else:
             return render(request, self.landing_empty_template)
@@ -251,22 +252,6 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-    
-class UpdateTicketState(View):
-    login_url = 'login'
-    
-    def post(self, request, *args, **kwargs):
-        try:
-            state_name = json.loads(request.body)['state']
-            state = State.objects.get(state_name=state_name)
-            ticket = Ticket.objects.get(pk=kwargs.get('pk'))
-            ticket.state = state
-            ticket.save()
-            return HttpResponse({'':''},status=status.HTTP_200_OK,
-            content_type='application/json')
-        except:
-            return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
-            content_type='application/json')
 
 class AccessSettings(LoginRequiredMixin,View):
     login_url = 'login'
