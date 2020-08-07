@@ -184,7 +184,7 @@ class Relationship(models.Model):
     # The parent of the attribute
     relationship_type = models.ForeignKey(RelationshipType, on_delete=models.CASCADE, related_name="relationships")
     # Ticket that has the relationships
-    ticket_1 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="relationships", blank=True, null=True)
+    ticket_1 = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="relationships", blank=True, null=True)
     # Other ticket that is in this instance of a relationship
     ticket_2 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="related_ticket", blank=True)
 
