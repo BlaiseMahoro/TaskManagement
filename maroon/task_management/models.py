@@ -5,6 +5,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from colorful.fields import RGBColorField
+from .upload_paths import get_file_upload_path
+
 #Refence:https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.DO_NOTHING) 
@@ -111,6 +113,15 @@ class AttributeType(models.Model):
     def __str__(self):
         return self.name
 
+class RelationshipType(models.Model):
+    # Name of the relationship type
+    name = models.TextField()
+    # The ticket template the relationship belongs to
+    ticket_template = models.ForeignKey(TicketTemplate, on_delete=models.CASCADE, related_name="relationshipTypes")
+
+    def __str__(self):
+        return self.name
+
 class Comment(models.Model):
     # The ticket of the comment
     ticket = models.ForeignKey("Ticket", on_delete=models.CASCADE, related_name="comments")
@@ -144,17 +155,14 @@ class Ticket(models.Model):
     # The date that the ticket was created
     created_date = models.DateTimeField(auto_now_add=True)
     #state of ticket
-    state = models.ForeignKey(State, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
-    #state = models.OneToOneField('State', on_delete=models.DO_NOTHING)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, related_name="tickets", null=True)
     #type of ticket
-    type = models.ForeignKey(Type, on_delete=models.DO_NOTHING, related_name="tickets", null=True)
-    #ticket_type = models.OneToOneField('Type', on_delete=models.DO_NOTHING)
+    type = models.ForeignKey(Type, on_delete=models.SET_NULL, related_name="tickets", null=True)
   
     class Meta:
         ordering = ["created_date"]
         
     def save(self, *args, **kwargs):
-        print("Saving")
         if self.pk == None:
             self.id_in_project = self.project.max_ticket_id + 1
             self.project.max_ticket_id = self.id_in_project
@@ -172,13 +180,25 @@ class Attribute(models.Model):
     # For ticket to have more than one Attributes
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="attributes", blank=True)
 
+class Relationship(models.Model):
+    # The parent of the attribute
+    relationship_type = models.ForeignKey(RelationshipType, on_delete=models.CASCADE, related_name="relationships")
+    # Ticket that has the relationships
+    ticket_1 = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="relationships", blank=True, null=True)
+    # Other ticket that is in this instance of a relationship
+    ticket_2 = models.ForeignKey(Ticket, on_delete=models.DO_NOTHING, related_name="related_ticket", blank=True)
+
+    def __str__(self):
+        return self.relationship_type.name
+
 class File(models.Model):
     # The parent of the file
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="files")
 
     # The name of the File
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200)
     # The file
-    file = models.FileField()
+    file = models.FileField(upload_to=get_file_upload_path)
     # The date that the file was created
     created_date = models.DateTimeField(auto_now_add=True)
+

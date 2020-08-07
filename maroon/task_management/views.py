@@ -16,6 +16,11 @@ from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm,
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
+# from .forms import UserDeleteForm
+from django.db.models import Q
+from .filters import OrderFilter
+from django.core.paginator import Paginator
+# Create your views here.
 
 # Create your views here.
 import json
@@ -33,10 +38,21 @@ class Landing(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         if 'pk' in kwargs:
             project = get_object_or_404(Project, pk=kwargs['pk'])
+            tickets = Ticket.objects.filter(project=project)
+            myFilter = OrderFilter(request.GET, queryset=tickets)
+            tickets = myFilter.qs
+            paginator = Paginator(tickets, 1)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             context = {'project': project, 
+                'project': project, 
+                'myFilter':myFilter, 
+                'tickets':tickets, 
+                'page_obj': page_obj, 
                 'template_name': self.landing_template, 
                 'ticket_form': TicketForm(), 
-                'project_profiles': [ role.profile for role in project.roles.all()]}
+                'project_profiles': [ role.profile for role in project.roles.all()], 
+                'token':Token.objects.get_or_create(user=request.user)[0]}
             return render(request, self.landing_template, context)
         else:
             return render(request, self.landing_empty_template)
@@ -59,10 +75,22 @@ class Landing(LoginRequiredMixin,View):
             ticket.save()
             ticket.assignees.set(assignees)
             context['ticket_form'] = TicketForm() 
-            return render(request, self.landing_template, context)
+            url = reverse('landing', kwargs={'pk': project.pk})
+            return HttpResponseRedirect(url)
         context['ticket_form'] = form
         return render(request, self.landing_template, context)
 
+    # def get(self, request, *args, **kwargs):
+    #     project = get_object_or_404(Project, pk=kwargs['pk'])
+    #     tickets = Ticket.objects.filter(project=project)
+    #     myFilter = OrderFilter(request.GET, queryset=tickets)
+    #     tickets = myFilter.qs
+    #     paginator = Paginator(tickets, 1)
+    #     page_number = request.GET.get('page')
+    #     page_obj = paginator.get_page(page_number)
+    #     context = {'project': project, 'myFilter':myFilter, 'tickets':tickets, 'page_obj': page_obj}
+        
+    #     return render(request, self.template_name, context)
 
 
 class Account(LoginRequiredMixin,View):
@@ -78,13 +106,14 @@ class Account(LoginRequiredMixin,View):
 
     def post(self, request):
         form = UserUpdate(data=request.POST, instance=request.user)
+        token = Token.objects.get(user=request.user)
         if form.is_valid():
             form.save()
             profile = Profile.objects.get(user=request.user)
-            context = {"profile":profile}
+            context = {"profile":profile, "user_token":token}
             return render(request, self.template_name, context)
         profile = Profile.objects.get(user=request.user)
-        context = {"profile":profile, 'form':form}
+        context = {"profile":profile,"user_token":token, 'form':form}
         return render(request, self.template_name, context)        
     
 class Register(View):
@@ -224,22 +253,6 @@ def deleteuser(request):
     }
 
     return render(request, 'user/delete.html', context)
-
-class UpdateTicketState(View):
-    login_url = 'login'
-    
-    def post(self, request, *args, **kwargs):
-        try:
-            state_name = json.loads(request.body)['state']
-            state = State.objects.get(state_name=state_name)
-            ticket = Ticket.objects.get(pk=kwargs.get('pk'))
-            ticket.state = state
-            ticket.save()
-            return HttpResponse({'':''},status=status.HTTP_200_OK,
-            content_type='application/json')
-        except:
-            return HttpResponse({'':''},status=status.HTTP_404_NOT_FOUND,
-            content_type='application/json')
 
 class AccessSettings(LoginRequiredMixin,View):
     login_url = 'login'
