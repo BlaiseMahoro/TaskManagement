@@ -11,6 +11,7 @@ from rest_framework import authentication
 from django.shortcuts import get_object_or_404
 import json
 from api.permissions import ProjectAdmin, ProjectCollaborator
+from datetime import datetime
 
 class TokenAuthView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
@@ -146,19 +147,95 @@ class TicketUpdateState(TokenAuthView, APIView):
         #Get state out of request body
         body = json.loads(request.body)
         state = body['state']
-        print(state)
+        
+        #Get project from url
+        project = get_object_or_404(models.Project, pk=self.kwargs['pk'])
 
-        #Get ticket from url and confirm state is valid
-        ticket = models.Ticket.objects.get(pk=self.kwargs['pk'])
-        print(ticket.project.ticket_template.states.all().values('state_name'))
-        if ticket.project.ticket_template.states.all().filter(state_name=state).exists():
+        #Get ticket by project id and confirm state is valid
+        try: 
+            ticket = project.tickets.get(id_in_project=self.kwargs['ticket_pk'])
+        except:
+            return Response("Ticket not found", status=status.HTTP_404_NOT_FOUND)
+        #print(project.ticket_template.states.all().values('state_name'))
+        if project.ticket_template.states.all().filter(state_name=state).exists():
             #Update state
-            ticket.state = ticket.project.ticket_template.states.all().get(state_name=state)
+            ticket.state = project.ticket_template.states.all().get(state_name=state)
             ticket.save()
             return Response("Ticket state updated", status=status.HTTP_202_ACCEPTED)
         
         #State not valid
         return Response("The state is not valid", status=status.HTTP_406_NOT_ACCEPTABLE)
+
+class TicketObjectView(generics.ListCreateAPIView, generics.DestroyAPIView,):
+    def get_ticket(self, **kwargs):
+        project = get_object_or_404(models.Project, pk=kwargs['pk'])
+        return project.tickets.get(id_in_project=kwargs['ticket_pk'])
+
+    def delete(self, request, *args, **kwargs):
+        obj = getattr(self.get_ticket(**kwargs), self.ticket_attribute).get(pk=kwargs[self.url_pk])
+        obj.delete()
+        return Response("Deleted successfully.", status=status.HTTP_202_ACCEPTED)
+
+    def get_queryset(self):
+        kwargs = self.kwargs
+        return getattr(self.get_ticket(**kwargs), self.ticket_attribute).all()
+
+class Comment(TokenAuthView, TicketObjectView):
+    queryset = models.Comment.objects.all()
+    serializer_class = serializers.CommentSerializer
+    permission_classes = [ProjectCollaborator]
+    ticket_attribute = "comments"
+    url_pk = "comment_pk"
+
+    def post(self, request, *args, **kwargs):
+        body = json.loads(request.body)
+        comment = models.Comment(ticket=self.get_ticket(**kwargs), author=request.user, body=body['body'], created_date=datetime.now())
+        comment.save()
+        serializer = self.serializer_class(comment)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class Link(TokenAuthView, TicketObjectView):
+    queryset = models.Relationship.objects.all()
+    serializer_class = serializers.LinkSerializer
+    permission_classes = [ProjectCollaborator]
+    ticket_attribute = "relationships"
+    url_pk = "link_pk"
+
+    def post(self, request, *args, **kwargs):
+        body = json.loads(request.body)
+        project = get_object_or_404(models.Project, pk=kwargs['pk'])
+        ticket_2 = project.tickets.get(id_in_project=body['related_ticket_project_pk'])
+
+        #Check if relationship eists and create the link
+        if project.ticket_template.relationshipTypes.filter(name=body['link_type']).exists():
+            relationship_type = project.ticket_template.relationshipTypes.get(name=body['link_type'])
+
+            link = models.Relationship(ticket_1=self.get_ticket(**kwargs), ticket_2=ticket_2, relationship_type=relationship_type)
+            link.save()
+            serializer = self.serializer_class(link)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        #Relationship not valid
+        return Response("The relationship is not valid", status=status.HTTP_406_NOT_ACCEPTABLE)
+
+class File(TokenAuthView, TicketObjectView):
+    queryset = models.File.objects.all()
+    serializer_class = serializers.FileSerializer
+    permission_classes = [ProjectCollaborator]
+    ticket_attribute = "files"
+    url_pk = "file_pk"
+
+    def post(self, request, *args, **kwargs):
+        if 'file' not in request.data:
+            raise ParseError("Empty content")
+        file = request.data['file']
+
+        ticket = self.get_ticket(**kwargs)
+    
+        file_obj = models.File(ticket=ticket, file=file, name=file.name, created_date=datetime.now())
+        file_obj.save()
+        serializer = self.serializer_class(file_obj)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
     '''For printing post requests if needed.'''

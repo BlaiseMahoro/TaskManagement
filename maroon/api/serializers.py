@@ -27,18 +27,20 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
     types = CustomSlugRelatedField(many=True,queryset=models.Type.objects.all(),slug_field='type_name')#TypeSerializer(many=True)
     states = CustomSlugRelatedField(many=True,queryset=models.State.objects.all(),slug_field='state_name')
     attributeTypes = CustomSlugRelatedField(many=True,queryset=models.AttributeType.objects.all(),slug_field='name')
+    relationshipTypes = CustomSlugRelatedField(many=True,queryset=models.RelationshipType.objects.all(),slug_field='name')
 
     def get_fields(self, *args, **kwargs):
         #Save instance to pass as primary key for creating new items
         fields = super(TicketTemplateSerializer, self).get_fields(*args, **kwargs)
         fields['types'].child_relation.ticket_template = self.instance
         fields['states'].child_relation.ticket_template = self.instance
-        fields['attributeTypes'].child_relation.ticket_template = self.instance    
+        fields['attributeTypes'].child_relation.ticket_template = self.instance
+        fields['relationshipTypes'].child_relation.ticket_template = self.instance     
         return fields
 
     class Meta:
         model = models.TicketTemplate
-        fields = ['types','states','attributeTypes']
+        fields = ['types','states','attributeTypes','relationshipTypes']
 
     def to_internal_value(self, data):
         #Delete Types and States before the new ones are added to the database
@@ -48,6 +50,7 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         self.delete_removed_attributes(instance, validated_data.get('attributeTypes'))
+        self.delete_removed_relationships(instance, validated_data.get('relationshipTypes'))
         return instance
 
     def delete_removed_attributes(self, instance, validated_data):
@@ -55,6 +58,12 @@ class TicketTemplateSerializer(serializers.ModelSerializer):
         for attribute in models.AttributeType.objects.filter(ticket_template=instance):
             if attribute.name not in names:
                 attribute.delete()
+
+    def delete_removed_relationships(self, instance, validated_data):
+        names = [new_relationship.name for new_relationship in validated_data]
+        for relationship in models.RelationshipType.objects.filter(ticket_template=instance):
+            if relationship.name not in names:
+                relationship.delete()
 
 class RoleSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='profile.user.username')
@@ -124,8 +133,8 @@ class TypeSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     project = serializers.CharField(source='project.name', required=False)
     project_pk = serializers.IntegerField(source='project.pk', required=False, write_only=True)
-    state = serializers.CharField(source='state.state_name')
-    type = serializers.CharField(source='type.type_name')
+    state = serializers.CharField(source='state.state_name', default="None")
+    type = serializers.CharField(source='type.type_name', default="None")
     assignee_list = serializers.ListField(child=serializers.CharField(), required=False, write_only=True)
     assignees = ProfileSerializer(many=True, read_only=True)
     attributes = AttributeSerialier(many=True, required=False)
@@ -210,6 +219,28 @@ class TicketSerializer(serializers.ModelSerializer):
         for profile in ticket.assignees.all():
             if profile.user.username not in validated_data:
                 ticket.assignees.remove(profile)
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source='author.username', required=False, read_only=True)
+    created_date = serializers.DateTimeField(required=False, read_only=True)
+
+    class Meta:
+        model = models.Comment
+        fields = ('pk','author','created_date','body')
+
+class LinkSerializer(serializers.ModelSerializer):
+    relationship_type = serializers.CharField(source='relationship_type.name')
+    ticket_2 = serializers.CharField(source='ticket_2.title', required=False, read_only=True)
+
+    class Meta:
+        model = models.Comment
+        fields = ('pk','relationship_type','ticket_2')
+
+class FileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.File
+        fields = ('pk','name','created_date')
 
 
 
