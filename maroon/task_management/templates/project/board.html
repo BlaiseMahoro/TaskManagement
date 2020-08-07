@@ -13,7 +13,9 @@
                     <div class="task card-body p-2">
                         <div class="state-color" style="background-color:{{state.color}};"></div>
                         <div class="task-details">
-                            <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
+                            <a href="{% url 'ticket' ticket.pk %}">
+                                <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
+                            </a>
                             <div class="sub-details">
                                 <p class="task-number">{{ticket.description}}</p>
                                 <p class="task-type" style="background-color: {{ticket.type.color}};">{{ticket.type}}</p>
