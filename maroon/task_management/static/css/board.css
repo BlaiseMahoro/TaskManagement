@@ -84,12 +84,12 @@
     border: none;
     font-size: 16px;
     margin: 0;
-    padding: 0;
+    padding: 5px;
 }
 
-.user-toggle:hover, .user-toggle:focus, .user-toggle:active {
-    background-color: lightgray;
-    border-color: transparent;
+.user-toggle:hover, .user-toggle:focus, .user-toggle:active, .user-toggle:active:focus {
+    background-color: lightgray !important;
+    border-color: transparent !important;
 }
 
 .user-img {

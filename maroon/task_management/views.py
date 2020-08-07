@@ -59,7 +59,8 @@ class Landing(LoginRequiredMixin,View):
             ticket.save()
             ticket.assignees.set(assignees)
             context['ticket_form'] = TicketForm() 
-            return render(request, self.landing_template, context)
+            url = reverse('landing', kwargs={'pk': project.pk})
+            return HttpResponseRedirect(url)
         context['ticket_form'] = form
         return render(request, self.landing_template, context)
 
