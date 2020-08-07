@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'bootstrap_modal_forms',
     'colorful',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
