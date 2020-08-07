@@ -7,6 +7,7 @@
 {% block content %}
 
 <div class="access1">
+    <button class="button button1" data-toggle="modal" data-target="#add_user" style="float: right;" >Add User</button>
     <h2>Administrators</h2>    
     <!-- <i class="fa fa-user-circle" id="circ1"></i>   -->
     {% for role in project.roles.all %}
@@ -15,16 +16,18 @@
         <i class="fa fa-user-circle" id="circ2"></i> 
         <div class="user-info">
             <p><strong>{{ role.profile.user.username }}</strong></p>
-            {% if role == "is_admin" %}
-            <button class="button2">Demote</button>
+            {% if role.role == "is_admin" %}
+            <button class="btn" style="float: right;">Demote</button>
             {% endif %}
+            <p><strong>{{ role.profile.user.email }}</strong></p>
+            
             <!-- <p>{{ role.email }}</p>   -->
         </div>
         <!-- <p id="pending">Pending.....</p> -->
     </div>
     {% endif %}
     {% endfor %}
-    <button class="button button1" data-toggle="modal" data-target="#add-user">Add administrator</button>
+   
     
     <div class="collabheader"><h2>Collaborators</h2></div> 
     {% for role in project.roles.all %}
@@ -33,13 +36,15 @@
         <i class="fa fa-user-circle" id="circ2"></i> 
         <div class="collab-info">
             <p><strong>{{ role.profile.user.username }}</strong></p>
-            <i class="fa fa-trash" id="trash1"></i>
+            <button class="btn" style="float: right;">Delete</button>
+            <p><strong>{{ role.profile.user.email }}</strong></p>
+            
             <!-- <p>{{ user.email }}</p>             -->
         </div>   
     </div> 
     {% endif %}
     {% endfor %}  
-    <button class="button button2" data-toggle="modal" data-target="#add-user">Add collaborator</button>
+    
     
 </div>
 
