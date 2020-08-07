@@ -32,8 +32,10 @@
                                     <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
                                     {% endif %}
                                     <button type="button" class="user-toggle btn btn-info" data-toggle="collapse" data-target="#user-list{{ticket.id_in_project}}">
-                                        <p>{{ticket.assignees.all.0.user}}</p>
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i></button>
+                                        <p>{{ticket.assignees.all.0.user}}
+                                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                        </p>
+                                    </button>
                                     <div id="user-list{{ticket.id_in_project}}" class="collapse">
                                         <tr class="user-row">
                                             {% for profile in ticket.assignees.all|slice:"1:" %} 
