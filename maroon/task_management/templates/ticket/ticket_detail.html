@@ -4,49 +4,49 @@
 
 <form action="{% url 'ticket' ticket.pk %}" method="POST">
 
-        {% csrf_token %}
-        <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
-            {% for error in form.non_field_errors %}
-                {{ error }}
+    {% csrf_token %}
+    <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+    </div>
+    {% for field in form %}
+    <div class="form-group">
+        <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <div class="{% if field.errors %} invalid{% endif %}">
+            {% for error in field.errors %}
+            <p class="help-block">{{ error }}</p>
             {% endfor %}
         </div>
-        {% for field in form %}
-        <div class="form-group">
-            <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-            <div class="{% if field.errors %} invalid{% endif %}">
-                {% for error in field.errors %}
-                <p class="help-block">{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% if field.label == "Type" %}
-            <select class="mdb-select md-form modal_input" name="{{field.name}}">
-                <option value='' disabled selected>Select Type</option>
-                {% for type in project.ticket_template.types.all %}
-                <option value='{{type.pk}}'>{{type.type_name}}</option>
-                {% endfor %}
-            </select>
-            {% elif field.label == "State" %}
-            <select class="mdb-select md-form modal_input" name="{{field.name}}">
-                <option value='' disabled selected>Select State</option>
-                {% for state in project.ticket_template.states.all %}
-                <option value='{{state.pk}}'>{{state.state_name}}</option>
-                {% endfor %}
-            </select>
-            {% elif field.label == "Assignees" %}
-            <select class="selectpicker" name="{{field.name}}" multiple data-live-search="true">
-                {% for profile in project_profiles %}
-                <option value='{{profile.pk}}'>
+        {% if field.label == "Type" %}
+        <select class="mdb-select md-form modal_input" name="{{field.name}}">
+            <option value='' disabled selected>Select Type</option>
+            {% for type in project.ticket_template.types.all %}
+            <option value='{{type.pk}}'>{{type.type_name}}</option>
+            {% endfor %}
+        </select>
+        {% elif field.label == "State" %}
+        <select class="mdb-select md-form modal_input" name="{{field.name}}">
+            <option value='' disabled selected>Select State</option>
+            {% for state in project.ticket_template.states.all %}
+            <option value='{{state.pk}}'>{{state.state_name}}</option>
+            {% endfor %}
+        </select>
+        {% elif field.label == "Assignees" %}
+        <select class="selectpicker" name="{{field.name}}" multiple data-live-search="true">
+            {% for profile in project_profiles %}
+            <option value='{{profile.pk}}'>
                 {{profile.user.username}}
-                </option>
-                {% endfor %}
-            </select>
-            {% else %}
-            <input class="modal_input" type="text" name="{{field.name}}" value="{{field.value}}" />
-            {% endif %}
-            </div>
-        {% endfor %}   
+            </option>
+            {% endfor %}
+        </select>
+        {% else %}
+        <input class="modal_input" type="text" name="{{field.name}}" value="{{field.value}}" />
+        {% endif %}
+    </div>
+    {% endfor %}
 
-        <input type="submit" value="Save" class="btn btn-primary" />
+    <input type="submit" value="Save" class="btn btn-primary" />
 </form>
 
 <div class="comment-block">
@@ -57,19 +57,56 @@
         <p>{{comment.body}}</p>
     </div>
     {% endfor %}
-    <form id="comment-form">
+    <div id="comment-form">
         <input id="comment-body" type="text">
-    </form>
-    <button form="comment-form" type="submit">Add</button>
+        <p id="error_comment" style="color: red;"></p>
+    </div>
+    <button id="addComment" class="btn btn-primary">Add</button>
 </div>
 <div class="relationship-block">
     <h1>Relationships</h1>
-    <button>Add Link</button>
+    <button type="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddLinkModal">Add
+        Link</button>
+    <!-- Modal for add link -->
+    <div class="modal fade" id="AddLinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel"><em>Add Link</em></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>{% csrf_token %}
+                        <select class="" name="link_type" id="link_type">
+                            <option value='' disabled selected>Select Link</option>
+                            {% for rel_type in project.ticket_template.relationshipTypes.all %}
+                            <option value='{{rel_type.name}}'>{{rel_type.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <select class="" name="ticket">
+                            <option value='' disabled selected>Select Ticket</option>
+                            {% for ticket in project.tickets.all %}
+                            <option value='{{ticket.id_in_project}}'>{{ticket.title}}</option>
+                            {% endfor %}
+                        </select>
+
+                    </form>
+                </div>
+                 <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
+                <button type="button" class="btn btn-primary">Save changes</button>
+    </div> 
+            </div>
+        </div>
+    </div>
     {% for relationship in ticket.relationships.all %}
     <div class="relationships">
-        <p>{{relationship.relationship_type.name}}: 
+        <p>{{relationship.relationship_type.name}}:
             <a href="{% url 'ticket' relationship.ticket_2.pk %}">
-                {{relationship.ticket_2.title}} (ID: {{relationship.ticket_2.id_in_project}}) 
+                {{relationship.ticket_2.title}} (ID: {{relationship.ticket_2.id_in_project}})
             </a>
         </p>
     </div>
@@ -78,21 +115,76 @@
 
 <div class="file-block">
     <h1>Files</h1>
-    <button>Add File</button>
+    <button type="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddFileModal">Add
+        File</button>
+    <!-- Modal for add file -->
+    <div class="modal fade" id="AddFileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel"><em>Upload File</em></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <p>
+                            <input id="id_file" type="file" class="" name="file" required>
+                        </p>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <table class="files">
         <tr>
-          <th>Name</th>
-          <th>Size</th>
-          <th>Date Uploaded</th>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Date Uploaded</th>
         </tr>
         {% for file in ticket.files.all %}
         <tr>
-          <td>{{file.name}}</td>
-          <td>{{file.filesize}}</td>
-          <td>{{file.created_date}}</td>
+            <td>{{file.name}}</td>
+            <td>{{file.filesize}}</td>
+            <td>{{file.created_date}}</td>
         </tr>
         {% endfor %}
-      </table>
+    </table>
 </div>
+<script type="text/javascript">
+    $("#addComment").click((e) => {
+        let project_id = "{{project.pk}}"
+        let ticket_id = "{{ticket.id_in_project}}"
+        let comment = $("#comment-body").val()
+        let token = "{{token}}"
+        if (comment.length === 0) {
+            $("#error_comment").text("Please enter text for the comment's body")
+            return
+        }
+        $("#error_comment").text("")
+        $.ajax({
+            url: `/api/project/${project_id}/ticket/${ticket_id}/comment`,
+            type: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify({ body: comment }),
+            headers: { "Authorization": `Token ${token}` },
+            success: function (data, textStatus, jqXHR) {
+                //data - response from server
+                //This request will always work, unless the server is down.
+                location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("State not updated!", errorThrown);
+            }
+        })
+    });
 
-{% endblock content %} 
+</script>
+{% endblock content %}

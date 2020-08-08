@@ -293,6 +293,7 @@ class TicketDetail(LoginRequiredMixin,View):
             'form': form, 
             'ticket': ticket, 
             'project':ticket.project,
-            'project_profiles': [ role.profile for role in ticket.project.roles.all()]
+            'project_profiles': [ role.profile for role in ticket.project.roles.all()],
+            'token':Token.objects.get(user=request.user)
         }
         return render(request, self.template_name, context)
