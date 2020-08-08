@@ -20,22 +20,22 @@
         </div>
         {% if field.label == "Type" %}
         <select class="mdb-select md-form modal_input" name="{{field.name}}">
-            <option value='' disabled selected>Select Type</option>
+            <option value='' disabled >Select Type</option>
             {% for type in project.ticket_template.types.all %}
-            <option value='{{type.pk}}'>{{type.type_name}}</option>
+            <option value='{{type.pk}}' {% if type.pk == ticket.type.pk %} selected {%endif%}>{{type.type_name}}</option>
             {% endfor %}
         </select>
         {% elif field.label == "State" %}
         <select class="mdb-select md-form modal_input" name="{{field.name}}">
-            <option value='' disabled selected>Select State</option>
+            <option value='' disabled selected>Select State</option> 
             {% for state in project.ticket_template.states.all %}
-            <option value='{{state.pk}}'>{{state.state_name}}</option>
+            <option value='{{state.pk}}' {% if state.pk == ticket.state.pk %} selected {%endif%} >{{state.state_name}}</option>
             {% endfor %}
         </select>
         {% elif field.label == "Assignees" %}
         <select class="selectpicker" name="{{field.name}}" multiple data-live-search="true">
             {% for profile in project_profiles %}
-            <option value='{{profile.pk}}'>
+            <option value='{{profile.pk}}' {% if profile in ticket.assignees.all %} selected {% endif %}>
                 {{profile.user.username}}
             </option>
             {% endfor %}
