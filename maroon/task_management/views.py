@@ -310,9 +310,17 @@ class TicketDetail(LoginRequiredMixin,View):
             attribute.save()
 
         #Handle rest of form here
-        form = self.form_class(request.POST)
-
-        #Redirect after valid form
-        url = reverse('ticket', kwargs={'pk': kwargs.get('pk')})
-        return HttpResponseRedirect(url)
-
+        form = self.form_class(request.POST, instance=ticket)
+        if form.is_valid():
+            form.save()    
+            #Redirect after valid form
+            url = reverse('ticket', kwargs={'pk': kwargs.get('pk')})
+            return HttpResponseRedirect(url)
+        context = {
+            'form': form, 
+            'ticket': ticket, 
+            'project':ticket.project,
+            'project_profiles': [ role.profile for role in ticket.project.roles.all()],
+            'token':Token.objects.get(user=request.user)
+        }
+        return render(request, self.template_name, context)
