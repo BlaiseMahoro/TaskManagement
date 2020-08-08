@@ -173,6 +173,17 @@ class Ticket(models.Model):
     def __str__(self):
         return self.title
 
+    #To display attributes that may not exist for a ticket yet but are 
+    #part of the ticket template
+    def get_attribute_dict(self):
+        attribute_dict = {}
+        for attributeType in self.project.ticket_template.attributeTypes.all():
+            if self.attributes.filter(attribute_type=attributeType).exists():
+                attribute_dict[attributeType.name] = self.attributes.get(attribute_type=attributeType).value
+            else:
+                attribute_dict[attributeType.name] = ""
+        return attribute_dict
+
 class Attribute(models.Model):
     # The parent of the attribute
     attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE, related_name="attributes")
