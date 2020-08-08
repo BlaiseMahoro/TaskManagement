@@ -45,18 +45,16 @@
         {% endif %}
     </div>
     {% endfor %}
-
+    <div name="attributes" class="attribute-block">
+        {% for attr_name, attr_value in ticket.get_attribute_dict.items %}
+        <div class="attribute">
+            <h1>{{attr_name}}</h1>
+            <input id="attr_name" type="text" value="{{attr_value}}" name="{{attr_name}}">
+        </div>
+        {% endfor %}
+    </div>
     <input type="submit" value="Save" class="btn btn-primary" />
 </form>
-
-<div class="attribute-block">
-    {% for attr_name, attr_value in ticket.get_attribute_dict.items %}
-    <div class="attribute">
-        <h1>{{attr_name}}</h1>
-        <input id="comment-body" type="text" value="{{attr_value}}">
-    </div>
-    {% endfor %}
-</div>
 
 <div class="comment-block">
     <h1>Comments</h1>
