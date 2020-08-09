@@ -17,7 +17,17 @@
         <div class="user-info">
             <p><strong>{{ role.profile.user.username }}</strong></p>
             {% if role.role == "is_admin" %}
-            <button class="btn" style="float: right;">Demote</button>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="demote_user">
+                    
+                        <button class="btn btn-primary" type="submit" style="float: right;">Demote</button>
+                    
+                    <input id="section" name="section" type="hidden" value="demote_user"> 
+                    
+                </div>
+        
+            </form>
             {% endif %}
             <p><strong>{{ role.profile.user.email }}</strong></p>
             
@@ -36,7 +46,17 @@
         <i class="fa fa-user-circle" id="circ2"></i> 
         <div class="collab-info">
             <p><strong>{{ role.profile.user.username }}</strong></p>
-            <button class="btn" style="float: right;">Delete</button>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="delete_user">
+                    
+                        <button class="btn btn-primary" type="submit" style="float: right;">Delete</button>
+                    
+                    <input id="section" name="section" type="hidden" value="delete_user"> 
+                    
+                </div>
+        
+            </form>
             <p><strong>{{ role.profile.user.email }}</strong></p>
             
             <!-- <p>{{ user.email }}</p>             -->

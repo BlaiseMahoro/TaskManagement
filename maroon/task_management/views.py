@@ -206,7 +206,21 @@ class ProjectSettings(LoginRequiredMixin,View):
         if response.get('section') =='delete_project':
             project.delete()   
             return redirect('landing')
+
+        if response.get('section') == 'demote_user':
+            profile = Profile.objects.get(user=request.user)
+            role = Role.objects.get(project=project, profile=profile)
+            role.role = "is_normal"
+            role.save()
+            return redirect('landing')
+
+        if response.get('section') == 'delete_user':
+            profile = Profile.objects.get(user=request.user)
+            role = Role.objects.get(project=project, profile=profile)
+            role.delete()
+            return redirect('landing')
         return render(request, self.template_name, {'project':project})
+
 
 class CreateProject(LoginRequiredMixin, BSModalCreateView):
     login_url = 'login' 
