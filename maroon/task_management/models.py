@@ -88,7 +88,13 @@ class State(models.Model):
 
     #color
     color = RGBColorField(default="#0000FF")
+
+    # The position of the state relative to a specific ticket_template's other states
+    position = models.IntegerField(default=-1)
     
+    class Meta:
+        ordering = ["position"]
+
     def __str__(self):
         return self.state_name
 
