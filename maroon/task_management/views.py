@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
-from .models import Profile, Project, Role, User, Ticket, State, Type, AttributeType, RelationshipType
+from .models import Profile, Project, Role, User, Ticket, State, Attribute
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate, TicketDetailForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
@@ -396,15 +396,44 @@ class AccessSettings(LoginRequiredMixin,View):
 class TicketDetail(LoginRequiredMixin,View):
     login_url = 'login'
     template_name = "ticket/ticket_detail.html"
+    form_class = TicketDetailForm
 
     def get(self, request, *args, **kwargs):
         ticket = Ticket.objects.get(pk=kwargs.get('pk'))
         form = TicketDetailForm(initial=ticket.__dict__)
         context = {
             'form': form, 
+            'ticket': ticket,
+            'ticket_id': ticket.id_in_project,
+            'project':ticket.project,
+            'project_profiles': [ role.profile for role in ticket.project.roles.all()],
+            'token':Token.objects.get(user=request.user)
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+
+        #Getting attributes straight from post request, django form ignores extra fields in post request
+        ticket = Ticket.objects.get(pk=kwargs.get('pk'))
+        for attributeType in ticket.project.ticket_template.attributeTypes.all():
+            attr_value = request.POST.get(attributeType.name)
+            attribute, created = Attribute.objects.get_or_create(attribute_type=attributeType, ticket=ticket)
+            attribute.value = attr_value
+            attribute.save()
+
+        #Handle rest of form here
+        form = self.form_class(request.POST, instance=ticket)
+        if form.is_valid():
+            form.save()    
+            #Redirect after valid form
+            url = reverse('ticket', kwargs={'pk': kwargs.get('pk')})
+            return HttpResponseRedirect(url)
+        context = {
+            'form': form, 
             'ticket': ticket, 
             'project':ticket.project,
-            'project_profiles': [ role.profile for role in ticket.project.roles.all()]
+            'project_profiles': [ role.profile for role in ticket.project.roles.all()],
+            'token':Token.objects.get(user=request.user)
         }
         return render(request, self.template_name, context)
 
