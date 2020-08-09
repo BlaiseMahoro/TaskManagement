@@ -169,14 +169,15 @@ class ProjectSettings(LoginRequiredMixin,View):
         project = get_object_or_404(Project, pk=project_id)
         #print(project.ticket_template.states.all())
         profile = Profile.objects.get(user=request.user)
-        role = Role.objects.get(profile= profile, project= project).role
+        role = Role.objects.get(profile= profile, project= project)
         # is_admin = role =='is_admin'
         states = State.objects.filter(ticket_template=project.ticket_template).all()
         types = Type.objects.filter(ticket_template=project.ticket_template)
         attributes = AttributeType.objects.filter(ticket_template=project.ticket_template)
         relationships = RelationshipType.objects.filter(ticket_template=project.ticket_template)
-        print(role)
-        context = {'project': project, 'role':role, 'states': states, 'types': types, 'attributes': attributes, 'relationships': relationships}
+        admin = Role.objects.filter(project=project,role="is_admin")
+        collaborators = Role.objects.filter(project=project, role="is_normal")
+        context = {'project': project, 'role':role, 'states': states, 'types': types, 'attributes': attributes, 'relationships': relationships, 'admin':admin,'collaborators':collaborators}
         return render(request, self.template_name, context)
    
     def post(self, request, *args, **kwargs):
@@ -192,7 +193,6 @@ class ProjectSettings(LoginRequiredMixin,View):
         #For Upload Profile Picture
         if response.get('section') == 'upload_pic':
             project_id = kwargs.get('pk')
-            print(project_id)
             form = ProfilePicForm(request.POST, request.FILES)
             project = get_object_or_404(Project, pk=project_id)
             if form.is_valid():
@@ -277,14 +277,6 @@ class ProjectSettings(LoginRequiredMixin,View):
                     relationship_type = RelationshipType(ticket_template=project.ticket_template, name=remove_empty_string(response.get('relationship-name' + str(i+1))))
                     relationship_type.save()
 
-            states = State.objects.filter(ticket_template=project.ticket_template).all()
-            types = Type.objects.filter(ticket_template=project.ticket_template).all()
-            attributes = AttributeType.objects.filter(ticket_template=project.ticket_template).all()
-            relationships = RelationshipType.objects.filter(ticket_template=project.ticket_template)
-
-            return render(request, self.template_name, {'project':project, 'states': states, 'types': types, 'attributes': attributes, 'relationships': relationships}) 
-
-
         #Demote user from project
         if response.get('section') == 'demote_user':
             username = response.get('username')
@@ -297,7 +289,6 @@ class ProjectSettings(LoginRequiredMixin,View):
         #Delete user from project
         if response.get('section') == 'delete_user':
             username = response.get('username')
-            print(username)
             user = User.objects.get(username=username)
             profile = Profile.objects.get(user=user)
             project.roles.get(profile=profile).delete()
@@ -305,12 +296,9 @@ class ProjectSettings(LoginRequiredMixin,View):
 
         #Add User to project
         if response.get('section') == "add_user":
-            # form = AddUserForm(request.POST)
             project = get_object_or_404(Project, pk=project_id)
             username = response.get('username')
             roles = response.get('role')
-            print(username)
-            print(roles)
             if not User.objects.filter(username = username).exists():
                 raise forms.ValidationError("User does not exist!")            
             user = User.objects.get(username=username)
@@ -319,8 +307,9 @@ class ProjectSettings(LoginRequiredMixin,View):
                 raise forms.ValidationError("User and Role already exist!")
             role = Role(profile=profile, role=roles, project=project)
             role.save()
-    
-        return render(request, self.template_name, {'project':project})
+
+        url = reverse('project', kwargs={'pk': kwargs.get('pk')})
+        return HttpResponseRedirect(url)
 
 class CreateProject(LoginRequiredMixin, BSModalCreateView):
     login_url = 'login' 
