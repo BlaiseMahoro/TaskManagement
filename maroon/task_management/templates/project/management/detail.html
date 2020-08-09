@@ -57,7 +57,7 @@
     <form action="" method="POST">
         {% csrf_token %}
         <h3>Title</h3>
-        <input type="text" id="title" name="title" value="{{project.name}}" /> <!-- Value will be proj name?-->
+        <input type="text" id="title" name="title" value="{{project.name}}" required/> <!-- Value will be proj name?-->
 
         <h3>Description</h3>
         <textarea name="description" cols="24" rows="6">{{project.description}}</textarea>
