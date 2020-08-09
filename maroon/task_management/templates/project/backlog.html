@@ -60,9 +60,7 @@
         <td>{{ ticket.id }}</td>
         <td>{{ ticket.type }}</td>
         <td>{{ ticket.title }}</td>
-        {% if ticket.assignees.all %}
-        <td>{{ ticket.assignees.all.0.user }}</td>
-        {% endif %}
+        <td>{% if ticket.assignees.all %}{{ ticket.assignees.all.0.user }}{% endif %}</td>
         <td id="new">
           <p>{{ ticket.state }}</p>
         </td>
