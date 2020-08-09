@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
 from .models import Profile, Project, Role, User, Ticket, State
-from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate, TicketDetailForm
+from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate, TicketDetailForm, AddUserForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
@@ -20,6 +20,8 @@ from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from .filters import OrderFilter
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from django import forms
 # Create your views here.
 
 # Create your views here.
@@ -206,7 +208,7 @@ class ProjectSettings(LoginRequiredMixin,View):
         if response.get('section') =='delete_project':
             project.delete()   
             
-
+        #Demote User
         if response.get('section') == 'demote_user':
             username = response.get('username')
             user = User.objects.get(username=username)
@@ -215,7 +217,7 @@ class ProjectSettings(LoginRequiredMixin,View):
             role.role = "is_normal"
             role.save()
   
-
+        #Delete user from project
         if response.get('section') == 'delete_user':
             username = response.get('username')
             print(username)
@@ -223,7 +225,24 @@ class ProjectSettings(LoginRequiredMixin,View):
             profile = Profile.objects.get(user=user)
             project.roles.get(profile=profile).delete()
             project.save()
-           
+
+        #Add User to project
+        if response.get('section') == "add_user":
+            # form = AddUserForm(request.POST)
+            project = get_object_or_404(Project, pk=project_id)
+            username = response.get('username')
+            roles = response.get('role')
+            print(username)
+            print(roles)
+            if not User.objects.filter(username = username).exists():
+                raise forms.ValidationError("User does not exist!")            
+            user = User.objects.get(username=username)
+            profile = Profile.objects.get(user=user)
+            if Role.objects.filter(profile=profile, project=project).exists():
+                raise forms.ValidationError("User and Role already exist!")
+            role = Role(profile=profile, role=roles, project=project)
+            role.save()
+    
         return render(request, self.template_name, {'project':project})
 
 

@@ -60,12 +60,10 @@ class TicketDetailForm(forms.ModelForm):
         fields = ['title', 'state','type','assignees','description']
 
 
-# class AddUserForm(forms.Form):
-#     username = forms.TextInput()
-#     role = forms.SelectMultiple()
-#     class Meta:
-#         model = Project
-#         fields = ['roles']
+class AddUserForm(forms.ModelForm):
+    class Meta:
+        model = Role
+        fields = ['profile', 'role']
     
 
 
