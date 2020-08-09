@@ -165,9 +165,9 @@
                     <a href="{% url 'ticket' relationship.ticket_2.pk %}">
                         {{relationship.ticket_2.title}} (ID: {{relationship.ticket_2.id_in_project}})
                     </a>
-                </p>
-                <button type="button" onclick="deleteLink({{relationship.pk}})"><i class="fa fa-trash"
-                        aria-hidden="true"></i></button>
+                    
+                    <button type="button" id="trash_button" onclick="deleteLink({{relationship.pk}})"><i class="fa fa-trash"
+                        aria-hidden="true"></i></button></p>
             </div>
             {% endfor %}
         </div>

@@ -169,3 +169,6 @@
     margin-left: 14px;
     margin-bottom: 10px;
 }
+.relationship-block #trash_button {
+    font-size: large;
+}
