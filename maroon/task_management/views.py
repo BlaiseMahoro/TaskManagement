@@ -216,8 +216,8 @@ class ProjectSettings(LoginRequiredMixin,View):
 
         if response.get('section') == 'delete_user':
             profile = Profile.objects.get(user=request.user)
-            role = Role.objects.get(project=project, profile=profile)
-            role.delete()
+            project.roles = Project.roles.exclude(profile=profile)
+            project.roles.save()
             return redirect('landing')
         return render(request, self.template_name, {'project':project})
 
