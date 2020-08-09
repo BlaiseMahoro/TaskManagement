@@ -5,7 +5,7 @@
 <div class="ticket_contents">
     <div class="ticket_header">
         <!-- Close button   -->
-        <i class="fa fa-times" aria-hidden="true"></i>
+        <a href="{% url 'landing'  project.pk %}"><i class="fa fa-times" aria-hidden="true"></i></a>
         <h1>ID {{ticket_id}}</h1>
     </div>
     <form action="{% url 'ticket' ticket.pk %}" method="POST">
