@@ -49,14 +49,14 @@
         {% for attr_name, attr_value in ticket.get_attribute_dict.items %}
         <div class="attribute">
             <h1>{{attr_name}}</h1>
-            <input id="attr_name" type="text" value="{{attr_value}}" name="{{attr_name}}">
+            <input id="{{attr_name}}" type="text" value="{{attr_value}}" name="{{attr_name}}">
         </div>
         {% endfor %}
     </div>
     <input type="submit" value="Save" class="btn btn-primary" />
 </form>
 
-<div class="comment-block">
+<div class="comment-block" id="comments">
     <h1>Comments</h1>
     {% for comment in ticket.comments.all %}
     <div class="comment">
@@ -138,14 +138,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                        <p>
+                    <form action="" method="POST" enctype="multipart/form-data" id="uploadFileForm">{% csrf_token %}
                             <input id="id_file" type="file" class="" name="file" required>
-                        </p>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-primary" id ="UploadFile">Save changes</button>
                         </div>
                     </form>
                 </div>
@@ -160,7 +158,7 @@
         </tr>
         {% for file in ticket.files.all %}
         <tr>
-            <td>{{file.name}}</td>
+            <td><a href="/{{file.file}}" target="_blank">{{file.name}}</a></td>
             <td>{{file.filesize}}</td>
             <td>{{file.created_date}}</td>
         </tr>
@@ -174,7 +172,7 @@
         let comment = $("#comment-body").val()
         let token = "{{token}}"
         if (comment.length === 0) {
-            $("#error_comment").text("Please enter text for the comment's body")
+            $("#error_comment").text("Please enter text")
             return
         }
         $("#error_comment").text("")
@@ -187,13 +185,49 @@
             success: function (data, textStatus, jqXHR) {
                 //data - response from server
                 //This request will always work, unless the server is down.
+                // const comment =data;
+                // let commentHtmlStr =`<div class='comment'>\
+                // <p>(${comment.created_date}) ${comment.author.username} said: </p>\
+                // <p>${comment.body}</p></div>`;
+                // $('#comments').append(commentHtmlStr);
                 location.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log("State not updated!", errorThrown);
+                console.log("Comment not added!", errorThrown);
             }
         })
     });
-
+    $("#UploadFile").click((e)=>{
+        e.preventDefault();
+        var form = $('#uploadFileForm')[0];
+        var data = new FormData(form);
+        console.log(data);
+        let project_id = "{{project.pk}}"
+        let ticket_id = "{{ticket.id_in_project}}"
+        let token = "{{token}}"
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: `/api/project/${project_id}/ticket/${ticket_id}/file`,
+            data: data,
+            headers: { "Authorization": `Token ${token}` },
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function (data, textStatus, jqXHR) {
+                //data - response from server
+                //This request will always work, unless the server is down.
+                // const comment =data;
+                // let commentHtmlStr =`<div class='comment'>\
+                // <p>(${comment.created_date}) ${comment.author.username} said: </p>\
+                // <p>${comment.body}</p></div>`;
+                // $('#comments').append(commentHtmlStr);
+                location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("File not added!", errorThrown);
+            }
+        })
+    });
 </script>
 {% endblock content %}
