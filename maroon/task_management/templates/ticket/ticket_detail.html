@@ -178,13 +178,13 @@
                 <div class="modal-body">
                     <form action="" method="POST" enctype="multipart/form-data" id="uploadFileForm">{% csrf_token %}
                             <input id="id_file" type="file" class="" name="file">
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                            <p id="err_fileUpload" style="color: red;"></p>
+                        
                     </form>
-                    <p id="err_fileUpload" style="color: red;"></p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="UploadFile" class="btn btn-primary">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
