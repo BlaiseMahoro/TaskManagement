@@ -36,9 +36,10 @@
 }
 
 .template-content-container {
-    border-radius: 25px;
-    background-color: #ebebeb;
-    padding: 5px 20px 5px 20px;
+    border-radius: 25px !important;
+    background-color: #ebebeb !important;
+    padding: 5px 20px 5px 20px !important;
+    color: #000000;
 }
 
 .ticket-template-content {
@@ -58,7 +59,7 @@
 .content-button {
     background-color: #ebebeb;
     border: none;
-    color: #7a7a7a;
+    color: #7a7a7a !important;
     width: 120px;
     font-size: 80%;
 }

@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
-from .models import Profile, Project, Role, User, Ticket, State, Type, AttributeType
+from .models import Profile, Project, Role, User, Ticket, State, Type, AttributeType, RelationshipType
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate, TicketDetailForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
@@ -181,8 +181,9 @@ class ProjectSettings(LoginRequiredMixin,View):
         states = State.objects.filter(ticket_template=project.ticket_template).all()
         types = Type.objects.filter(ticket_template=project.ticket_template)
         attributes = AttributeType.objects.filter(ticket_template=project.ticket_template)
+        relationships = RelationshipType.objects.filter(ticket_template=project.ticket_template)
         print(role)
-        context = {'project': project, 'role':role, 'states': states, 'types': types, 'attributes': attributes, 'relationships': []}
+        context = {'project': project, 'role':role, 'states': states, 'types': types, 'attributes': attributes, 'relationships': relationships}
         return render(request, self.template_name, context)
    
     def post(self, request, *args, **kwargs):
@@ -267,15 +268,26 @@ class ProjectSettings(LoginRequiredMixin,View):
                     attribute_type = AttributeType(ticket_template=project.ticket_template, name=remove_empty_string(response.get('attribute-name' + str(i+1))))
                     attribute_type.save()
 
-            #Relationship
-            relationships = []
-            for i in range(0, int(response.get('relationship-number'))):
-                relationship = {'title': response.get('relationship-name' + str(i+1))}
-                relationships.append(relationship)
+            #Update/Create RelationshipType
+            relationship_queryset = RelationshipType.objects.filter(ticket_template=project.ticket_template).all()
+
+            num_relationships = int(response.get('relationship-number'))
+            for relationship_type in relationship_queryset[num_relationships:]:
+                relationship_type.delete()
+
+            for i in range(0, num_relationships):
+                if i < len(relationship_queryset):
+                    relationship_type = relationship_queryset[i]
+                    relationship_type.name = remove_empty_string(response.get('relationship-name' + str(i+1)))
+                    relationship_type.save()
+                else:
+                    relationship_type = RelationshipType(ticket_template=project.ticket_template, name=remove_empty_string(response.get('relationship-name' + str(i+1))))
+                    relationship_type.save()
 
             states = State.objects.filter(ticket_template=project.ticket_template).all()
             types = Type.objects.filter(ticket_template=project.ticket_template).all()
             attributes = AttributeType.objects.filter(ticket_template=project.ticket_template).all()
+            relationships = RelationshipType.objects.filter(ticket_template=project.ticket_template)
 
             return render(request, self.template_name, {'project':project, 'states': states, 'types': types, 'attributes': attributes, 'relationships': relationships}) 
 
