@@ -95,8 +95,10 @@
                         </select>
                         <select class="" name="ticket">
                             <option value='' disabled selected>Select Ticket</option>
-                            {% for ticket in project.tickets.all %}
-                            <option value='{{ticket.id_in_project}}'>{{ticket.title}}</option>
+                            {% for ticket_1 in project.tickets.all %}
+                               {% if ticket.pk != ticket_1.pk %}
+                                <option value='{{ticket_1.id_in_project}}'>{{ticket_1.title}}</option>
+                               {%endif%}
                             {% endfor %}
                         </select>
 
