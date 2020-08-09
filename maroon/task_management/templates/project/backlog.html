@@ -46,11 +46,13 @@
       <tr>
 
         <td>{{ ticket.id }}</td>
-        <td>{{ ticket.type }}</td>
-        <td>{{ ticket.title }}</td>
+        <td class="ticket-type" style="padding-right: 50px;">
+          <p style="background-color:{{ ticket.type.color }};">{{ ticket.type }}</p>
+        </td>
+        <td><a href="{% url 'ticket' ticket.id %}">{{ ticket.title }}</a></td>
         <td>{% if ticket.assignees.all %}{{ ticket.assignees.all.0.user }}{% endif %}</td>
         <td id="new">
-          <p>{{ ticket.state }}</p>
+          <p style="background-color: {{ ticket.state.color }};">{{ ticket.state }}</p>
         </td>
       </tr>
       {% endfor %}
