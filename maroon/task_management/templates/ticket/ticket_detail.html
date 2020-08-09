@@ -87,13 +87,13 @@
                 </div>
                 <div class="modal-body">
                     <form>{% csrf_token %}
-                        <select class="" name="link_type" id="link_type">
+                        <select class="" name="link_type" id="link_type_id">
                             <option value='' disabled selected>Select Link</option>
                             {% for rel_type in project.ticket_template.relationshipTypes.all %}
                             <option value='{{rel_type.name}}'>{{rel_type.name}}</option>
                             {% endfor %}
                         </select>
-                        <select class="" name="ticket">
+                        <select class="" id="ticket_id" name="ticket">
                             <option value='' disabled selected>Select Ticket</option>
                             {% for ticket_1 in project.tickets.all %}
                                {% if ticket.pk != ticket_1.pk %}
@@ -103,10 +103,11 @@
                         </select>
 
                     </form>
+                    <p id="error_link" style="color: red;"></p>
                 </div>
                  <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary" id="saveLink">Save changes</button>
     </div> 
             </div>
         </div>
@@ -139,13 +140,14 @@
                 </div>
                 <div class="modal-body">
                     <form action="" method="POST" enctype="multipart/form-data" id="uploadFileForm">{% csrf_token %}
-                            <input id="id_file" type="file" class="" name="file" required>
+                            <input id="id_file" type="file" class="" name="file">
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id ="UploadFile">Save changes</button>
+                            <button type="submit" class="btn btn-primary" id ="UploadFile">Save changes</button>
                         </div>
                     </form>
+                    <p id="err_fileUpload" style="color: red;"></p>
                 </div>
             </div>
         </div>
@@ -205,6 +207,12 @@
         let project_id = "{{project.pk}}"
         let ticket_id = "{{ticket.id_in_project}}"
         let token = "{{token}}"
+        console.log("file", $('#id_file').val())
+        if($('#id_file').val() ==''){
+            $('#err_fileUpload').text("Please select a file to upload");
+            return;
+        }
+        $('#err_fileUpload').text("");
         $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
@@ -226,6 +234,38 @@
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("File not added!", errorThrown);
+            }
+        })
+    });
+    $("#saveLink").click((e)=>{
+        let link_type = $("#link_type_id").children("option:selected").val();
+        let ticket_rel = $("#ticket_id").children("option:selected").val();
+        if(link_type == '' || ticket_rel==''){
+            $('#error_link').text("Please select link type and ticket");
+            return;
+        }
+        $('#err_link').text("");
+        let project_id = "{{project.pk}}";
+        let token = "{{token}}";
+        let ticket_id = "{{ticket.id_in_project}}";
+        $.ajax({
+            url: `/api/project/${project_id}/ticket/${ticket_id}/link`,
+            type: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify({ link_type: link_type, related_ticket_project_pk:ticket_rel }),
+            headers: { "Authorization": `Token ${token}` },
+            success: function (data, textStatus, jqXHR) {
+                //data - response from server
+                //This request will always work, unless the server is down.
+                // const comment =data;
+                // let commentHtmlStr =`<div class='comment'>\
+                // <p>(${comment.created_date}) ${comment.author.username} said: </p>\
+                // <p>${comment.body}</p></div>`;
+                // $('#comments').append(commentHtmlStr);
+                location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Relationship not added!", errorThrown);
             }
         })
     });
