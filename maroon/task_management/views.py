@@ -44,7 +44,7 @@ class Landing(LoginRequiredMixin,View):
             if not request.GET._mutable:
                 request.GET._mutable = True
             request.GET['pk'] = project.pk
-            myFilter = TicketFilter(request=request, queryset=tickets)
+            myFilter = TicketFilter(request.GET, request=request, queryset=tickets)
             tickets = myFilter.qs
             paginator = Paginator(tickets, 1)
             page_number = request.GET.get('page')

@@ -23,7 +23,7 @@ def assignees(request):
 
 class TicketFilter(django_filters.FilterSet):
     
-    title = CharFilter(field_name="title", lookup_expr='icontains', initial="Search" )
+    title = CharFilter(field_name="title", lookup_expr='icontains')
     type = ModelChoiceFilter(field_name="type", queryset=types)
     state = ModelChoiceFilter(field_name="state", queryset=states)
     assignees = ModelChoiceFilter(field_name="assignees", queryset=assignees)
