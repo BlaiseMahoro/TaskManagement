@@ -102,6 +102,8 @@
             {% for comment in ticket.comments.all %}
             <div class="comment">
                 <p>({{comment.created_date}}) {{comment.author.username}} said: {{comment.body}}</p>
+                <button type="button" onclick="deleteComment({{comment.pk}})"><i class="fa fa-trash"
+                        aria-hidden="true"></i></button>
             </div>
             {% endfor %}
             <div id="comment-form">
@@ -163,6 +165,8 @@
                         {{relationship.ticket_2.title}} (ID: {{relationship.ticket_2.id_in_project}})
                     </a>
                 </p>
+                <button type="button" onclick="deleteLink({{relationship.pk}})"><i class="fa fa-trash"
+                        aria-hidden="true"></i></button>
             </div>
             {% endfor %}
         </div>
@@ -214,6 +218,8 @@
                     <td><a href="/{{file.file}}" target="_blank">{{file.name}}</a></td>
                     <td>{{file.filesize}}</td>
                     <td>{{file.created_date}}</td>
+                    <td><button type="button" onclick="deleteFile({{file.pk}})"><i class="fa fa-trash"
+                                aria-hidden="true"></i></button></td>
                 </tr>
                 {% endfor %}
             </table>
@@ -242,7 +248,7 @@
                 success: function (data, textStatus, jqXHR) {
                     //data - response from server
                     //This request will always work, unless the server is down.
-                  
+
                     location.reload();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -276,7 +282,7 @@
                 success: function (data, textStatus, jqXHR) {
                     //data - response from server
                     //This request will always work, unless the server is down.
-                   
+
                     location.reload();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -310,7 +316,7 @@
                 }
             })
         });
-        $("#delete_ticket").click((e)=>{
+        $("#delete_ticket").click((e) => {
             let project_id = "{{project.pk}}";
             let token = "{{token}}";
             let ticket_id = "{{ticket.id_in_project}}";
@@ -323,13 +329,77 @@
                     //data - response from server
                     //This request will always work, unless the server is down.
                     // similar behavior as an HTTP redirect
-                window.location.replace("{% url 'landing'  project.pk %}");
+                    window.location.replace("{% url 'landing'  project.pk %}");
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log("Ticket not deleted!", errorThrown);
                 }
             })
         });
+        const deleteComment = (commentId) => {
+            console.log(commentId)
+            let project_id = "{{project.pk}}";
+            let token = "{{token}}";
+            let ticket_id = "{{ticket.id_in_project}}";
+            $.ajax({
+                url: `/api/project/${project_id}/ticket/${ticket_id}/comment/${commentId}`,
+                type: "DELETE",
+                contentType: 'application/json',
+                headers: { "Authorization": `Token ${token}` },
+                success: function (data, textStatus, jqXHR) {
+                    //data - response from server
+                    //This request will always work, unless the server is down.
+                    // similar behavior as an HTTP redirect
+                    location.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Comment not deleted!", errorThrown);
+                }
+            })
+        }
+        const deleteFile = (fileId) => {
+            console.log(fileId)
+            let project_id = "{{project.pk}}";
+            let token = "{{token}}";
+            let ticket_id = "{{ticket.id_in_project}}";
+            $.ajax({
+                url: `/api/project/${project_id}/ticket/${ticket_id}/file/${fileId}`,
+                type: "DELETE",
+                contentType: 'application/json',
+                headers: { "Authorization": `Token ${token}` },
+                success: function (data, textStatus, jqXHR) {
+                    //data - response from server
+                    //This request will always work, unless the server is down.
+                    // similar behavior as an HTTP redirect
+                    location.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("File not deleted!", errorThrown);
+                }
+            })
+        }
+        const deleteLink = (linkId) => {
+            console.log(linkId)
+            let project_id = "{{project.pk}}";
+            let token = "{{token}}";
+            let ticket_id = "{{ticket.id_in_project}}";
+            $.ajax({
+                url: `/api/project/${project_id}/ticket/${ticket_id}/link/${linkId}`,
+                type: "DELETE",
+                contentType: 'application/json',
+                headers: { "Authorization": `Token ${token}` },
+                success: function (data, textStatus, jqXHR) {
+                    //data - response from server
+                    //This request will always work, unless the server is down.
+                    // similar behavior as an HTTP redirect
+                    location.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Link not deleted!", errorThrown);
+                }
+            })
+        }
+
     </script>
 </div>
 {% endblock content %}
