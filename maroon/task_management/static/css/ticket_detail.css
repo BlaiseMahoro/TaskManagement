@@ -1,6 +1,5 @@
 .ticket_header {
-    border-left: 20px solid;
-    border-left-color: aqua;
+    border-left: 20px solid;    
     height: 44px;
 }
 .ticket_header i {
@@ -41,13 +40,18 @@
 .comment-block .comment_title {
     width: 100%;
 }
+.comment-block {
+    position: relative;
+    /* margin-top: 48px; */
+}
 .comment p{
     font-size: 18px;
     margin-bottom: 0;    
 }
 .rlship {
     width:40%;
-    margin-bottom: 8px;      
+    margin-bottom: 8px;
+    margin-top: 50px;
 }
 .file_title {   
     margin-bottom: 8px;
@@ -79,6 +83,7 @@
     display: inline-flex;
     width: 100%;
     margin-bottom: 65px;
+    height: auto;
 }
 .navbar .form-group {
     display: flex;
@@ -104,6 +109,8 @@
 .right_side {
     padding-left: 2em;
     display: grid;
+    margin-left: 38%;
+    position: relative;
 }
 .attribute h1 {
     margin-top: 6px;
@@ -130,10 +137,35 @@
     border: none transparent;
     outline: none;   
 }
-.navbar .ticket_title {    
+.navbar .ticket_title {
     position: absolute;
-    top: -36px;
+    top: -73px;
 }
 .submit_button {
     width: fit-content;
+    position: relative;
+    top: 47px;
+    float: right;
+    margin-right: 80px;
+}
+.submit_button input {
+    font-size: smaller;
+}
+#delete_ticket {
+    font-size: smaller;
+}
+
+#addComment, #delete_ticket, .submit_button input{
+    background-color: #bb285c;
+    color:white;
+    border-radius: 6px;
+    border-color: #bb285c;
+}
+.relationship-block .fa-plus:before {
+    color: chartreuse;
+}
+
+.files button {
+    margin-left: 14px;
+    margin-bottom: 10px;
 }
