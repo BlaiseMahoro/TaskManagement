@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Project, Role, Ticket
+from .models import Profile, Project, Role, Ticket, Attribute, Comment, File
 from django import forms
 from bootstrap_modal_forms.forms import BSModalModelForm
 
@@ -46,11 +46,20 @@ class UserUpdate(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email',)
+    
 class TicketForm(BSModalModelForm):
     description = forms.CharField(required=False)
     class Meta:
         model = Ticket
-        fields = ['title','type','description','assignees']
+        fields = ['title','type','assignees','description']
+
+class TicketDetailForm(forms.ModelForm):
+    description = forms.CharField(required=False)
+    class Meta:
+        model = Ticket
+        fields = ['title', 'state','type','assignees','description']
+
+
 # class AddUserForm(forms.Form):
 #     username = forms.TextInput()
 #     role = forms.SelectMultiple()

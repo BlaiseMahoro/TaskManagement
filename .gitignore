@@ -5,3 +5,4 @@ env/
 
 settings.json
 *.ps1
+maroon/task_management/migrations/0001_initial.py

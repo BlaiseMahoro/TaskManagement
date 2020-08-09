@@ -1,8 +1,10 @@
 <!-- https://www.codeply.com/go/YEFHXEnn0v -->
 <div class="container-fluid pt-3 table">
     <div class="row flex-row flex-sm-nowrap py-3">
-
+        <input id="token" type="hidden" value="{{token}}"/>
+        <input id="project_id" type="hidden" value={{project.pk}} />
         <main class="board">
+
             {% for state in project.ticket_template.states.all %}
             <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <h2 class="column-title">{{state.state_name}}</h2>
@@ -10,10 +12,13 @@
                 <input type="hidden"  class="state_name" value="{{state.state_name}}" />
                 {% for ticket in state.tickets.all %}
                 <article class="card carddraggable shadow-sm"  draggable="true" ondragstart="drag(event)" data-id="{{ticket.id_in_project}}">
+                    <input type="hidden" class="ticket_id" value="{{ticket.id_in_project}}" />
                     <div class="task card-body p-2">
                         <div class="state-color" style="background-color:{{state.color}};"></div>
                         <div class="task-details">
-                            <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
+                            <a href="{% url 'ticket' ticket.pk %}">
+                                <p><strong>{{ticket.id_in_project}} - {{ticket.title}}</strong> </p>
+                            </a>
                             <div class="sub-details">
                                 <p class="task-number">{{ticket.description}}</p>
                                 <p class="task-type" style="background-color: {{ticket.type.color}};">{{ticket.type}}</p>
@@ -26,10 +31,12 @@
                                     {% else %}
                                     <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
                                     {% endif %}
-                                    <button type="button" class="user-toggle btn btn-info" data-toggle="collapse" data-target="#user-list">
-                                        <p>{{ticket.assignees.all.0.user}}</p>
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i></button>
-                                    <div id="user-list" class="collapse">
+                                    <button type="button" class="user-toggle btn btn-info" data-toggle="collapse" data-target="#user-list{{ticket.id_in_project}}">
+                                        <p>{{ticket.assignees.all.0.user}}
+                                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                        </p>
+                                    </button>
+                                    <div id="user-list{{ticket.id_in_project}}" class="collapse">
                                         <tr class="user-row">
                                             {% for profile in ticket.assignees.all|slice:"1:" %} 
                                                 <td>
@@ -38,7 +45,7 @@
                                                     {% else %}
                                                     <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
                                                     {% endif %}
-                                                    s<p class="no-collapse">{{profile.user}}</p>
+                                                    <p class="no-collapse">{{profile.user}}</p>
                                                 </td>
                                             {% endfor %}
                                         </tr>
@@ -79,22 +86,40 @@ const drag = event => {
 };
 
 const drop = event => {
+    const project_id = "{{project.pk}}";
+    const token = "{{token}}";
+    const el = document.querySelector(`[data-id="${event.dataTransfer.getData('text/plain')}"]`);
+    const ticket_id = el.getElementsByClassName("ticket_id")[0].value;
     Array.from(document.querySelectorAll('.column'))
          .forEach(column => column.classList.remove('drop'));
 
-    document.querySelector(`[data-id="${event.dataTransfer.getData('text/plain')}"]`).remove();
+   
+        document.querySelector(`[data-id="${event.dataTransfer.getData('text/plain')}"]`).remove();
 
-    console.log("dropped",event.currentTarget)
-    event.currentTarget.innerHTML = event.currentTarget.innerHTML + event.dataTransfer.getData('text/html');
-    event.currentTarget.querySelector(".state-color").style.backgroundColor = event.currentTarget.querySelector(".color").value;
-    const cards = event.currentTarget.querySelectorAll('div.state-color')
-    console.log(cards[0])
-     for(let i=0; i<cards.length; i++){
-        cards[i].style.backgroundColor = event.currentTarget.querySelector(".color").value;
-     }
-    
-    
-    //$.post('/ticket/<pk>/changestate')
+        event.currentTarget.innerHTML = event.currentTarget.innerHTML + event.dataTransfer.getData('text/html');
+        event.currentTarget.querySelector(".state-color").style.backgroundColor = event.currentTarget.querySelector(".color").value;
+        const cards = event.currentTarget.querySelectorAll('div.state-color')
+        for(let i=0; i<cards.length; i++){
+            cards[i].style.backgroundColor = event.currentTarget.querySelector(".color").value;
+        }
+    $.ajax({
+        url:`/api/project/${project_id}/ticket/${ticket_id}/changestate`,
+        type:"POST",
+        contentType: 'application/json',
+        data:JSON.stringify({state:event.currentTarget.querySelector(".column-title").innerHTML}),
+        headers: {"Authorization": `Token ${token}`},
+        success: function(data, textStatus, jqXHR)
+        {
+        //data - response from server
+        //This request will always work, unless the server is down.
+         
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            console.log("State not updated!", errorThrown);
+        }
+    })
+   
 };
 
 const allowDrop = event => {
