@@ -205,20 +205,25 @@ class ProjectSettings(LoginRequiredMixin,View):
             project.save()
         if response.get('section') =='delete_project':
             project.delete()   
-            return redirect('landing')
+            
 
         if response.get('section') == 'demote_user':
-            profile = Profile.objects.get(user=request.user)
+            username = response.get('username')
+            user = User.objects.get(username=username)
+            profile = Profile.objects.get(user=user)
             role = Role.objects.get(project=project, profile=profile)
             role.role = "is_normal"
             role.save()
-            return redirect('landing')
+  
 
         if response.get('section') == 'delete_user':
-            profile = Profile.objects.get(user=request.user)
-            project.roles = Project.roles.exclude(profile=profile)
-            project.roles.save()
-            return redirect('landing')
+            username = response.get('username')
+            print(username)
+            user = User.objects.get(username=username)
+            profile = Profile.objects.get(user=user)
+            project.roles.get(profile=profile).delete()
+            project.save()
+           
         return render(request, self.template_name, {'project':project})
 
 
