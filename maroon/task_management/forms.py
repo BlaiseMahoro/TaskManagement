@@ -57,6 +57,3 @@ class TicketForm(BSModalModelForm):
 #     class Meta:
 #         model = Project
 #         fields = ['roles']
-    
-# class TicketTemplateForm(forms.Form):
-#     pass

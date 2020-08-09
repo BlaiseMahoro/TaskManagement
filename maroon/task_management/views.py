@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
-from .models import Profile, Project, Role, User, Ticket, State
+from .models import Profile, Project, Role, User, Ticket, State, Type, AttributeType
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
@@ -145,11 +145,15 @@ class ProjectSettings(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         project_id = kwargs.get('pk')
         project = get_object_or_404(Project, pk=project_id)
+        #print(project.ticket_template.states.all())
         profile = Profile.objects.get(user=request.user)
         role = Role.objects.get(profile= profile, project= project).role
         # is_admin = role =='is_admin'
+        states = State.objects.filter(ticket_template=project.ticket_template).all()
+        types = Type.objects.filter(ticket_template=project.ticket_template)
+        attributes = AttributeType.objects.filter(ticket_template=project.ticket_template)
         print(role)
-        context = {'project': project, 'role':role}
+        context = {'project': project, 'role':role, 'states': states, 'types': types, 'attributes': attributes, 'relationships': []}
         return render(request, self.template_name, context)
    
     def post(self, request, *args, **kwargs):
@@ -177,7 +181,74 @@ class ProjectSettings(LoginRequiredMixin,View):
         if response.get('section') =='delete_project':
             project.delete()   
             return redirect('landing')
-        return render(request, self.template_name, {'project':project})
+        if response.get('section') == 'ticket_template':
+            #print(response)
+            project_id = kwargs.get('pk')
+            #print(project_id)
+            project = get_object_or_404(Project, pk=project_id)
+            
+            #Update/Create States
+            state_queryset = State.objects.filter(ticket_template=project.ticket_template).all()
+
+            num_states = int(response.get('state-number'))
+            for state in state_queryset[num_states:]:
+                state.delete()
+
+            for i in range(0, num_states):
+                if i < len(state_queryset):
+                    state = state_queryset[i]
+                    state.state_name = remove_empty_string(response.get('state-name' + str(i+1)))
+                    state.color = response.get('state-color' + str(i+1))
+                    state.position = int(response.get('state-position' + str(i+1)))
+                    state.save()
+                else:
+                    state = State(ticket_template=project.ticket_template, state_name=remove_empty_string(response.get('state-name' + str(i+1))), color=response.get('state-color' + str(i+1)), position=int(response.get('state-position' + str(i+1))))
+                    state.save()
+
+            #Update/Create Types
+            type_queryset = Type.objects.filter(ticket_template=project.ticket_template).all()
+
+            num_types = int(response.get('type-number'))
+            for type_obj in type_queryset[num_types:]:
+                type_obj.delete()
+
+            for i in range(0, num_types):
+                if i < len(type_queryset):
+                    type_obj = type_queryset[i]
+                    type_obj.type_name = remove_empty_string(response.get('type-name' + str(i+1)))
+                    type_obj.color = response.get('type-color' + str(i+1))
+                    type_obj.save()
+                else:
+                    type_obj = Type(ticket_template=project.ticket_template, type_name=remove_empty_string(response.get('type-name' + str(i+1))), color=response.get('type-color' + str(i+1)))
+                    type_obj.save()
+
+            #Update/Create AttributeType
+            attribute_queryset = AttributeType.objects.filter(ticket_template=project.ticket_template).all()
+
+            num_attributes = int(response.get('attribute-number'))
+            for attribute_type in attribute_queryset[num_attributes:]:
+                attribute_type.delete()
+
+            for i in range(0, num_attributes):
+                if i < len(attribute_queryset):
+                    attribute_type = attribute_queryset[i]
+                    attribute_type.name = remove_empty_string(response.get('attribute-name' + str(i+1)))
+                    attribute_type.save()
+                else:
+                    attribute_type = AttributeType(ticket_template=project.ticket_template, name=remove_empty_string(response.get('attribute-name' + str(i+1))))
+                    attribute_type.save()
+
+            #Relationship
+            relationships = []
+            for i in range(0, int(response.get('relationship-number'))):
+                relationship = {'title': response.get('relationship-name' + str(i+1))}
+                relationships.append(relationship)
+
+            states = State.objects.filter(ticket_template=project.ticket_template).all()
+            types = Type.objects.filter(ticket_template=project.ticket_template).all()
+            attributes = AttributeType.objects.filter(ticket_template=project.ticket_template).all()
+
+            return render(request, self.template_name, {'project':project, 'states': states, 'types': types, 'attributes': attributes, 'relationships': relationships})
 
 class CreateProject(LoginRequiredMixin, BSModalCreateView):
     login_url = 'login' 
@@ -269,19 +340,7 @@ class AccessSettings(LoginRequiredMixin,View):
             form = AddUserForm()
         return render(request, "add_user.html", {"project": project, "form": form})
 
-# class TicketTemplateSettings(LoginRequiredMixin,View):
-#     login_url = 'login'
-#     template_name = "project/management/container.html"
-
-#     def get(self, request, *args, **kwargs):
-#         project_id = kwargs.get('pk')
-#         project = get_object_or_404(Project, pk=project_id)
-#         profile = Profile.objects.get(user=request.user)
-#         role = Role.objects.get(profile= profile, project= project).role
-#         # users = User.objects.all().filter(profile= profile)
-#         # is_admin = role =='is_admin'
-#         ticket_project = {'states': [{'state_name':'New','color':'#ff0000'}, {'state_name':'To-Do','color':'#ff9500'}, {'state_name':'Doing','color':'#fffb00'}, {'state_name':'Done','color':'#00ff00'}, {'state_name':'Extra','color':'#fb00ff'}], 'types': [{'type_name': 'Bug','color':'#ff9500'}, {'type_name': 'Feature','color':'#0077ff'}], 'attributes': [{'name': 'Example'}, {'name': 'Example 2'}], 'relationships': [{'title': 'Null Pointer on update'}, {'title': 'Ticket Edit Wireframe'}]}
-#         #ticket_project = {'states': [], 'types': [], 'attributes': [], 'relationships': []}
-#         print(role)
-#         context = {'project': project, 'role':role}
-#         return render(request, self.template_name, context)
+def remove_empty_string(string):
+    if not string:
+        string = 'Placeholder'
+    return string
