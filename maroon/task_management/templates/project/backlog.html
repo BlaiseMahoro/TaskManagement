@@ -1,40 +1,31 @@
 <div>
   <div class="wrapper">
     <form method="get">
-      {{myFilter.form}}
-      <!-- <div class="search_field">        
-        <input class="search_box" id="searchbox" name="q" method='GET' action="." type="text" value="{{ request.GET.q }}" placeholder="Search...">
-        <i class="fa fa-search"></i>
-        
-        <div class="dropdown">
-        <div class="type">
-            <select name="type" id="type">
-            <option value="">Type</option>
-            <option value="bug">Bug</option>
-            <option value="feature">Feature</option>
-            <option value="document">Document</option>
-            </select>
-        </div>
-        
-        <div class="assignee">
-            <select name="assignees" id="assignee" >
-            <option value="">Assignee(s)</option>
-            <option value="user1">brooke.dobbins</option>
-            <option value="user2">james.hannah</option>
-            <option value="user3">divergentNate</option>
-            </select>
-        </div>
-        <div class="state">
-            <select name="state" id="state">
-            <option value="">State</option>
-            <option value="new">New</option>
-            <option value="inprogress">In Progress</option>
-            <option value="done">Done</option>
-            </select>
-        </div>
-    </div> -->
-      <input type="submit" name="submit" value="Search" />
+      <!-- {{myFilter.form}} -->
 
+      <!-- {{myFilter.form.type}} -->
+      <div class="search_field">       
+        
+        <!-- <div class="dropdown"> -->
+          <div class="search_title">
+          <i class="fa fa-search"></i>
+          {{myFilter.form.title}}
+          <!-- <input class="search_box" id="searchbox" name="q" method='GET' action="." type="text" value="{{ request.GET.q }}" placeholder="Search..."> -->
+          </div> 
+          <div class="type" id="type">
+            <label class="search-label">Type: </label>
+              {{myFilter.form.type}}
+          </div>
+          <div class="state" id="state">
+            <label class="search-label">State: </label>
+            {{myFilter.form.state}}
+          </div>
+          <div class="assignee" id="assignee">
+            <label class="search-label">Assignees: </label>
+            {{myFilter.form.assignees}}
+          </div>
+          <button type="submit" class="btn">Search</button>
+        <!-- </div> -->
   </div>
   </form>
 <div class="tickets">

@@ -18,7 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
 # from .forms import UserDeleteForm
 from django.db.models import Q
-from .filters import OrderFilter
+from .filters import TicketFilter
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django import forms
@@ -41,7 +41,10 @@ class Landing(LoginRequiredMixin,View):
         if 'pk' in kwargs:
             project = get_object_or_404(Project, pk=kwargs['pk'])
             tickets = Ticket.objects.filter(project=project)
-            myFilter = OrderFilter(request.GET, queryset=tickets)
+            if not request.GET._mutable:
+                request.GET._mutable = True
+            request.GET['pk'] = project.pk
+            myFilter = TicketFilter(request=request, queryset=tickets)
             tickets = myFilter.qs
             paginator = Paginator(tickets, 1)
             page_number = request.GET.get('page')
@@ -81,18 +84,6 @@ class Landing(LoginRequiredMixin,View):
             return HttpResponseRedirect(url)
         context['ticket_form'] = form
         return render(request, self.landing_template, context)
-
-    # def get(self, request, *args, **kwargs):
-    #     project = get_object_or_404(Project, pk=kwargs['pk'])
-    #     tickets = Ticket.objects.filter(project=project)
-    #     myFilter = OrderFilter(request.GET, queryset=tickets)
-    #     tickets = myFilter.qs
-    #     paginator = Paginator(tickets, 1)
-    #     page_number = request.GET.get('page')
-    #     page_obj = paginator.get_page(page_number)
-    #     context = {'project': project, 'myFilter':myFilter, 'tickets':tickets, 'page_obj': page_obj}
-        
-    #     return render(request, self.template_name, context)
 
 
 class Account(LoginRequiredMixin,View):
@@ -340,7 +331,6 @@ class CreateProject(LoginRequiredMixin, BSModalCreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        print(request.POST)
         #Processes request if valid
         if form.is_valid():
             # form.save()
