@@ -2,6 +2,11 @@
 
 {% block content %}
 
+<div class="ticket_contents">    
+    <div class="ticket_header">
+        <!-- Close button   -->
+        <i class="fa fa-times" aria-hidden="true"></i>
+        <h1>ID {{ticket_id}}</h1> </div>
 <form action="{% url 'ticket' ticket.pk %}" method="POST">
 
     {% csrf_token %}
@@ -10,29 +15,40 @@
         {{ error }}
         {% endfor %}
     </div>
-    {% for field in form %}
-    <div class="form-group">
-        <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    
+   <div class="form-group">
+        <nav class="navbar">
+    {% for field in form %}     
+        
         <div class="{% if field.errors %} invalid{% endif %}">
             {% for error in field.errors %}
             <p class="help-block">{{ error }}</p>
             {% endfor %}
         </div>
+           
         {% if field.label == "Type" %}
+            <div class="form-group" id="bar">
+        <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
         <select class="mdb-select md-form modal_input" name="{{field.name}}">
             <option value='' disabled >Select Type</option>
             {% for type in project.ticket_template.types.all %}
             <option value='{{type.pk}}' {% if type.pk == ticket.type.pk %} selected {%endif%}>{{type.type_name}}</option>
             {% endfor %}
         </select>
+            </div>
         {% elif field.label == "State" %}
+             <div class="form-group" id="bar">
+        <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
         <select class="mdb-select md-form modal_input" name="{{field.name}}">
             <option value='' disabled selected>Select State</option> 
             {% for state in project.ticket_template.states.all %}
             <option value='{{state.pk}}' {% if state.pk == ticket.state.pk %} selected {%endif%} >{{state.state_name}}</option>
             {% endfor %}
         </select>
+                  </div>
         {% elif field.label == "Assignees" %}
+             <div class="form-group" id="bar">
+        <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
         <select class="selectpicker" name="{{field.name}}" multiple data-live-search="true">
             {% for profile in project_profiles %}
             <option value='{{profile.pk}}' {% if profile in ticket.assignees.all %} selected {% endif %}>
@@ -40,11 +56,27 @@
             </option>
             {% endfor %}
         </select>
-        {% else %}
+            </div>
+            {% elif field.label == "Title" %}
+            <div class="form-group">
+            <div class="ticket_title">
+            <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <input class="modal_input" type="text" name="{{field.name}}" value="{{field.value}}" /> </div> 
+                </div>
+        {% else %}            
+        
+             </nav>
+       <div class="left_side">
+           <div class="desc">
+       <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
         <input class="modal_input" type="text" name="{{field.name}}" value="{{field.value}}" />
-        {% endif %}
-    </div>
-    {% endfor %}
+               </div>
+       </div>
+        {% endif %}    
+    {% endfor %}           
+
+        </div>
+    <div class="right_side">
     <div name="attributes" class="attribute-block">
         {% for attr_name, attr_value in ticket.get_attribute_dict.items %}
         <div class="attribute">
@@ -53,15 +85,18 @@
         </div>
         {% endfor %}
     </div>
+    </div>
+    
+    <div class="submit_button">
     <input type="submit" value="Save" class="btn btn-primary" />
-</form>
-
-<div class="comment-block" id="comments">
-    <h1>Comments</h1>
+        </div>
+</form>  
+<div class="left_side">
+ <div class="comment-block">
+    <div class="comment_title"><h1>Comments</h1></div>
     {% for comment in ticket.comments.all %}
     <div class="comment">
-        <p>({{comment.created_date}}) {{comment.author.username}} said: </p>
-        <p>{{comment.body}}</p>
+        <p>({{comment.created_date}}) {{comment.author.username}} said: {{comment.body}}</p>
     </div>
     {% endfor %}
     <div id="comment-form">
@@ -70,9 +105,11 @@
     </div>
     <button id="addComment" class="btn btn-primary">Add</button>
 </div>
+    </div>
+<div class="right_side">
 <div class="relationship-block">
-    <h1>Relationships</h1>
-    <button type="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddLinkModal">Add
+        <div class="rlship"><h1>Relationships</h1></div>
+    <button type="button" type="button" class="fa fa-plus" data-toggle="modal" data-target="#AddLinkModal">Add
         Link</button>
     <!-- Modal for add link -->
     <div class="modal fade" id="AddLinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -124,8 +161,8 @@
 </div>
 
 <div class="file-block">
-    <h1>Files</h1>
-    <button type="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddFileModal">Add
+        <div class="file_title"><h1>Files</h1></div>
+    <button type="button" type="button" class="fa fa-paperclip" data-toggle="modal" data-target="#AddFileModal">Add
         File</button>
     <!-- Modal for add file -->
     <div class="modal fade" id="AddFileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel"
@@ -144,7 +181,7 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id ="UploadFile">Save changes</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
                         </div>
                     </form>
                     <p id="err_fileUpload" style="color: red;"></p>
@@ -153,6 +190,9 @@
         </div>
     </div>
     <table class="files">
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:10%">
         <tr>
             <th>Name</th>
             <th>Size</th>
@@ -167,6 +207,8 @@
         {% endfor %}
     </table>
 </div>
+    </div>
+ 
 <script type="text/javascript">
     $("#addComment").click((e) => {
         let project_id = "{{project.pk}}"
@@ -270,4 +312,5 @@
         })
     });
 </script>
+        </div>
 {% endblock content %}

@@ -292,7 +292,8 @@ class TicketDetail(LoginRequiredMixin,View):
         form = TicketDetailForm(initial=ticket.__dict__)
         context = {
             'form': form, 
-            'ticket': ticket, 
+            'ticket': ticket,
+            'ticket_id': ticket.id_in_project,
             'project':ticket.project,
             'project_profiles': [ role.profile for role in ticket.project.roles.all()],
             'token':Token.objects.get(user=request.user)
