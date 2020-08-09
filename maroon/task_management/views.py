@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.utils.translation import ugettext as _
 from django.contrib.auth import logout
 from rest_framework import status
-from .models import Profile, Project, Role, User, Ticket, State, Attribute
+from .models import Profile, Project, Role, User, Ticket, State, Attribute, Type, AttributeType, RelationshipType
 from .forms import RegisterForm, ProfilePicForm, NewProjectForm, UserDeleteForm, TicketForm, UserUpdate, TicketDetailForm
 from bootstrap_modal_forms.generic import BSModalCreateView
 from django.http import HttpResponse, HttpResponseRedirect
