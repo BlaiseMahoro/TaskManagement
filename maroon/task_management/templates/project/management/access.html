@@ -13,7 +13,11 @@
     <h2>Administrators</h2>
     {% for project_role in admin %}
     <div class="user-row">
-        <i class="fa fa-user-circle" id="circ2"></i>
+        {% if project_role.profile.avatar %}
+        <img src="/{{project_role.profile.avatar}}" alt="Avatar" class="access-img user-img">
+        {% else %}
+        <img class="access-img user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+        {% endif %}
         <div class="user-info">
             <p><strong>{{ project_role.profile.user.username }}</strong></p>
             {% if role.profile.user.username == project_role.profile.user.username and admin.count > 1 %}
@@ -37,7 +41,12 @@
     </div>
     {% for project_role in collaborators %}
     <div class="collab-row">
-        <i class="fa fa-user-circle" id="circ2"></i>
+        {% if ticket.assignees.all.0.avatar %}
+        <img src="/{{project_role.profile.avatar}}" alt="Avatar" class="user-img">
+        {% else %}
+        <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+        {% endif %}
+        <!-- <i class="fa fa-user-circle" id="circ2"></i> -->
         <div class="collab-info">
             <p><strong>{{ project_role.profile.user.username }}</strong></p>
             {% if role.role == "is_admin" %}
