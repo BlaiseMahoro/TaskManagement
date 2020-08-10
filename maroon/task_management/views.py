@@ -46,14 +46,10 @@ class Landing(LoginRequiredMixin,View):
             request.GET['pk'] = project.pk
             myFilter = TicketFilter(request.GET, request=request, queryset=tickets)
             tickets = myFilter.qs
-            paginator = Paginator(tickets, 1)
-            page_number = request.GET.get('page')
-            page_obj = paginator.get_page(page_number)
             context = {'project': project, 
                 'project': project, 
                 'myFilter':myFilter, 
                 'tickets':tickets, 
-                'page_obj': page_obj, 
                 'template_name': self.landing_template, 
                 'ticket_form': TicketForm(), 
                 'project_profiles': [ role.profile for role in project.roles.all()], 
