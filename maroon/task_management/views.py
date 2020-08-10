@@ -68,7 +68,7 @@ class Landing(LoginRequiredMixin,View):
         if form.is_valid():
             title = form.cleaned_data.get('title')
             type = form.cleaned_data.get('type')
-            state = project.ticket_template.states.all()[0]
+            state = form.cleaned_data.get('state')
             description = form.cleaned_data.get('description')
             assignees = form.cleaned_data.get('assignees')
 
