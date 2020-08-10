@@ -185,7 +185,7 @@ class ProjectSettings(LoginRequiredMixin,View):
             project.name = response['title']
             project.description = response['description']
             project.save()
-            return render(request, self.template_name, {'project': project})
+            #return render(request, self.template_name, {'project': project})
         #For Upload Profile Picture
         if response.get('section') == 'upload_pic':
             project_id = kwargs.get('pk')
@@ -194,9 +194,10 @@ class ProjectSettings(LoginRequiredMixin,View):
             if form.is_valid():
                 project.avatar = form.cleaned_data['image']
                 project.save()
-                return render(request, self.template_name, {'project':project})
-            project.avatar = None #Delete profile
-            project.save()
+                #return render(request, self.template_name, {'project':project})
+            else:
+                project.avatar = None #Delete profile
+                project.save()
         if response.get('section') =='delete_project':
             project.delete()   
             return redirect('landing')
