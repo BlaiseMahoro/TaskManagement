@@ -76,7 +76,7 @@
             <div class="left_side">
                 <div class="desc">
                     <label class="popup-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    <input class="modal_input" type="text" name="{{field.name}}" value="{{field.value}}" />
+                    <textarea class="form-control" name="{{field.name}}" rows="5">{{field.value}}</textarea>
                 </div>
             </div>
             {% endif %}
@@ -109,7 +109,7 @@
             </div>
             {% endfor %}
             <div id="comment-form">
-                <input id="comment-body" type="text">
+                <textarea id="comment-body" class="form-control" rows="3">{{field.value}}</textarea>
                 <p id="error_comment" style="color: red;"></p>
             </div>
             <button id="addComment" class="maroon-button btn btn-primary">Add</button>
