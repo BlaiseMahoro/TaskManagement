@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="ticket_contents">
-    <div class="ticket_header">
+    <div class="ticket_header" style="border-left-color: {{ ticket.type.color }}">
         <!-- Close button   -->
         <a href="{% url 'landing'  project.pk %}"><i class="fa fa-times" aria-hidden="true"></i></a>
         <h1>ID {{ticket_id}}</h1>
@@ -15,6 +15,10 @@
             {% for error in form.non_field_errors %}
             {{ error }}
             {% endfor %}
+        </div>
+        
+        <div class="submit_button">
+            <input type="submit" value="Save" class="btn btn-primary" />
         </div>
 
         <div class="form-group">
@@ -89,10 +93,6 @@
                 {% endfor %}
             </div>
         </div>
-
-        <div class="submit_button">
-            <input type="submit" value="Save" class="btn btn-primary" />
-        </div>
     </form>
     <div class="left_side">
         <div class="comment-block">
@@ -101,25 +101,29 @@
             </div>
             {% for comment in ticket.comments.all %}
             <div class="comment">
-                <p>({{comment.created_date}}) {{comment.author.username}} said: {{comment.body}}</p>
-                <button type="button" onclick="deleteComment({{comment.pk}})"><i class="fa fa-trash"
-                        aria-hidden="true"></i></button>
+                <p>({{comment.created_date}}) {{comment.author.username}} said: {{comment.body}}
+                    <button type="button" class="right-button" onclick="deleteComment({{comment.pk}})">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </p>
             </div>
             {% endfor %}
             <div id="comment-form">
                 <input id="comment-body" type="text">
                 <p id="error_comment" style="color: red;"></p>
             </div>
-            <button id="addComment" class="btn btn-primary">Add</button>
+            <button id="addComment" class="maroon-button btn btn-primary">Add</button>
+        </div>
+        <div class="">
+            <button id="delete_ticket" class="maroon-button delete-button btn btn-primary">Delete Ticket</button>
         </div>
     </div>
     <div class="right_side">
         <div class="relationship-block">
-            <div class="rlship">
-                <h1>Relationships</h1>
+            <div>
+                <h1 class="rlship">Relationships <button type="button" class="right-button fa fa-plus" data-toggle="modal" data-target="#AddLinkModal">Add
+                    Link</button>  </h1>
             </div>
-            <button type="button" type="button" class="fa fa-plus" data-toggle="modal" data-target="#AddLinkModal">Add
-                Link</button>
             <!-- Modal for add link -->
             <div class="modal fade" id="AddLinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
@@ -164,20 +168,19 @@
                     <a href="{% url 'ticket' relationship.ticket_2.pk %}">
                         {{relationship.ticket_2.title}} (ID: {{relationship.ticket_2.id_in_project}})
                     </a>
-                </p>
-                <button type="button" onclick="deleteLink({{relationship.pk}})"><i class="fa fa-trash"
+                    <button type="button" class="right-button" onclick="deleteLink({{relationship.pk}})"><i class="fa fa-trash"
                         aria-hidden="true"></i></button>
+                </p>
             </div>
             {% endfor %}
         </div>
 
         <div class="file-block">
-            <div class="file_title">
-                <h1>Files</h1>
+            <div>
+                <h1 class="file_title">Files <button type="button" class="right-button fa fa-paperclip" data-toggle="modal"
+                    data-target="#AddFileModal">Add
+                    File</button></h1>
             </div>
-            <button type="button" type="button" class="fa fa-paperclip" data-toggle="modal"
-                data-target="#AddFileModal">Add
-                File</button>
             <!-- Modal for add file -->
             <div class="modal fade" id="AddFileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel"
                 aria-hidden="true">
@@ -205,28 +208,23 @@
                 </div>
             </div>
             <table class="files">
-                <col style="width:5%">
-                <col style="width:5%">
-                <col style="width:10%">
                 <tr>
                     <th>Name</th>
                     <th>Size</th>
                     <th>Date Uploaded</th>
+                    <th></th>
                 </tr>
                 {% for file in ticket.files.all %}
                 <tr>
                     <td><a href="/{{file.file}}" target="_blank">{{file.name}}</a></td>
                     <td>{{file.filesize}}</td>
                     <td>{{file.created_date}}</td>
-                    <td><button type="button" onclick="deleteFile({{file.pk}})"><i class="fa fa-trash"
+                    <td><button type="button" class="right-button" onclick="deleteFile({{file.pk}})"><i class="fa fa-trash"
                                 aria-hidden="true"></i></button></td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
-    </div>
-    <div class="">
-        <button id="delete_ticket" class="btn btn-primary">Delete Ticket</button>
     </div>
     <script type="text/javascript">
         $("#addComment").click((e) => {
