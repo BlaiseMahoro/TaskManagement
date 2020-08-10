@@ -1,6 +1,6 @@
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -297,11 +297,11 @@ class ProjectSettings(LoginRequiredMixin,View):
             username = response.get('username')
             roles = response.get('role')
             if not User.objects.filter(username = username).exists():
-                raise forms.ValidationError("User does not exist!")            
+                return HttpResponseNotFound("<h1>User does not exist!</h1>")            
             user = User.objects.get(username=username)
             profile = Profile.objects.get(user=user)
             if Role.objects.filter(profile=profile, project=project).exists():
-                raise forms.ValidationError("User and Role already exist!")
+                return HttpResponseBadRequest("<h1>User and Role already exist!</h1>")
             role = Role(profile=profile, role=roles, project=project)
             role.save()
 
