@@ -26,14 +26,14 @@
   </form>
   </div>
 <div class="tickets">
-  <table>
+  <table class="ticket-table">
     <col style="width:5%">
-    <col style="width:15%">
-    <col style="width:20%">
+    <col style="width:10%">
+    <col style="width:25%">
     <col style="width:15%">
     <col style="width:10%">
     <th>
-      <tr>
+      <tr class="table-titles">
         <th>ID</th>
         <th>Type</th>
         <th>Title</th>
@@ -50,7 +50,16 @@
           <p style="background-color:{{ ticket.type.color }};">{{ ticket.type }}</p>
         </td>
         <td><a href="{% url 'ticket' ticket.id %}">{{ ticket.title }}</a></td>
-        <td>{% if ticket.assignees.all %}{{ ticket.assignees.all.0.user }}{% endif %}</td>
+        <td>
+          {% if ticket.assignees.all %}
+            {% if ticket.assignees.all.0.avatar %}
+            <img src="/{{ticket.assignees.all.0.avatar}}" alt="Avatar" class="user-img">
+            {% else %}
+            <img class="user-img" src="https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png">
+            {% endif %}
+            {{ ticket.assignees.all.0.user }}
+          {% endif %}
+        </td>
         <td id="new">
           <p style="background-color: {{ ticket.state.color }};">{{ ticket.state }}</p>
         </td>
